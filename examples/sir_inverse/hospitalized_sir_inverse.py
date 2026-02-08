@@ -13,14 +13,13 @@ import pandas as pd
 import seaborn as sns
 import torch
 from torch import Tensor
-import torch.nn as nn
 
+from pinn.catalog.sir import DELTA_KEY, I_KEY, Rt_KEY, SIRInvDataModule
 from pinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
     ColumnRef,
-    Constraint,
     Field,
     FieldsRegistry,
     IngestionConfig,
@@ -28,15 +27,12 @@ from pinn.core import (
     Parameter,
     ParamsRegistry,
     Predictions,
-    Problem,
     SchedulerConfig,
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters
-from pinn.problems.ode import DataConstraint, ICConstraint, PredictDataFn, ResidualsConstraint
-from pinn.problems.sir_inverse import DELTA_KEY, I_KEY, Rt_KEY
+from pinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
 
 # ============================================================================
 # Constants
@@ -49,49 +45,6 @@ H_KEY = "H"
 # ============================================================================
 # Hospitalized Problem Definition
 # ============================================================================
-
-
-class HospitalizedSIRInvProblem(Problem):
-    """
-    SIR Inverse Problem using hospitalization data.
-    """
-
-    def __init__(
-        self,
-        props: ODEProperties,
-        hp: SIRInvHyperparameters,
-        fields: FieldsRegistry,
-        params: ParamsRegistry,
-        predict_data: PredictDataFn,
-    ) -> None:
-        constraints: list[Constraint] = [
-            ResidualsConstraint(
-                props=props,
-                fields=fields,
-                params=params,
-                weight=hp.pde_weight,
-            ),
-            ICConstraint(
-                props=props,
-                fields=fields,
-                weight=hp.ic_weight,
-            ),
-            DataConstraint(
-                fields=fields,
-                params=params,
-                predict_data=predict_data,
-                weight=hp.data_weight,
-            ),
-        ]
-
-        criterion = nn.MSELoss()
-
-        super().__init__(
-            constraints=constraints,
-            criterion=criterion,
-            fields=fields,
-            params=params,
-        )
 
 
 # ============================================================================
@@ -146,7 +99,7 @@ def main(config: RunConfig) -> None:
     # Hyperparameters
     # ========================================================================
 
-    hp = SIRInvHyperparameters(
+    hp = ODEHyperparameters(
         lr=5e-4,
         training_data=IngestionConfig(
             batch_size=100,
@@ -254,7 +207,7 @@ def main(config: RunConfig) -> None:
 
         return torch.stack([I_pred, H_pred])
 
-    problem = HospitalizedSIRInvProblem(
+    problem = ODEInverseProblem(
         props=props,
         hp=hp,
         fields=fields,

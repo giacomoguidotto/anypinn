@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import math
 from pathlib import Path
 import shutil
-from typing import cast, override
+from typing import cast
 
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
@@ -15,41 +15,36 @@ import pandas as pd
 import seaborn as sns
 import torch
 from torch import Tensor
-import torch.nn as nn
-from torchdiffeq import odeint
 
+from pinn.catalog.damped_oscillator import (
+    OMEGA_KEY,
+    V_KEY,
+    X_KEY,
+    ZETA_KEY,
+    DampedOscillatorDataModule,
+)
 from pinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
-    Constraint,
-    Domain1D,
     Field,
     FieldsRegistry,
     GenerationConfig,
     MLPConfig,
     Parameter,
     ParamsRegistry,
-    PINNDataModule,
     Predictions,
-    Problem,
     ScalarConfig,
     SchedulerConfig,
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import ODEProperties, SIRInvHyperparameters
-from pinn.problems.ode import DataConstraint, ICConstraint, PredictDataFn, ResidualsConstraint
+from pinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
 
 # ============================================================================
 # Constants
 # ============================================================================
-
-X_KEY = "x"  # position
-V_KEY = "v"  # velocity
-ZETA_KEY = "zeta"  # damping ratio
-OMEGA_KEY = "omega0"  # natural frequency
 
 # True parameter values
 TRUE_ZETA = 0.15
@@ -64,99 +59,6 @@ T_TOTAL = 5
 
 # Noise level for synthetic data
 NOISE_STD = 0.02
-
-
-# ============================================================================
-# Damped Oscillator Problem Definition
-# ============================================================================
-
-
-class DampedOscillatorProblem(Problem):
-    """Damped Oscillator Inverse Problem: recover zeta from noisy x(t) observations."""
-
-    def __init__(
-        self,
-        props: ODEProperties,
-        hp: SIRInvHyperparameters,
-        fields: FieldsRegistry,
-        params: ParamsRegistry,
-        predict_data: PredictDataFn,
-    ) -> None:
-        constraints: list[Constraint] = [
-            ResidualsConstraint(
-                props=props,
-                fields=fields,
-                params=params,
-                weight=hp.pde_weight,
-            ),
-            ICConstraint(
-                props=props,
-                fields=fields,
-                weight=hp.ic_weight,
-            ),
-            DataConstraint(
-                fields=fields,
-                params=params,
-                predict_data=predict_data,
-                weight=hp.data_weight,
-            ),
-        ]
-
-        criterion = nn.MSELoss()
-
-        super().__init__(
-            constraints=constraints,
-            criterion=criterion,
-            fields=fields,
-            params=params,
-        )
-
-
-# ============================================================================
-# Data Module
-# ============================================================================
-
-
-class DampedOscillatorDataModule(PINNDataModule):
-    """DataModule for damped oscillator inverse problem. Generates synthetic data via odeint."""
-
-    def __init__(
-        self,
-        hp: SIRInvHyperparameters,
-        validation: ValidationRegistry | None = None,
-        callbacks: list[DataScaling] | None = None,
-    ):
-        super().__init__(hp, validation, callbacks)
-
-    @override
-    def gen_coll(self, domain: Domain1D) -> Tensor:
-        """Generate uniform collocation points."""
-        coll = torch.rand((self.hp.training_data.collocations, 1))
-        x0 = torch.tensor(domain.x0, dtype=torch.float32)
-        x1 = torch.tensor(domain.x1, dtype=torch.float32)
-        coll = coll * (x1 - x0) + x0
-        return coll
-
-    @override
-    def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
-        """Generate synthetic damped oscillator data using odeint + Gaussian noise."""
-
-        def oscillator_ode(t: Tensor, y: Tensor) -> Tensor:
-            x, v = y[0], y[1]
-            dx = v
-            dv = -2 * TRUE_ZETA * TRUE_OMEGA0 * v - TRUE_OMEGA0**2 * x
-            return torch.stack([dx, dv])
-
-        y0 = torch.tensor([X0, V0])
-        t = config.x
-
-        sol = odeint(oscillator_ode, y0, t)  # [T, 2]
-        x_true = sol[:, 0]
-
-        # Add Gaussian noise to position observations only
-        x_obs = x_true + NOISE_STD * torch.randn_like(x_true)
-
-        return t.unsqueeze(-1), x_obs.unsqueeze(-1)
 
 
 # ============================================================================
@@ -209,7 +111,7 @@ def main(config: RunConfig) -> None:
     # Hyperparameters
     # ========================================================================
 
-    hp = SIRInvHyperparameters(
+    hp = ODEHyperparameters(
         lr=5e-4,
         training_data=GenerationConfig(
             batch_size=100,
@@ -254,8 +156,27 @@ def main(config: RunConfig) -> None:
     # Training and Prediction Data Definition
     # ============================================================================
 
+    def oscillator_unscaled(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+        pos, vel = y
+        z = args[ZETA_KEY]
+        omega0 = args[OMEGA_KEY]
+        dx = vel
+        dv = -2 * z(x) * omega0(x) * vel - omega0(x) ** 2 * pos
+        return torch.stack([dx, dv])
+
+    gen_props = ODEProperties(
+        ode=oscillator_unscaled,
+        y0=torch.tensor([X0, V0]),
+        args={
+            ZETA_KEY: Argument(TRUE_ZETA),
+            OMEGA_KEY: Argument(TRUE_OMEGA0),
+        },
+    )
+
     dm = DampedOscillatorDataModule(
         hp=hp,
+        gen_props=gen_props,
+        noise_std=NOISE_STD,
         validation=validation,
         callbacks=[DataScaling(y_scale=1.0)],
     )
@@ -300,13 +221,11 @@ def main(config: RunConfig) -> None:
         }
     )
 
-    def predict_data(
-        x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry
-    ) -> Tensor:
+    def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
         x_pred = fields[X_KEY](x_data)
         return cast(Tensor, x_pred)
 
-    problem = DampedOscillatorProblem(
+    problem = ODEInverseProblem(
         props=props,
         hp=hp,
         fields=fields,
@@ -422,9 +341,7 @@ def plot_and_save(
     ax = axes[0]
     sns.lineplot(x=t_data, y=x_pred, label="$x_{pred}$ (position)", ax=ax, color="C0")
     sns.lineplot(x=t_data, y=v_pred, label="$v_{pred}$ (velocity)", ax=ax, color="C2")
-    sns.scatterplot(
-        x=t_data, y=x_data, label="$x_{observed}$", ax=ax, color="C1", s=10, alpha=0.5
-    )
+    sns.scatterplot(x=t_data, y=x_data, label="$x_{observed}$", ax=ax, color="C1", s=10, alpha=0.5)
     ax.set_title("Damped Oscillator Predictions")
     ax.set_xlabel("Time (scaled)")
     ax.set_ylabel("Amplitude")

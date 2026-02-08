@@ -13,6 +13,8 @@ from pinn.core import (
     InferredContext,
     LogFn,
     ParamsRegistry,
+    PINNHyperparameters,
+    Problem,
     TrainingBatch,
 )
 
@@ -153,6 +155,17 @@ class ICConstraint(Constraint):
 PredictDataFn: TypeAlias = Callable[[Tensor, FieldsRegistry, ParamsRegistry], Tensor]
 
 
+@dataclass(kw_only=True)
+class ODEHyperparameters(PINNHyperparameters):
+    """
+    Hyperparameters for ODE inverse problems.
+    """
+
+    pde_weight: float = 1.0
+    ic_weight: float = 1.0
+    data_weight: float = 1.0
+
+
 class DataConstraint(Constraint):
     """
     Constraint enforcing fit to observed data.
@@ -195,3 +208,47 @@ class DataConstraint(Constraint):
             log("loss/data", loss)
 
         return loss
+
+
+class ODEInverseProblem(Problem):
+    """
+    Generic ODE Inverse Problem.
+    Composes Residuals + IC + Data constraints with MSELoss.
+    """
+
+    def __init__(
+        self,
+        props: ODEProperties,
+        hp: ODEHyperparameters,
+        fields: FieldsRegistry,
+        params: ParamsRegistry,
+        predict_data: PredictDataFn,
+    ) -> None:
+        constraints: list[Constraint] = [
+            ResidualsConstraint(
+                props=props,
+                fields=fields,
+                params=params,
+                weight=hp.pde_weight,
+            ),
+            ICConstraint(
+                props=props,
+                fields=fields,
+                weight=hp.ic_weight,
+            ),
+            DataConstraint(
+                fields=fields,
+                params=params,
+                predict_data=predict_data,
+                weight=hp.data_weight,
+            ),
+        ]
+
+        criterion = nn.MSELoss()
+
+        super().__init__(
+            constraints=constraints,
+            criterion=criterion,
+            fields=fields,
+            params=params,
+        )
