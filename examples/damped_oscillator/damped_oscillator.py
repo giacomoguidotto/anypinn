@@ -307,7 +307,10 @@ def main(config: RunConfig) -> None:
     # ============================================================================
 
     if not config.predict:
-        trainer.fit(module, dm)
+        try:
+            trainer.fit(module, dm)
+        except KeyboardInterrupt:
+            print("\nTraining interrupted. Saving checkpoint and predictions...")
         trainer.save_checkpoint(config.model_path, weights_only=False)
 
     trainer.predict(module, dm)
