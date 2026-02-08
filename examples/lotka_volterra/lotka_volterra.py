@@ -4,6 +4,8 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 import shutil
+import signal
+import sys
 
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
@@ -108,6 +110,13 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
     return value
 
 
+def fourier_encode(t: Tensor) -> Tensor:
+    features = [t]
+    for k in range(1, 7):
+        features.append(torch.sin(k * t))
+    return torch.cat(features, dim=-1)
+
+
 def main(config: RunConfig) -> None:
     # Time scaling constant
     T = T_TOTAL
@@ -121,17 +130,18 @@ def main(config: RunConfig) -> None:
         training_data=GenerationConfig(
             batch_size=100,
             data_ratio=2,
-            collocations=6000,
+            collocations=10000,
             x=torch.linspace(start=0, end=T, steps=200),
             noise_level=0,
             args_to_train={},
         ),
         fields_config=MLPConfig(
-            in_dim=1,
+            in_dim=7,
             out_dim=1,
-            hidden_layers=[64, 128, 128, 64],
+            hidden_layers=[64, 64, 64, 64, 64, 64],
             activation="tanh",
-            output_activation="softplus",
+            output_activation=None,
+            encode=fourier_encode,
         ),
         params_config=ScalarConfig(
             init_value=0.05,
@@ -139,13 +149,13 @@ def main(config: RunConfig) -> None:
         scheduler=SchedulerConfig(
             mode="min",
             factor=0.5,
-            patience=55,
-            threshold=5e-3,
-            min_lr=1e-6,
+            patience=200,
+            threshold=1e-4,
+            min_lr=1e-5,
         ),
-        pde_weight=1e-4,
-        ic_weight=15,
-        data_weight=5,
+        pde_weight=1.0,
+        ic_weight=10,
+        data_weight=1.0,
     )
 
     # ========================================================================
@@ -319,10 +329,16 @@ def main(config: RunConfig) -> None:
     # ============================================================================
 
     if not config.predict:
-        try:
-            trainer.fit(module, dm)
-        except KeyboardInterrupt:
+
+        def on_interrupt(_signum, _frame):
             print("\nTraining interrupted. Saving checkpoint and predictions...")
+            trainer.save_checkpoint(config.model_path, weights_only=False)
+            trainer.predict(module, dm)
+            clean_dir(config.checkpoint_dir)
+            sys.exit(0)
+
+        signal.signal(signal.SIGINT, on_interrupt)
+        trainer.fit(module, dm)
         trainer.save_checkpoint(config.model_path, weights_only=False)
 
     trainer.predict(module, dm)
@@ -423,7 +439,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "lotka-volterra"
-    run_name = "v0-synthetic-alt"
+    run_name = "v0-synthetic"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
@@ -446,8 +462,8 @@ if __name__ == "__main__":
         clean_dir(tensorboard_dir / experiment_name / run_name)
 
     config = RunConfig(
-        max_epochs=2000,
-        gradient_clip_val=0.1,
+        max_epochs=5000,
+        gradient_clip_val=1.0,
         predict=args.predict,
         run_name=run_name,
         tensorboard_dir=tensorboard_dir,
