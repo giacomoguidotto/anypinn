@@ -12,53 +12,251 @@
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 
-A modular and flexible solution to build Physics-Informed Neural Networks (PINNs) for any mathematical problem.
+A modular, extensible Python library for solving differential equations using Physics-Informed Neural Networks (PINNs). Built for scalability — from one-click experiments to fully custom problem definitions.
 
-## Overview
+## Philosophy
 
-The PINN library is designed to provide a robust framework for solving differential equations using neural networks. It separates the problem definition from the solution architecture, allowing users to easily implement custom problems or leverage existing ones.
+PINN is designed around two principles:
 
-### Key Concepts
+1. **Separation of concerns.** The mathematical problem definition is completely decoupled from the training engine. You can use one without the other.
+2. **Progressive complexity.** Start simple, go deep only when you need to.
 
-- **Modular**: Components like datasets, models, and training loops are decoupled.
-- **Flexible**: Supports various types of problems. Currently, it includes an integration layer for Ordinary Differential Equations (ODEs), but it is easily expandable to Partial Differential Equations (PDEs) and other mathematical problems.
-- **Expandable**: New problems can be implemented by defining the constraints and fields. A future goal is to provide a bootstrap script to help users set up new projects quickly.
+This means the library serves three types of users:
 
-### Examples
+| User                  | Goal                                               | How                                                                    |
+| --------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Experimenter**      | Run a known problem, tweak parameters, see results | Pick a built-in problem, change config, press start                    |
+| **Researcher**        | Define a new problem with custom physics           | Implement `Constraint` and `Problem`, use the provided training engine |
+| **Framework builder** | Custom training loops, novel architectures         | Use the core abstractions directly, skip Lightning entirely            |
 
-The library currently includes an implementation for the **SIR Inverse** problem as an example of how to use the ODE integration layer. We aim to build a catalog of problems that can be easily expanded by the community.
+## Architecture
 
-## Documentation
+The library is split into two independent layers:
 
-Comprehensive documentation for all components is available. You can generate the user guide and API documentation locally.
-
-To build the documentation:
-
-```shell
-uv run nox -s docs
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Your Experiment                          │
+│             (examples/ or your own script)                      │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+              ▼                         ▼
+┌──────────────────────┐  ┌──────────────────────────────────────┐
+│   pinn.lightning      │  │             pinn.core                │
+│   (optional)          │  │             (standalone)             │
+│                       │  │                                      │
+│  PINNModule           │  │  Problem    ─── Constraint (ABC)    │
+│  Callbacks            │  │  Field      ─── MLP networks        │
+│  PINNDataModule       │  │  Parameter  ─── learnable scalars   │
+│  PredictionsWriter    │  │  Config     ─── dataclass configs   │
+│                       │  │  Context    ─── runtime domain info │
+└───────────┬───────────┘  │  Validation ─── ground truth refs   │
+            │              └──────────────────────────────────────┘
+            │                         ▲
+            └─────── depends on ──────┘
 ```
 
-Open `docs/user_guide/site/index.html` to view it.
+### Core (`pinn.core`) — The Math Layer
 
-## Development
+The core is a pure PyTorch library. It defines what a PINN problem _is_, with no opinions about how you train it.
 
-This project uses modern Python tooling:
+- **`Problem`** — Aggregates constraints, fields, and parameters. Provides `training_loss()` and `predict()`.
+- **`Constraint`** (abstract) — A single loss term. Subclass it to define any physics equation, boundary condition, or data-matching loss.
+- **`Field`** — An MLP that maps input coordinates to state variables (e.g., `t -> [S, I, R]`).
+- **`Parameter`** — A learnable scalar or function-valued parameter (e.g., `beta` in an SIR model).
+- **`InferredContext`** — Runtime information (domain bounds, validation data) extracted from training data and injected into constraints.
 
-- **uv** for dependency management.
-- **Nox** for automation.
-- **Ruff** for linting and formatting.
-- **pytest** for testing.
+You can use `Problem.training_loss()` inside any training loop — plain PyTorch, Hugging Face Accelerate, or anything else.
+
+### Lightning (`pinn.lightning`) — The Training Engine (Optional)
+
+A thin wrapper that plugs a `Problem` into PyTorch Lightning. Use it when you want batteries-included training with minimal boilerplate:
+
+- **`PINNModule`** — Wraps a `Problem` as a `LightningModule`. Handles optimizer setup, context injection, and prediction.
+- **`PINNDataModule`** — Abstract data module that manages data loading, collocation point generation, and context creation.
+- **`Callbacks`** — SMMA-based early stopping, formatted progress bars, prediction writers, data scaling.
+
+### Problems (`pinn.problems`) — Ready-Made Templates
+
+Pre-built constraint sets for common problem types:
+
+- **ODE layer** (`ode.py`): `ResidualsConstraint`, `ICConstraint`, `DataConstraint` — covers most ODE inverse problems out of the box.
+- **SIR Inverse** (`sir_inverse.py`): Full and reduced SIR model implementations.
+
+## Data Flow
+
+### Training
+
+```
+Data Source (CSV or synthetic)
+        │
+        ▼
+PINNDataModule
+├── load_data() / gen_data()      ← produce (x, y) pairs
+├── gen_coll()                    ← produce collocation points
+├── DataCallback.transform_data() ← optional scaling/transforms
+└── setup()
+        │
+        ▼
+InferredContext (domain bounds, resolved validation)
+        │
+        ▼
+PINNDataset (batches of labeled data + collocation points)
+        │
+        ▼
+PINNModule.training_step(batch)
+        │
+        ▼
+Problem.training_loss(batch)
+├── Constraint₁.loss()  (e.g., ODE residuals)
+├── Constraint₂.loss()  (e.g., initial conditions)
+└── Constraint₃.loss()  (e.g., data matching)
+        │
+        ▼
+Σ weighted losses → backprop → Adam + optional scheduler
+```
+
+### Prediction
+
+```
+PINNModule.predict_step(batch)
+        │
+        ▼
+Problem.predict(batch)
+├── Field(x)         → state variables (unscaled)
+├── Parameter(x)     → learned parameters
+└── true_values(x)   → ground truth (if available)
+        │
+        ▼
+((x, y_pred), params_dict, true_values_dict)
+```
+
+## Getting Started
 
 ### Installation
 
-Install dependencies:
-
-```shell
+```bash
 uv sync
 ```
 
-### Running Tests
+### Run an Example
 
-```shell
-uv run nox -s test
+```bash
+cd examples/sir_inverse
+python sir_inverse.py
 ```
+
+### Implement a New Problem
+
+1. **Define your ODE** as a callable matching the `ODECallable` protocol:
+
+```python
+def my_ode(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+    # Return dy/dx
+    ...
+```
+
+2. **Configure hyperparameters**:
+
+```python
+@dataclass(frozen=True, kw_only=True)
+class MyHyperparameters(PINNHyperparameters):
+    pde_weight: float = 1.0
+    data_weight: float = 1.0
+```
+
+3. **Build the problem** from constraints:
+
+```python
+problem = MyProblem(
+    constraints=[
+        ResidualsConstraint(field, ode_props, weight=hp.pde_weight),
+        DataConstraint(predict_fn, weight=hp.data_weight),
+    ],
+    fields={"u": field},
+    params={"k": param},
+)
+```
+
+4. **Train** with Lightning or your own loop:
+
+```python
+# With Lightning
+module = PINNModule(problem, hp)
+trainer = pl.Trainer(max_epochs=50000)
+trainer.fit(module, datamodule=dm)
+
+# Or plain PyTorch
+for batch in dataloader:
+    loss = problem.training_loss(batch, log=my_log_fn)
+    loss.backward()
+    optimizer.step()
+```
+
+See `examples/` for complete implementations:
+
+- `sir_inverse/` — SIR epidemic model (full, reduced, hospitalized variants)
+- `damped_oscillator/` — Damped harmonic oscillator
+- `lotka_volterra/` — Predator-prey dynamics
+- `seir_inverse/` — SEIR epidemic model
+
+## Future: Bootstrap CLI (`pinn create`)
+
+Planned: a scaffolding tool inspired by `npx create-next-app` that lets you bootstrap a new PINN project interactively:
+
+```
+$ pinn create my-project
+
+? Choose a starting point:
+  > From a template (SIR, SEIR, Lotka-Volterra, Damped Oscillator, ...)
+    Define a new ODE problem
+    Blank project
+
+? Select training data source:
+  > Generate synthetic data
+    Load from CSV
+
+? Include Lightning training wrapper? (Y/n)
+
+Creating my-project/...
+  my_problem.py     — problem definition
+  train.py          — training script
+  config.py         — hyperparameters
+  data/             — data directory
+Done.
+```
+
+This will lower the barrier for experimenters who want to try a known problem with their own data without writing boilerplate.
+
+## Development
+
+### Tooling
+
+| Tool                                      | Purpose                |
+| ----------------------------------------- | ---------------------- |
+| [uv](https://github.com/astral-sh/uv)     | Dependency management  |
+| [Nox](https://github.com/wntrblm/nox)     | Task automation        |
+| [Ruff](https://github.com/astral-sh/ruff) | Linting and formatting |
+| [pytest](https://docs.pytest.org/)        | Testing                |
+| [mypy](https://mypy-lang.org/)            | Strict type checking   |
+
+### Commands
+
+```bash
+uv run nox -s test           # Run tests (100% coverage required)
+uv run nox -s lint           # Check code style
+uv run nox -s fmt            # Format code (isort + ruff)
+uv run nox -s lint_fix       # Auto-fix linting issues
+uv run nox -s type_check     # MyPy strict type checking
+uv run nox -s docs           # Build documentation
+uv run nox -s docs_serve     # Serve docs locally
+```
+
+## Contributing
+
+When contributing:
+
+- Follow the existing code style (Ruff, line length 99, absolute imports only)
+- Keep the two-layer separation: core stays pure PyTorch, Lightning stays optional
+- If you change the architecture or data flow, update both `CLAUDE.md` and this README to reflect the changes
