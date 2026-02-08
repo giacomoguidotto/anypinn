@@ -5,6 +5,8 @@ from dataclasses import dataclass
 import math
 from pathlib import Path
 import shutil
+import signal
+import sys
 from typing import cast
 
 from lightning.pytorch import Trainer
@@ -307,10 +309,16 @@ def main(config: RunConfig) -> None:
     # ============================================================================
 
     if not config.predict:
-        try:
-            trainer.fit(module, dm)
-        except KeyboardInterrupt:
+
+        def on_interrupt(_signum, _frame):
             print("\nTraining interrupted. Saving checkpoint and predictions...")
+            trainer.save_checkpoint(config.model_path, weights_only=False)
+            trainer.predict(module, dm)
+            clean_dir(config.checkpoint_dir)
+            sys.exit(0)
+
+        signal.signal(signal.SIGINT, on_interrupt)
+        trainer.fit(module, dm)
         trainer.save_checkpoint(config.model_path, weights_only=False)
 
     trainer.predict(module, dm)
