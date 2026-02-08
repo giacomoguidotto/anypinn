@@ -4,7 +4,7 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 import shutil
-from typing import cast, override
+from typing import cast
 
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
@@ -14,42 +14,29 @@ import pandas as pd
 import seaborn as sns
 import torch
 from torch import Tensor
-import torch.nn as nn
-from torchdiffeq import odeint
 
+from pinn.catalog.seir import BETA_KEY, E_KEY, GAMMA_KEY, I_KEY, S_KEY, SIGMA_KEY, SEIRDataModule
 from pinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
-    Constraint,
-    Domain1D,
     Field,
     FieldsRegistry,
     GenerationConfig,
     MLPConfig,
     Parameter,
     ParamsRegistry,
-    PINNDataModule,
     Predictions,
-    Problem,
     SchedulerConfig,
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import ODEProperties, SIRInvHyperparameters
-from pinn.problems.ode import DataConstraint, ICConstraint, PredictDataFn, ResidualsConstraint
+from pinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
 
 # ============================================================================
 # Constants
 # ============================================================================
-
-S_KEY = "S"
-E_KEY = "E"
-I_KEY = "I"
-BETA_KEY = "beta"
-SIGMA_KEY = "sigma"
-GAMMA_KEY = "gamma"
 
 # True parameter values
 TRUE_BETA = 0.5
@@ -66,101 +53,6 @@ T_DAYS = 160
 
 # Noise level for synthetic data
 NOISE_STD = 0.0005
-
-
-# ============================================================================
-# SEIR Problem Definition
-# ============================================================================
-
-
-class SEIRProblem(Problem):
-    """SEIR Inverse Problem: recover beta(t) from noisy I(t) observations."""
-
-    def __init__(
-        self,
-        props: ODEProperties,
-        hp: SIRInvHyperparameters,
-        fields: FieldsRegistry,
-        params: ParamsRegistry,
-        predict_data: PredictDataFn,
-    ) -> None:
-        constraints: list[Constraint] = [
-            ResidualsConstraint(
-                props=props,
-                fields=fields,
-                params=params,
-                weight=hp.pde_weight,
-            ),
-            ICConstraint(
-                props=props,
-                fields=fields,
-                weight=hp.ic_weight,
-            ),
-            DataConstraint(
-                fields=fields,
-                params=params,
-                predict_data=predict_data,
-                weight=hp.data_weight,
-            ),
-        ]
-
-        criterion = nn.MSELoss()
-
-        super().__init__(
-            constraints=constraints,
-            criterion=criterion,
-            fields=fields,
-            params=params,
-        )
-
-
-# ============================================================================
-# Data Module
-# ============================================================================
-
-
-class SEIRDataModule(PINNDataModule):
-    """DataModule for SEIR inverse problem. Generates synthetic data via odeint."""
-
-    def __init__(
-        self,
-        hp: SIRInvHyperparameters,
-        validation: ValidationRegistry | None = None,
-        callbacks: list[DataScaling] | None = None,
-    ):
-        super().__init__(hp, validation, callbacks)
-
-    @override
-    def gen_coll(self, domain: Domain1D) -> Tensor:
-        """Generate uniform collocation points."""
-        coll = torch.rand((self.hp.training_data.collocations, 1))
-        x0 = torch.tensor(domain.x0, dtype=torch.float32)
-        x1 = torch.tensor(domain.x1, dtype=torch.float32)
-        coll = coll * (x1 - x0) + x0
-        return coll
-
-    @override
-    def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
-        """Generate synthetic SEIR data using odeint + Gaussian noise."""
-
-        def seir_ode(t: Tensor, y: Tensor) -> Tensor:
-            s, e, i = y[0], y[1], y[2]
-            ds = -TRUE_BETA * s * i
-            de = TRUE_BETA * s * i - TRUE_SIGMA * e
-            di = TRUE_SIGMA * e - TRUE_GAMMA * i
-            return torch.stack([ds, de, di])
-
-        y0 = torch.tensor([S0, E0, I0])
-        t = config.x
-
-        sol = odeint(seir_ode, y0, t)  # [T, 3]
-        I_true = sol[:, 2].clamp_min(0.0)
-
-        # Add Gaussian noise to I observations
-        I_obs = I_true + NOISE_STD * torch.randn_like(I_true)
-        I_obs = I_obs.clamp_min(0.0)
-
-        return t.unsqueeze(-1), I_obs.unsqueeze(-1)
 
 
 # ============================================================================
@@ -213,7 +105,7 @@ def main(config: RunConfig) -> None:
     # Hyperparameters
     # ========================================================================
 
-    hp = SIRInvHyperparameters(
+    hp = ODEHyperparameters(
         lr=5e-4,
         training_data=GenerationConfig(
             batch_size=100,
@@ -262,8 +154,30 @@ def main(config: RunConfig) -> None:
     # Training and Prediction Data Definition
     # ============================================================================
 
+    def SEIR_unscaled(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+        S, E, I = y
+        b = args[BETA_KEY]
+        sigma = args[SIGMA_KEY]
+        gamma = args[GAMMA_KEY]
+        dS = -b(x) * S * I
+        dE = b(x) * S * I - sigma(x) * E
+        dI = sigma(x) * E - gamma(x) * I
+        return torch.stack([dS, dE, dI])
+
+    gen_props = ODEProperties(
+        ode=SEIR_unscaled,
+        y0=torch.tensor([S0, E0, I0]),
+        args={
+            BETA_KEY: Argument(TRUE_BETA),
+            SIGMA_KEY: Argument(TRUE_SIGMA),
+            GAMMA_KEY: Argument(TRUE_GAMMA),
+        },
+    )
+
     dm = SEIRDataModule(
         hp=hp,
+        gen_props=gen_props,
+        noise_std=NOISE_STD,
         validation=validation,
         callbacks=[DataScaling(y_scale=1.0)],
     )
@@ -311,14 +225,12 @@ def main(config: RunConfig) -> None:
         }
     )
 
-    def predict_data(
-        x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry
-    ) -> Tensor:
+    def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
         I = fields[I_KEY]
         I_pred = I(x_data)
         return cast(Tensor, I_pred)
 
-    problem = SEIRProblem(
+    problem = ODEInverseProblem(
         props=props,
         hp=hp,
         fields=fields,
@@ -436,9 +348,7 @@ def plot_and_save(
     sns.lineplot(x=t_data, y=S_pred, label="$S_{pred}$", ax=ax, color="C0")
     sns.lineplot(x=t_data, y=E_pred, label="$E_{pred}$", ax=ax, color="C2")
     sns.lineplot(x=t_data, y=I_pred, label="$I_{pred}$", ax=ax, color="C3")
-    sns.scatterplot(
-        x=t_data, y=I_data, label="$I_{observed}$", ax=ax, color="C1", s=10, alpha=0.5
-    )
+    sns.scatterplot(x=t_data, y=I_data, label="$I_{observed}$", ax=ax, color="C1", s=10, alpha=0.5)
     ax.set_title("SEIR Model Predictions")
     ax.set_xlabel("Time (scaled)")
     ax.set_ylabel("Fraction")

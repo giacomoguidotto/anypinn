@@ -1,28 +1,21 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
-from typing import cast, override
+from typing import override
 
 import torch
 from torch import Tensor
-import torch.nn as nn
 from torchdiffeq import odeint
 
 from pinn.core import (
     ArgsRegistry,
-    Constraint,
     DataCallback,
     Domain1D,
-    FieldsRegistry,
     GenerationConfig,
-    ParamsRegistry,
     PINNDataModule,
-    PINNHyperparameters,
-    Problem,
     ValidationRegistry,
 )
-from pinn.problems.ode import DataConstraint, ICConstraint, ODEProperties, ResidualsConstraint
+from pinn.problems.ode import ODEHyperparameters, ODEProperties
 
 S_KEY = "S"
 I_KEY = "I"
@@ -86,68 +79,6 @@ def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     return dI
 
 
-@dataclass(kw_only=True)
-class SIRInvHyperparameters(PINNHyperparameters):
-    """
-    Hyperparameters for the SIR Inverse problem.
-    """
-
-    # TODO: implement adaptive weights
-    pde_weight: float = 1.0
-    ic_weight: float = 1.0
-    data_weight: float = 1.0
-
-
-class SIRInvProblem(Problem):
-    """
-    Definition of the SIR Inverse Problem.
-    Infers parameters (beta) from data while satisfying the SIR ODE.
-    """
-
-    def __init__(
-        self,
-        props: ODEProperties,
-        hp: SIRInvHyperparameters,
-        fields: FieldsRegistry,
-        params: ParamsRegistry,
-    ) -> None:
-        def predict_data(
-            x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry
-        ) -> Tensor:
-            I = fields[I_KEY]
-            I_pred = I(x_data)
-            return cast(Tensor, I_pred)
-
-        constraints: list[Constraint] = [
-            ResidualsConstraint(
-                props=props,
-                fields=fields,
-                params=params,
-                weight=hp.pde_weight,
-            ),
-            ICConstraint(
-                props=props,
-                fields=fields,
-                weight=hp.ic_weight,
-            ),
-            DataConstraint(
-                fields=fields,
-                params=params,
-                predict_data=predict_data,
-                weight=hp.data_weight,
-            ),
-        ]
-
-        criterion = nn.MSELoss()
-
-        super().__init__(
-            constraints=constraints,
-            criterion=criterion,
-            fields=fields,
-            params=params,
-        )
-
-
 class SIRInvDataModule(PINNDataModule):
     """
     DataModule for SIR Inverse problem.
@@ -155,7 +86,7 @@ class SIRInvDataModule(PINNDataModule):
 
     def __init__(
         self,
-        hp: SIRInvHyperparameters,
+        hp: ODEHyperparameters,
         gen_props: ODEProperties | None = None,
         validation: ValidationRegistry | None = None,
         callbacks: Sequence[DataCallback] | None = None,
