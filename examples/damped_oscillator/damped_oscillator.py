@@ -112,7 +112,7 @@ def main(config: RunConfig) -> None:
     # ========================================================================
 
     hp = ODEHyperparameters(
-        lr=5e-4,
+        lr=1e-3,
         training_data=GenerationConfig(
             batch_size=100,
             data_ratio=2,
@@ -138,9 +138,9 @@ def main(config: RunConfig) -> None:
             threshold=5e-3,
             min_lr=1e-6,
         ),
-        pde_weight=1,
-        ic_weight=1,
-        data_weight=1,
+        pde_weight=1e-4,
+        ic_weight=15,
+        data_weight=5,
     )
 
     # ========================================================================
