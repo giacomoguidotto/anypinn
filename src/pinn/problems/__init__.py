@@ -1,13 +1,23 @@
 """Problem templates and implementations."""
 
-from pinn.problems.ode import ODECallable, ODEProperties
-from pinn.problems.sir_inverse import SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
+from pinn.problems.ode import (
+    DataConstraint,
+    ICConstraint,
+    ODECallable,
+    ODEHyperparameters,
+    ODEInverseProblem,
+    ODEProperties,
+    PredictDataFn,
+    ResidualsConstraint,
+)
 
 __all__ = [
-    "InferredContext",
+    "DataConstraint",
+    "ICConstraint",
     "ODECallable",
+    "ODEHyperparameters",
+    "ODEInverseProblem",
     "ODEProperties",
-    "SIRInvDataModule",
-    "SIRInvHyperparameters",
-    "SIRInvProblem",
+    "PredictDataFn",
+    "ResidualsConstraint",
 ]

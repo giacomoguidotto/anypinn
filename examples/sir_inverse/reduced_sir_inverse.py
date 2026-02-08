@@ -4,6 +4,7 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 import shutil
+from typing import cast
 
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
@@ -14,6 +15,7 @@ import seaborn as sns
 import torch
 from torch import Tensor
 
+from pinn.catalog.sir import DELTA_KEY, I_KEY, Rt_KEY, SIRInvDataModule
 from pinn.core import (
     LOSS_KEY,
     ArgsRegistry,
@@ -31,8 +33,7 @@ from pinn.core import (
 )
 from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
-from pinn.problems.sir_inverse import DELTA_KEY, I_KEY, Rt_KEY
+from pinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
 
 # ============================================================================
 # Configuration
@@ -85,7 +86,7 @@ def main(config: RunConfig) -> None:
     # Hyperparameters
     # ========================================================================
 
-    hp = SIRInvHyperparameters(
+    hp = ODEHyperparameters(
         lr=5e-4,
         training_data=IngestionConfig(
             batch_size=100,
@@ -172,11 +173,16 @@ def main(config: RunConfig) -> None:
         }
     )
 
-    problem = SIRInvProblem(
-        hp=hp,
+    def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
+        I_pred = fields[I_KEY](x_data)
+        return cast(Tensor, I_pred)
+
+    problem = ODEInverseProblem(
         props=props,
+        hp=hp,
         fields=fields,
         params=params,
+        predict_data=predict_data,
     )
 
     # ============================================================================
@@ -332,8 +338,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    experiment_name = "sir-inverse-reduced"
-    run_name = "v0"
+    experiment_name = "reduced-sir-inverse"
+    run_name = "v0-alt"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"

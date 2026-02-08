@@ -10,7 +10,8 @@ PINN is a modular Python library for solving differential equations using Physic
 
 - **Core layer** (`pinn.core`): Pure PyTorch. Defines the mathematical problem — constraints, fields, parameters — with zero opinions about training. Users can plug `Problem.training_loss()` into any training loop.
 - **Lightning layer** (`pinn.lightning`): Optional. Wraps the core in PyTorch Lightning for batteries-included training. Users who don't want to manage training loops use this.
-- **Problems** (`pinn.problems`): Ready-made constraint sets (ODE residuals, initial conditions, data matching) and full problem implementations (SIR, etc.) that users can pick up and run.
+- **Problems** (`pinn.problems`): Generalized ODE constraint types (residuals, initial conditions, data matching), `ODEHyperparameters`, and `ODEInverseProblem`.
+- **Catalog** (`pinn.catalog`): Ready-made building blocks for specific ODE systems (SIR, SEIR, Damped Oscillator, Lotka-Volterra) — ODE functions, constants, and DataModules.
 
 The library serves three user profiles:
 
@@ -62,11 +63,16 @@ src/pinn/
 │   └── callbacks.py       ← SMMAStopping, FormattedProgressBar,
 │                             PredictionsWriter, DataScaling
 │
-├── problems/              ← REUSABLE TEMPLATES, depends on core
-│   ├── ode.py             ← ResidualsConstraint, ICConstraint, DataConstraint,
-│   │                         ODECallable protocol, ODEProperties
-│   └── sir_inverse.py     ← SIR/rSIR ODE definitions, SIRInvProblem,
-│                             SIRInvDataModule, SIRInvHyperparameters
+├── problems/              ← GENERALIZED ODE ABSTRACTIONS, depends on core
+│   └── ode.py             ← ResidualsConstraint, ICConstraint, DataConstraint,
+│                             ODECallable, ODEProperties, ODEHyperparameters,
+│                             ODEInverseProblem, PredictDataFn
+│
+├── catalog/               ← PROBLEM-SPECIFIC BUILDING BLOCKS, depends on problems
+│   ├── sir.py             ← SIR/rSIR ODE functions, SIRInvDataModule, constants
+│   ├── damped_oscillator.py ← DampedOscillatorDataModule, constants
+│   ├── lotka_volterra.py  ← LotkaVolterraDataModule, constants
+│   └── seir.py            ← SEIRDataModule, constants
 │
 └── lib/
     └── utils.py           ← General-purpose helpers
@@ -77,7 +83,8 @@ src/pinn/
 ```
 pinn.lightning ──depends on──▶ pinn.core
 pinn.problems  ──depends on──▶ pinn.core
-pinn.lightning ──does NOT depend on──▶ pinn.problems
+pinn.catalog   ──depends on──▶ pinn.problems + pinn.core
+pinn.lightning ──does NOT depend on──▶ pinn.problems or pinn.catalog
 pinn.core      ──does NOT depend on──▶ anything in pinn.*
 ```
 
@@ -86,6 +93,7 @@ This means:
 - `pinn.core` can be used completely standalone
 - `pinn.lightning` only knows about core abstractions, never specific problems
 - `pinn.problems` builds on core abstractions but doesn't require Lightning
+- `pinn.catalog` provides problem-specific building blocks (ODE functions, DataModules)
 - Examples wire everything together
 
 ### Core Abstractions (`pinn.core`)
@@ -178,7 +186,7 @@ Predictions = ((x, y_pred), params_dict, true_values_dict | None)
 
 ### ODE Problem Pattern (`pinn.problems`)
 
-ODE problems are composed from three constraint types:
+ODE problems are composed from three constraint types, unified by `ODEInverseProblem`:
 
 ```
 ODEProperties
@@ -187,10 +195,13 @@ ODEProperties
 └── y0: Tensor (initial conditions)
         │
         ▼
-Constraints:
+ODEInverseProblem (composes all three with MSELoss)
 ├── ResidualsConstraint  ← ||dy/dt - f(t,y)||²  (uses autograd)
 ├── ICConstraint         ← ||y(t0) - y0||²      (needs context for t0)
 └── DataConstraint       ← ||prediction - data||²
+
+ODEHyperparameters (extends PINNHyperparameters)
+├── pde_weight, ic_weight, data_weight
 ```
 
 ### Class Hierarchies
@@ -200,7 +211,7 @@ nn.Module
 ├── Field           (MLP: coordinates → state variables)
 ├── Parameter       (learnable scalar or MLP)
 └── Problem         (aggregates constraints + registries)
-    └── SIRInvProblem, etc.
+    └── ODEInverseProblem  (generic ODE inverse, in pinn.problems)
 
 Constraint (ABC)
 ├── ResidualsConstraint   (ODE residual loss)
@@ -209,7 +220,10 @@ Constraint (ABC)
 
 pl.LightningDataModule
 └── PINNDataModule (ABC)
-    └── SIRInvDataModule, etc.
+    ├── SIRInvDataModule           (in pinn.catalog.sir)
+    ├── DampedOscillatorDataModule (in pinn.catalog.damped_oscillator)
+    ├── LotkaVolterraDataModule    (in pinn.catalog.lotka_volterra)
+    └── SEIRDataModule             (in pinn.catalog.seir)
 
 pl.LightningModule
 └── PINNModule
@@ -219,11 +233,10 @@ pl.LightningModule
 
 ### Adding a New Problem
 
-1. Define hyperparameters: `class MyHyperparameters(PINNHyperparameters)` with custom weights
-2. Define the ODE: function matching `ODECallable` protocol
-3. Create the problem: `class MyProblem(Problem)` composing constraints from `ode.py`
-4. Create the data module: `class MyDataModule(PINNDataModule)` implementing `gen_data()` and `gen_coll()`
-5. Wire it up in a training script (see `examples/`)
+1. Define the ODE: function matching `ODECallable` protocol
+2. Create the data module: `class MyDataModule(PINNDataModule)` implementing `gen_data()` and `gen_coll()` in `pinn/catalog/`
+3. Use `ODEInverseProblem` with `ODEHyperparameters` (or subclass if you need extra hyperparameters)
+4. Wire it up in a training script (see `examples/`)
 
 ### Adding a New Constraint Type
 
@@ -237,6 +250,7 @@ pl.LightningModule
 2. Define domain-specific constraint subclasses
 3. Define a properties dataclass (like `ODEProperties`)
 4. Keep it dependent only on `pinn.core`
+5. Add problem-specific building blocks in `pinn/catalog/`
 
 ### Using Core Without Lightning
 
