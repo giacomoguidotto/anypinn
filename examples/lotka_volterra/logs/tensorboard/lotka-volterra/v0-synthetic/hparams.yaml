@@ -1,5 +1,5 @@
-hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
-  data_weight: 1
+hp: !!python/object:pinn.problems.ode.ODEHyperparameters
+  data_weight: 5
   early_stopping: null
   fields_config: !!python/object:pinn.core.config.MLPConfig
     activation: tanh
@@ -12,11 +12,11 @@ hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
     in_dim: 1
     out_dim: 1
     output_activation: softplus
-  ic_weight: 1
-  lr: 0.0005
+  ic_weight: 15
+  lr: 0.001
   params_config: !!python/object:pinn.core.config.ScalarConfig
     init_value: 0.05
-  pde_weight: 1
+  pde_weight: 0.0001
   scheduler: !!python/object:pinn.core.config.SchedulerConfig
     factor: 0.5
     min_lr: 1.0e-06
@@ -36,8 +36,8 @@ hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
         gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
         AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
         aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
-        Z2UKcQFYCwAAADQ3MDQwOTYyNDMycQJYAwAAAGNwdXEDS8hOdHEEUS6AAl1xAFgLAAAANDcwNDA5
-        NjI0MzJxAWEuyAAAAAAAAAAAAAAAqqSAPqqkAD//9kA/qqSAP9TNoD//9sA/KiDhP6qkAEA/uRBA
+        Z2UKcQFYCwAAADQxMzAxMDAwMjg4cQJYAwAAAGNwdXEDS8hOdHEEUS6AAl1xAFgLAAAANDEzMDEw
+        MDAyODhxAWEuyAAAAAAAAAAAAAAAqqSAPqqkAD//9kA/qqSAP9TNoD//9sA/KiDhP6qkAEA/uRBA
         1M0gQGriMED/9kBAlAtRQCogYUC/NHFAqqSAQPWuiEA/uZBAisOYQNTNoEAf2KhAauKwQLTsuED/
         9sBASgHJQJQL0UDfFdlAKiDhQHQq6UC/NPFACT/5QKqkAEHPqQRB9a4IQRq0DEE/uRBBZb4UQYrD
         GEGvyBxB1M0gQfrSJEEf2ChBRN0sQWriMEGP5zRBtOw4QdrxPEH/9kBBJPxEQUoBSUFvBk1BlAtR
