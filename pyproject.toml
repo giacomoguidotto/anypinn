@@ -28,7 +28,6 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Free Threading :: 3 - Stable",
     "Typing :: Typed",
-    "Private :: Do Not Upload", # Include this classifier to prevent accidentally publishing private code to PyPI.
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Mathematics",
@@ -203,3 +202,9 @@ exclude_also = [
     "raise NotImplementedError",
     "@abstractmethod",
 ]
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["src/anypinn/__init__.py:__version__"]
+branch = "main"
+commit_message = "chore(release): v{version}"
