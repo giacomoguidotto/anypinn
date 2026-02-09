@@ -278,7 +278,7 @@ Planned scaffolding tool (like `npx create-next-app`) to generate boilerplate:
 - Choose data source (synthetic or CSV)
 - Choose whether to include Lightning wrapper
 
-This will be implemented using Typer (already a dependency via `src/fact/cli.py`).
+This will be implemented using Typer.
 
 ## Code Style
 
