@@ -33,28 +33,32 @@ This means the library serves three types of users:
 
 The library is split into two independent layers:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Your Experiment                          │
-│             (examples/ or your own script)                      │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │
-              ┌────────────┴────────────┐
-              │                         │
-              ▼                         ▼
-┌──────────────────────┐  ┌──────────────────────────────────────┐
-│   pinn.lightning      │  │             pinn.core                │
-│   (optional)          │  │             (standalone)             │
-│                       │  │                                      │
-│  PINNModule           │  │  Problem    ─── Constraint (ABC)    │
-│  Callbacks            │  │  Field      ─── MLP networks        │
-│  PINNDataModule       │  │  Parameter  ─── learnable scalars   │
-│  PredictionsWriter    │  │  Config     ─── dataclass configs   │
-│                       │  │  Context    ─── runtime domain info │
-└───────────┬───────────┘  │  Validation ─── ground truth refs   │
-            │              └──────────────────────────────────────┘
-            │                         ▲
-            └─────── depends on ──────┘
+```mermaid
+graph TD
+    EXP["Your Experiment<br/><i>examples/ or your own script</i>"]
+
+    EXP --> LIT
+    EXP --> CORE
+
+    subgraph LIT["pinn.lightning (optional)"]
+        direction LR
+        L1[PINNModule]
+        L2[Callbacks]
+        L3[PINNDataModule]
+        L4[PredictionsWriter]
+    end
+
+    subgraph CORE["pinn.core (standalone)"]
+        direction LR
+        C1["Problem — Constraint (ABC)"]
+        C2["Field — MLP networks"]
+        C3["Parameter — learnable scalars"]
+        C4["Config — dataclass configs"]
+        C5["Context — runtime domain info"]
+        C6["Validation — ground truth refs"]
+    end
+
+    LIT -->|depends on| CORE
 ```
 
 ### Core (`pinn.core`) — The Math Layer
@@ -88,48 +92,55 @@ Pre-built constraint sets for common problem types:
 
 ### Training
 
-```
-Data Source (CSV or synthetic)
-        │
-        ▼
-PINNDataModule
-├── load_data() / gen_data()      ← produce (x, y) pairs
-├── gen_coll()                    ← produce collocation points
-├── DataCallback.transform_data() ← optional scaling/transforms
-└── setup()
-        │
-        ▼
-InferredContext (domain bounds, resolved validation)
-        │
-        ▼
-PINNDataset (batches of labeled data + collocation points)
-        │
-        ▼
-PINNModule.training_step(batch)
-        │
-        ▼
-Problem.training_loss(batch)
-├── Constraint₁.loss()  (e.g., ODE residuals)
-├── Constraint₂.loss()  (e.g., initial conditions)
-└── Constraint₃.loss()  (e.g., data matching)
-        │
-        ▼
-Σ weighted losses → backprop → Adam + optional scheduler
+```mermaid
+graph TD
+    DS["Data Source<br/><i>CSV or synthetic</i>"]
+    DM["PINNDataModule"]
+    DM1["load_data() / gen_data() — produce (x, y) pairs"]
+    DM2["gen_coll() — produce collocation points"]
+    DM3["DataCallback.transform_data() — optional scaling"]
+    DM4["setup()"]
+    CTX["InferredContext<br/><i>domain bounds, resolved validation</i>"]
+    DSET["PINNDataset<br/><i>batches of labeled data + collocation points</i>"]
+    STEP["PINNModule.training_step(batch)"]
+    LOSS["Problem.training_loss(batch)"]
+    C1["Constraint₁.loss() — ODE residuals"]
+    C2["Constraint₂.loss() — initial conditions"]
+    C3["Constraint₃.loss() — data matching"]
+    BP["Σ weighted losses → backprop → Adam + optional scheduler"]
+
+    DS --> DM
+    DM --- DM1
+    DM --- DM2
+    DM --- DM3
+    DM --- DM4
+    DM --> CTX --> DSET --> STEP --> LOSS
+    LOSS --> C1
+    LOSS --> C2
+    LOSS --> C3
+    C1 --> BP
+    C2 --> BP
+    C3 --> BP
 ```
 
 ### Prediction
 
-```
-PINNModule.predict_step(batch)
-        │
-        ▼
-Problem.predict(batch)
-├── Field(x)         → state variables (unscaled)
-├── Parameter(x)     → learned parameters
-└── true_values(x)   → ground truth (if available)
-        │
-        ▼
-((x, y_pred), params_dict, true_values_dict)
+```mermaid
+graph TD
+    PS["PINNModule.predict_step(batch)"]
+    PP["Problem.predict(batch)"]
+    F["Field(x) → state variables (unscaled)"]
+    P["Parameter(x) → learned parameters"]
+    T["true_values(x) → ground truth (if available)"]
+    OUT["((x, y_pred), params_dict, true_values_dict)"]
+
+    PS --> PP
+    PP --> F
+    PP --> P
+    PP --> T
+    F --> OUT
+    P --> OUT
+    T --> OUT
 ```
 
 ## Getting Started
