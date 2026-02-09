@@ -160,7 +160,6 @@ wheels = [
 
 [[package]]
 name = "anypinn"
-version = "0.0.1"
 source = { editable = "." }
 
 [package.dev-dependencies]

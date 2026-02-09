@@ -1,6 +1,6 @@
 [project]
 name = "anypinn"
-version = "0.1.0"
+dynamic = ["version"]
 description = "..."
 authors = [{ name = "Giacomo Guidotto", email = "giacomo.guidotto@gmail.com" }]
 keywords = [
@@ -105,13 +105,8 @@ utils = [
 
 
 [build-system]
-requires = ["uv_build>=0.10.0,<0.11.0"]
-build-backend = "uv_build"
-
-# For non-src directory projects, explicitly set top level model name:
-#[tool.uv.build-backend]
-#module-name = "my-app"
-#module-root = ""
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
 [tool.uv]
 default-groups = "all"
@@ -203,8 +198,14 @@ exclude_also = [
     "@abstractmethod",
 ]
 
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "semver"
+fallback-version = "0.0.0"
+
 [tool.semantic_release]
-version_toml = ["pyproject.toml:project.version"]
-version_variables = ["src/anypinn/__init__.py:__version__"]
 branch = "main"
-commit_message = "chore(release): v{version}"
+tag_format = "v{version}"
