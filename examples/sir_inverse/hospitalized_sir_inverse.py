@@ -16,8 +16,8 @@ import seaborn as sns
 import torch
 from torch import Tensor
 
-from pinn.catalog.sir import DELTA_KEY, I_KEY, Rt_KEY, SIRInvDataModule
-from pinn.core import (
+from anypinn.catalog.sir import DELTA_KEY, I_KEY, Rt_KEY, SIRInvDataModule
+from anypinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
@@ -32,9 +32,14 @@ from pinn.core import (
     SchedulerConfig,
     ValidationRegistry,
 )
-from pinn.lightning import PINNModule, SMMAStopping
-from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
+from anypinn.lightning import PINNModule, SMMAStopping
+from anypinn.lightning.callbacks import (
+    DataScaling,
+    FormattedProgressBar,
+    Metric,
+    PredictionsWriter,
+)
+from anypinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
 
 # ============================================================================
 # Constants

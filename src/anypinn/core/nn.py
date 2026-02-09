@@ -10,8 +10,8 @@ import torch
 from torch import Tensor
 import torch.nn as nn
 
-from pinn.core.config import MLPConfig, ScalarConfig
-from pinn.core.types import Activations
+from anypinn.core.config import MLPConfig, ScalarConfig
+from anypinn.core.types import Activations
 
 
 @dataclass

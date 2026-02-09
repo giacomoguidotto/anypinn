@@ -18,14 +18,14 @@ import seaborn as sns
 import torch
 from torch import Tensor
 
-from pinn.catalog.damped_oscillator import (
+from anypinn.catalog.damped_oscillator import (
     OMEGA_KEY,
     V_KEY,
     X_KEY,
     ZETA_KEY,
     DampedOscillatorDataModule,
 )
-from pinn.core import (
+from anypinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
@@ -40,9 +40,14 @@ from pinn.core import (
     SchedulerConfig,
     ValidationRegistry,
 )
-from pinn.lightning import PINNModule, SMMAStopping
-from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
+from anypinn.lightning import PINNModule, SMMAStopping
+from anypinn.lightning.callbacks import (
+    DataScaling,
+    FormattedProgressBar,
+    Metric,
+    PredictionsWriter,
+)
+from anypinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
 
 # ============================================================================
 # Constants

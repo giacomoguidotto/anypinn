@@ -8,18 +8,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PINN is a modular Python library for solving differential equations using Physics-Informed Neural Networks. It is designed to be **scalable, modular, and progressively complex**:
 
-- **Core layer** (`pinn.core`): Pure PyTorch. Defines the mathematical problem — constraints, fields, parameters — with zero opinions about training. Users can plug `Problem.training_loss()` into any training loop.
-- **Lightning layer** (`pinn.lightning`): Optional. Wraps the core in PyTorch Lightning for batteries-included training. Users who don't want to manage training loops use this.
-- **Problems** (`pinn.problems`): Generalized ODE constraint types (residuals, initial conditions, data matching), `ODEHyperparameters`, and `ODEInverseProblem`.
-- **Catalog** (`pinn.catalog`): Ready-made building blocks for specific ODE systems (SIR, SEIR, Damped Oscillator, Lotka-Volterra) — ODE functions, constants, and DataModules.
+- **Core layer** (`anypinn.core`): Pure PyTorch. Defines the mathematical problem — constraints, fields, parameters — with zero opinions about training. Users can plug `Problem.training_loss()` into any training loop.
+- **Lightning layer** (`anypinn.lightning`): Optional. Wraps the core in PyTorch Lightning for batteries-included training. Users who don't want to manage training loops use this.
+- **Problems** (`anypinn.problems`): Generalized ODE constraint types (residuals, initial conditions, data matching), `ODEHyperparameters`, and `ODEInverseProblem`.
+- **Catalog** (`anypinn.catalog`): Ready-made building blocks for specific ODE systems (SIR, SEIR, Damped Oscillator, Lotka-Volterra) — ODE functions, constants, and DataModules.
 
 The library serves three user profiles:
 
 | User                  | What they do                                   | What they touch                                    |
 | --------------------- | ---------------------------------------------- | -------------------------------------------------- |
 | **Experimenter**      | Run a known problem, tweak params, see results | `examples/`, config dataclasses                    |
-| **Researcher**        | Define new physics/constraints                 | `pinn.core` (Constraint, Problem), `pinn.problems` |
-| **Framework builder** | Custom training, novel architectures           | `pinn.core` only, skip Lightning                   |
+| **Researcher**        | Define new physics/constraints                 | `anypinn.core` (Constraint, Problem), `anypinn.problems` |
+| **Framework builder** | Custom training, novel architectures           | `anypinn.core` only, skip Lightning                   |
 
 ## Commands
 
@@ -48,7 +48,7 @@ pytest tests/test_foo.py::test_bar  # Run single test
 ### Module Map
 
 ```
-src/pinn/
+src/anypinn/
 ├── core/                  ← STANDALONE, pure PyTorch
 │   ├── problem.py         ← Problem + Constraint (ABC)
 │   ├── nn.py              ← Field (MLP), Parameter, Argument, Domain1D
@@ -81,22 +81,22 @@ src/pinn/
 ### Dependency Direction (Strict)
 
 ```
-pinn.lightning ──depends on──▶ pinn.core
-pinn.problems  ──depends on──▶ pinn.core
-pinn.catalog   ──depends on──▶ pinn.problems + pinn.core
-pinn.lightning ──does NOT depend on──▶ pinn.problems or pinn.catalog
-pinn.core      ──does NOT depend on──▶ anything in pinn.*
+anypinn.lightning ──depends on──▶ anypinn.core
+anypinn.problems  ──depends on──▶ anypinn.core
+anypinn.catalog   ──depends on──▶ anypinn.problems + anypinn.core
+anypinn.lightning ──does NOT depend on──▶ anypinn.problems or anypinn.catalog
+anypinn.core      ──does NOT depend on──▶ anything in anypinn.*
 ```
 
 This means:
 
-- `pinn.core` can be used completely standalone
-- `pinn.lightning` only knows about core abstractions, never specific problems
-- `pinn.problems` builds on core abstractions but doesn't require Lightning
-- `pinn.catalog` provides problem-specific building blocks (ODE functions, DataModules)
+- `anypinn.core` can be used completely standalone
+- `anypinn.lightning` only knows about core abstractions, never specific problems
+- `anypinn.problems` builds on core abstractions but doesn't require Lightning
+- `anypinn.catalog` provides problem-specific building blocks (ODE functions, DataModules)
 - Examples wire everything together
 
-### Core Abstractions (`pinn.core`)
+### Core Abstractions (`anypinn.core`)
 
 - **`Problem`** (`problem.py`): `nn.Module` that aggregates constraints, fields, and parameters. Provides `training_loss(batch, log)` and `predict(batch)`. The central object users build.
 - **`Constraint`** (`problem.py`): Abstract base class for loss terms. Each subclass defines a `loss(batch, criterion, log)` method returning a weighted loss tensor. Supports runtime context injection.
@@ -107,7 +107,7 @@ This means:
 - **`PINNDataset`** (`dataset.py`): PyTorch Dataset combining labeled data + collocation points per batch. Configurable `data_ratio`.
 - **`PINNDataModule`** (`dataset.py`): Abstract Lightning DataModule. Subclasses implement `gen_data()` and `gen_coll()`. Handles context creation and validation resolution.
 
-### Configuration System (`pinn.core.config`)
+### Configuration System (`anypinn.core.config`)
 
 All configs are frozen dataclasses with `kw_only=True`:
 
@@ -184,7 +184,7 @@ Problem.predict(batch)
 Predictions = ((x, y_pred), params_dict, true_values_dict | None)
 ```
 
-### ODE Problem Pattern (`pinn.problems`)
+### ODE Problem Pattern (`anypinn.problems`)
 
 ODE problems are composed from three constraint types, unified by `ODEInverseProblem`:
 
@@ -211,7 +211,7 @@ nn.Module
 ├── Field           (MLP: coordinates → state variables)
 ├── Parameter       (learnable scalar or MLP)
 └── Problem         (aggregates constraints + registries)
-    └── ODEInverseProblem  (generic ODE inverse, in pinn.problems)
+    └── ODEInverseProblem  (generic ODE inverse, in anypinn.problems)
 
 Constraint (ABC)
 ├── ResidualsConstraint   (ODE residual loss)
@@ -220,10 +220,10 @@ Constraint (ABC)
 
 pl.LightningDataModule
 └── PINNDataModule (ABC)
-    ├── SIRInvDataModule           (in pinn.catalog.sir)
-    ├── DampedOscillatorDataModule (in pinn.catalog.damped_oscillator)
-    ├── LotkaVolterraDataModule    (in pinn.catalog.lotka_volterra)
-    └── SEIRDataModule             (in pinn.catalog.seir)
+    ├── SIRInvDataModule           (in anypinn.catalog.sir)
+    ├── DampedOscillatorDataModule (in anypinn.catalog.damped_oscillator)
+    ├── LotkaVolterraDataModule    (in anypinn.catalog.lotka_volterra)
+    └── SEIRDataModule             (in anypinn.catalog.seir)
 
 pl.LightningModule
 └── PINNModule
@@ -234,23 +234,23 @@ pl.LightningModule
 ### Adding a New Problem
 
 1. Define the ODE: function matching `ODECallable` protocol
-2. Create the data module: `class MyDataModule(PINNDataModule)` implementing `gen_data()` and `gen_coll()` in `pinn/catalog/`
+2. Create the data module: `class MyDataModule(PINNDataModule)` implementing `gen_data()` and `gen_coll()` in `anypinn/catalog/`
 3. Use `ODEInverseProblem` with `ODEHyperparameters` (or subclass if you need extra hyperparameters)
 4. Wire it up in a training script (see `examples/`)
 
 ### Adding a New Constraint Type
 
-1. Subclass `Constraint` from `pinn.core.problem`
+1. Subclass `Constraint` from `anypinn.core.problem`
 2. Implement `loss(batch, criterion, log)` returning a weighted loss tensor
 3. Optionally override `inject_context()` if you need domain information
 
 ### Adding a New Problem Domain (e.g., PDEs)
 
-1. Create a new module under `pinn/problems/` (e.g., `pde.py`)
+1. Create a new module under `anypinn/problems/` (e.g., `pde.py`)
 2. Define domain-specific constraint subclasses
 3. Define a properties dataclass (like `ODEProperties`)
-4. Keep it dependent only on `pinn.core`
-5. Add problem-specific building blocks in `pinn/catalog/`
+4. Keep it dependent only on `anypinn.core`
+5. Add problem-specific building blocks in `anypinn/catalog/`
 
 ### Using Core Without Lightning
 
@@ -268,7 +268,7 @@ for batch in your_dataloader:
     optimizer.step()
 ```
 
-## Future: Bootstrap CLI (`pinn create`)
+## Future: Bootstrap CLI (`anypinn create`)
 
 Planned scaffolding tool (like `npx create-next-app`) to generate boilerplate:
 

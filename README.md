@@ -1,4 +1,4 @@
-# PINN Library
+# AnyPINN
 
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
 [![uv][uv-badge]](https://github.com/astral-sh/uv)
@@ -16,7 +16,7 @@ A modular, extensible Python library for solving differential equations using Ph
 
 ## Philosophy
 
-PINN is designed around two principles:
+AnyPINN is designed around two principles:
 
 1. **Separation of concerns.** The mathematical problem definition is completely decoupled from the training engine. You can use one without the other.
 2. **Progressive complexity.** Start simple, go deep only when you need to.
@@ -40,7 +40,7 @@ graph TD
     EXP --> LIT
     EXP --> CORE
 
-    subgraph LIT["pinn.lightning (optional)"]
+    subgraph LIT["anypinn.lightning (optional)"]
         direction LR
         L1[PINNModule]
         L2[Callbacks]
@@ -48,7 +48,7 @@ graph TD
         L4[PredictionsWriter]
     end
 
-    subgraph CORE["pinn.core (standalone)"]
+    subgraph CORE["anypinn.core (standalone)"]
         direction LR
         C1["Problem — Constraint (ABC)"]
         C2["Field — MLP networks"]
@@ -61,7 +61,7 @@ graph TD
     LIT -->|depends on| CORE
 ```
 
-### Core (`pinn.core`) — The Math Layer
+### Core (`anypinn.core`) — The Math Layer
 
 The core is a pure PyTorch library. It defines what a PINN problem _is_, with no opinions about how you train it.
 
@@ -73,7 +73,7 @@ The core is a pure PyTorch library. It defines what a PINN problem _is_, with no
 
 You can use `Problem.training_loss()` inside any training loop — plain PyTorch, Hugging Face Accelerate, or anything else.
 
-### Lightning (`pinn.lightning`) — The Training Engine (Optional)
+### Lightning (`anypinn.lightning`) — The Training Engine (Optional)
 
 A thin wrapper that plugs a `Problem` into PyTorch Lightning. Use it when you want batteries-included training with minimal boilerplate:
 
@@ -81,7 +81,7 @@ A thin wrapper that plugs a `Problem` into PyTorch Lightning. Use it when you wa
 - **`PINNDataModule`** — Abstract data module that manages data loading, collocation point generation, and context creation.
 - **`Callbacks`** — SMMA-based early stopping, formatted progress bars, prediction writers, data scaling.
 
-### Problems (`pinn.problems`) — Ready-Made Templates
+### Problems (`anypinn.problems`) — Ready-Made Templates
 
 Pre-built constraint sets for common problem types:
 
@@ -212,12 +212,12 @@ See `examples/` for complete implementations:
 - `lotka_volterra/` — Predator-prey dynamics
 - `seir_inverse/` — SEIR epidemic model
 
-## Future: Bootstrap CLI (`pinn create`)
+## Future: Bootstrap CLI (`anypinn create`)
 
 Planned: a scaffolding tool inspired by `npx create-next-app` that lets you bootstrap a new PINN project interactively:
 
 ```
-$ pinn create my-project
+$ anypinn create my-project
 
 ? Choose a starting point:
   > From a template (SIR, SEIR, Lotka-Volterra, Damped Oscillator, ...)

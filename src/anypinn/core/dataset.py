@@ -10,11 +10,11 @@ import torch
 from torch import Tensor
 from torch.utils.data import DataLoader, Dataset, TensorDataset
 
-from pinn.core.config import GenerationConfig, IngestionConfig, PINNHyperparameters
-from pinn.core.context import InferredContext
-from pinn.core.nn import Domain1D
-from pinn.core.types import DataBatch, PredictionBatch, TrainingBatch
-from pinn.core.validation import ValidationRegistry, resolve_validation
+from anypinn.core.config import GenerationConfig, IngestionConfig, PINNHyperparameters
+from anypinn.core.context import InferredContext
+from anypinn.core.nn import Domain1D
+from anypinn.core.types import DataBatch, PredictionBatch, TrainingBatch
+from anypinn.core.validation import ValidationRegistry, resolve_validation
 
 
 class DataCallback:

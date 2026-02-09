@@ -6,8 +6,8 @@ from dataclasses import dataclass
 
 from torch import Tensor
 
-from pinn.core.nn import Domain1D
-from pinn.core.validation import ResolvedValidation
+from anypinn.core.nn import Domain1D
+from anypinn.core.validation import ResolvedValidation
 
 
 @dataclass
