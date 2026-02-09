@@ -93,7 +93,7 @@ copyright: Copyright &copy; 2025 Giacomo Guidotto
 # GitHub Specific Configuration.
 repo_name: anypinn
 repo_url: https://github.com/giacomoguidotto/anypinn
-edit_uri: edit/main/docs/user_guide/docs/
+edit_uri: edit/main/docs/
 nav:
   - index.md
   - Third Party Licenses:
