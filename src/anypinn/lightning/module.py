@@ -7,9 +7,9 @@ from lightning.pytorch.utilities.types import OptimizerLRScheduler
 import torch
 from torch import Tensor
 
-from pinn.core import LOSS_KEY, LogFn, Predictions, Problem, TrainingBatch
-from pinn.core.config import PINNHyperparameters
-from pinn.core.types import PredictionBatch
+from anypinn.core import LOSS_KEY, LogFn, Predictions, Problem, TrainingBatch
+from anypinn.core.config import PINNHyperparameters
+from anypinn.core.types import PredictionBatch
 
 
 class PINNModule(pl.LightningModule):

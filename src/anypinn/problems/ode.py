@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 import torch.nn as nn
 
-from pinn.core import (
+from anypinn.core import (
     ArgsRegistry,
     Constraint,
     FieldsRegistry,

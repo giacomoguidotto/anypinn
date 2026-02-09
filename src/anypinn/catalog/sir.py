@@ -7,7 +7,7 @@ import torch
 from torch import Tensor
 from torchdiffeq import odeint
 
-from pinn.core import (
+from anypinn.core import (
     ArgsRegistry,
     DataCallback,
     Domain1D,
@@ -15,7 +15,7 @@ from pinn.core import (
     PINNDataModule,
     ValidationRegistry,
 )
-from pinn.problems.ode import ODEHyperparameters, ODEProperties
+from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
 S_KEY = "S"
 I_KEY = "I"

@@ -9,7 +9,7 @@ from lightning.pytorch.callbacks import BasePredictionWriter, Callback, TQDMProg
 import torch
 from torch import Tensor
 
-from pinn.core import DataBatch, DataCallback, PINNDataModule, Predictions, SMMAStoppingConfig
+from anypinn.core import DataBatch, DataCallback, PINNDataModule, Predictions, SMMAStoppingConfig
 
 SMMA_KEY = "loss/smma"
 

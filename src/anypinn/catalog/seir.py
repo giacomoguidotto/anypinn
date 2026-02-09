@@ -7,17 +7,25 @@ import torch
 from torch import Tensor
 from torchdiffeq import odeint
 
-from pinn.core import DataCallback, Domain1D, GenerationConfig, PINNDataModule, ValidationRegistry
-from pinn.problems.ode import ODEHyperparameters, ODEProperties
+from anypinn.core import (
+    DataCallback,
+    Domain1D,
+    GenerationConfig,
+    PINNDataModule,
+    ValidationRegistry,
+)
+from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
-X_KEY = "x"
-V_KEY = "v"
-ZETA_KEY = "zeta"
-OMEGA_KEY = "omega0"
+S_KEY = "S"
+E_KEY = "E"
+I_KEY = "I"
+BETA_KEY = "beta"
+SIGMA_KEY = "sigma"
+GAMMA_KEY = "gamma"
 
 
-class DampedOscillatorDataModule(PINNDataModule):
-    """DataModule for damped oscillator inverse problem. Generates synthetic data via odeint."""
+class SEIRDataModule(PINNDataModule):
+    """DataModule for SEIR inverse problem. Generates synthetic data via odeint."""
 
     def __init__(
         self,
@@ -42,16 +50,17 @@ class DampedOscillatorDataModule(PINNDataModule):
 
     @override
     def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
-        """Generate synthetic damped oscillator data using odeint + Gaussian noise."""
+        """Generate synthetic SEIR data using odeint + Gaussian noise."""
 
-        def oscillator_ode(t: Tensor, y: Tensor) -> Tensor:
+        def seir_ode(t: Tensor, y: Tensor) -> Tensor:
             return self.gen_props.ode(t, y, self.gen_props.args)
 
         t = config.x
 
-        sol = odeint(oscillator_ode, self.gen_props.y0, t)  # [T, 2]
-        x_true = sol[:, 0]
+        sol = odeint(seir_ode, self.gen_props.y0, t)  # [T, 3]
+        I_true = sol[:, 2].clamp_min(0.0)
 
-        x_obs = x_true + self.noise_std * torch.randn_like(x_true)
+        I_obs = I_true + self.noise_std * torch.randn_like(I_true)
+        I_obs = I_obs.clamp_min(0.0)
 
-        return t.unsqueeze(-1), x_obs.unsqueeze(-1)
+        return t.unsqueeze(-1), I_obs.unsqueeze(-1)

@@ -1,13 +1,13 @@
 """Catalog of ready-made ODE problem building blocks."""
 
-from pinn.catalog.damped_oscillator import (
+from anypinn.catalog.damped_oscillator import (
     OMEGA_KEY,
     V_KEY,
     X_KEY,
     ZETA_KEY,
     DampedOscillatorDataModule,
 )
-from pinn.catalog.lotka_volterra import (
+from anypinn.catalog.lotka_volterra import (
     ALPHA_KEY,
     BETA_KEY,
     DELTA_KEY,
@@ -15,17 +15,17 @@ from pinn.catalog.lotka_volterra import (
     Y_KEY,
     LotkaVolterraDataModule,
 )
-from pinn.catalog.lotka_volterra import X_KEY as LV_X_KEY
-from pinn.catalog.seir import BETA_KEY as SEIR_BETA_KEY
-from pinn.catalog.seir import E_KEY, SIGMA_KEY, SEIRDataModule
-from pinn.catalog.seir import GAMMA_KEY as SEIR_GAMMA_KEY
-from pinn.catalog.seir import I_KEY as SEIR_I_KEY
-from pinn.catalog.seir import S_KEY as SEIR_S_KEY
-from pinn.catalog.sir import BETA_KEY as SIR_BETA_KEY
-from pinn.catalog.sir import DELTA_KEY as SIR_DELTA_KEY
-from pinn.catalog.sir import I_KEY as SIR_I_KEY
-from pinn.catalog.sir import N_KEY, SIR, Rt_KEY, SIRInvDataModule, rSIR
-from pinn.catalog.sir import S_KEY as SIR_S_KEY
+from anypinn.catalog.lotka_volterra import X_KEY as LV_X_KEY
+from anypinn.catalog.seir import BETA_KEY as SEIR_BETA_KEY
+from anypinn.catalog.seir import E_KEY, SIGMA_KEY, SEIRDataModule
+from anypinn.catalog.seir import GAMMA_KEY as SEIR_GAMMA_KEY
+from anypinn.catalog.seir import I_KEY as SEIR_I_KEY
+from anypinn.catalog.seir import S_KEY as SEIR_S_KEY
+from anypinn.catalog.sir import BETA_KEY as SIR_BETA_KEY
+from anypinn.catalog.sir import DELTA_KEY as SIR_DELTA_KEY
+from anypinn.catalog.sir import I_KEY as SIR_I_KEY
+from anypinn.catalog.sir import N_KEY, SIR, Rt_KEY, SIRInvDataModule, rSIR
+from anypinn.catalog.sir import S_KEY as SIR_S_KEY
 
 __all__ = [
     "ALPHA_KEY",

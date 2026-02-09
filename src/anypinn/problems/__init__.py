@@ -1,6 +1,6 @@
 """Problem templates and implementations."""
 
-from pinn.problems.ode import (
+from anypinn.problems.ode import (
     DataConstraint,
     ICConstraint,
     ODECallable,
