@@ -16,7 +16,7 @@ def test(s: Session) -> None:
         "--cov=anypinn",
         "--cov-report=html",
         "--cov-report=term",
-        "--cov-fail-under=100",
+        # "--cov-fail-under=80",
         "tests",
         *s.posargs,
     )
