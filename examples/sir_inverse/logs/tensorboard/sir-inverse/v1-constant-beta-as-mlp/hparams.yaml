@@ -1,7 +1,7 @@
-hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
+hp: !!python/object:anypinn.problems.sir_inverse.SIRInvHyperparameters
   data_weight: 1
   early_stopping: null
-  fields_config: !!python/object:pinn.core.config.MLPConfig
+  fields_config: !!python/object:anypinn.core.config.MLPConfig
     activation: tanh
     encode: null
     hidden_layers:
@@ -15,7 +15,7 @@ hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
     output_activation: softplus
   ic_weight: 1
   lr: 0.0005
-  params_config: !!python/object:pinn.core.config.MLPConfig
+  params_config: !!python/object:anypinn.core.config.MLPConfig
     activation: tanh
     encode: null
     hidden_layers:
@@ -28,16 +28,16 @@ hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
     out_dim: 1
     output_activation: softplus
   pde_weight: 1
-  scheduler: !!python/object:pinn.core.config.SchedulerConfig
+  scheduler: !!python/object:anypinn.core.config.SchedulerConfig
     factor: 0.5
     min_lr: 1.0e-06
     mode: min
     patience: 55
     threshold: 0.005
   smma_stopping: null
-  training_data: !!python/object:pinn.core.config.GenerationConfig
+  training_data: !!python/object:anypinn.core.config.GenerationConfig
     args_to_train:
-      beta: !!python/object:pinn.core.nn.Argument
+      beta: !!python/object:anypinn.core.nn.Argument
         _name: beta
         _value: 0.6
     batch_size: 100

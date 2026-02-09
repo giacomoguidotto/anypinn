@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING, Any, Literal
 
 from torch import Tensor
 
-from pinn.core.types import Activations
+from anypinn.core.types import Activations
 
 if TYPE_CHECKING:
-    from pinn.core.nn import ArgsRegistry
+    from anypinn.core.nn import ArgsRegistry
 
 
 @dataclass(kw_only=True)

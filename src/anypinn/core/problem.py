@@ -8,9 +8,9 @@ import torch
 from torch import Tensor
 import torch.nn as nn
 
-from pinn.core.context import InferredContext
-from pinn.core.nn import FieldsRegistry, Parameter, ParamsRegistry
-from pinn.core.types import LOSS_KEY, DataBatch, LogFn, TrainingBatch
+from anypinn.core.context import InferredContext
+from anypinn.core.nn import FieldsRegistry, Parameter, ParamsRegistry
+from anypinn.core.types import LOSS_KEY, DataBatch, LogFn, TrainingBatch
 
 
 class Constraint(ABC):

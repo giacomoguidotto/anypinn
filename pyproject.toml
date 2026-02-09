@@ -1,10 +1,10 @@
 [project]
-name = "pinn"
+name = "anypinn"
 version = "0.0.1"
 description = "..."
 authors = [{ name = "Giacomo Guidotto", email = "giacomo.guidotto@gmail.com" }]
 keywords = [
-    "pinn",
+    "anypinn",
     "sir",
     "epidemiology",
     "neural-networks",
@@ -36,12 +36,12 @@ classifiers = [
 requires-python = ">=3.10"
 
 [project.urls]
-Homepage = "https://github.com/GiacomoGuidotto/pinn"
-Documentation = "https://GiacomoGuidotto.github.io/pinn/"
-Repository = "https://github.com/GiacomoGuidotto/pinn"
+Homepage = "https://github.com/GiacomoGuidotto/anypinn"
+Documentation = "https://GiacomoGuidotto.github.io/anypinn/"
+Repository = "https://github.com/GiacomoGuidotto/anypinn"
 
 [project.scripts]
-pinn = "pinn.cli:app"
+anypinn = "anypinn.cli:app"
 
 [dependency-groups]
 nox = [

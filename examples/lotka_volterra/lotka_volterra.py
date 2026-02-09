@@ -16,7 +16,7 @@ import seaborn as sns
 import torch
 from torch import Tensor
 
-from pinn.catalog.lotka_volterra import (
+from anypinn.catalog.lotka_volterra import (
     ALPHA_KEY,
     BETA_KEY,
     DELTA_KEY,
@@ -25,7 +25,7 @@ from pinn.catalog.lotka_volterra import (
     Y_KEY,
     LotkaVolterraDataModule,
 )
-from pinn.core import (
+from anypinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
@@ -40,9 +40,14 @@ from pinn.core import (
     SchedulerConfig,
     ValidationRegistry,
 )
-from pinn.lightning import PINNModule, SMMAStopping
-from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
+from anypinn.lightning import PINNModule, SMMAStopping
+from anypinn.lightning.callbacks import (
+    DataScaling,
+    FormattedProgressBar,
+    Metric,
+    PredictionsWriter,
+)
+from anypinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
 
 # ============================================================================
 # Constants

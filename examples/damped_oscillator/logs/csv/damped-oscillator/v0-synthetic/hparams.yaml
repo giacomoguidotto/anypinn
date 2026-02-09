@@ -1,7 +1,7 @@
-hp: !!python/object:pinn.problems.ode.ODEHyperparameters
+hp: !!python/object:anypinn.problems.ode.ODEHyperparameters
   data_weight: 5
   early_stopping: null
-  fields_config: !!python/object:pinn.core.config.MLPConfig
+  fields_config: !!python/object:anypinn.core.config.MLPConfig
     activation: tanh
     encode: null
     hidden_layers:
@@ -14,17 +14,17 @@ hp: !!python/object:pinn.problems.ode.ODEHyperparameters
     output_activation: null
   ic_weight: 15
   lr: 0.001
-  params_config: !!python/object:pinn.core.config.ScalarConfig
+  params_config: !!python/object:anypinn.core.config.ScalarConfig
     init_value: 0.3
   pde_weight: 0.0001
-  scheduler: !!python/object:pinn.core.config.SchedulerConfig
+  scheduler: !!python/object:anypinn.core.config.SchedulerConfig
     factor: 0.5
     min_lr: 1.0e-06
     mode: min
     patience: 55
     threshold: 0.005
   smma_stopping: null
-  training_data: !!python/object:pinn.core.config.GenerationConfig
+  training_data: !!python/object:anypinn.core.config.GenerationConfig
     args_to_train: {}
     batch_size: 100
     collocations: 6000
