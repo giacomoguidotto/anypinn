@@ -25,3 +25,6 @@ devenv.local.yaml
 
 # pre-commit
 .pre-commit-config.yaml
+
+# Changelog lives on GitHub Releases only
+CHANGELOG.md

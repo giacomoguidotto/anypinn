@@ -38,10 +38,18 @@ _LIGHTNING_DEPS: list[str] = [
     "tensorboard",
 ]
 
+_SYNTHETIC_DEPS: list[str] = [
+    "torchdiffeq",
+]
 
-def _pyproject_toml(project_name: str, lightning: bool) -> str:
+
+def _pyproject_toml(project_name: str, data_source: DataSource, lightning: bool) -> str:
     """Generate a minimal pyproject.toml for the scaffolded project."""
-    deps = _BASE_DEPS + (_LIGHTNING_DEPS if lightning else [])
+    deps = (
+        _BASE_DEPS
+        + (_SYNTHETIC_DEPS if data_source == DataSource.SYNTHETIC else [])
+        + (_LIGHTNING_DEPS if lightning else [])
+    )
     deps_str = "\n".join(f'    "{d}",' for d in deps)
 
     return f"""\
@@ -72,7 +80,7 @@ def render_project(
     project_dir.mkdir(parents=True)
     (project_dir / "data").mkdir()
 
-    pyproject = _pyproject_toml(project_dir.name, lightning)
+    pyproject = _pyproject_toml(project_dir.name, data_source, lightning)
     (project_dir / "pyproject.toml").write_text(pyproject)
 
     for filename, content in files.items():
