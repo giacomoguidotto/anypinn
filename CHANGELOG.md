@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.2.1 (2026-02-10)
+
+### Bug Fixes
+
+- Cli output and missing pyproject
+  ([`1396589`](https://github.com/giacomoguidotto/anypinn/commit/1396589eb808d77921a7fb11413c12d24ed15ff8))
+
+
 ## v0.2.0 (2026-02-10)
 
 ### Build System
