@@ -218,5 +218,5 @@ class DataScaling(DataCallback):
 
         for k in dm.validation:
             orig_fn = dm.validation[k]
-            dm.validation[k] = (lambda fn, scale: (lambda x: fn(x * scale)))(orig_fn, self.x_scale)
+            dm.validation[k] = (lambda fn, scale: lambda x: fn(x * scale))(orig_fn, self.x_scale)
         return None
