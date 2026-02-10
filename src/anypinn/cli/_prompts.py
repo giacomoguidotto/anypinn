@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from typing import TypeVar
 
 from rich.console import Console
@@ -16,6 +17,12 @@ T = TypeVar("T")
 
 def _print_bar() -> None:
     _console.print("[dim]│[/]")
+
+
+def _clear_lines(n: int) -> None:
+    """Move cursor up *n* lines and clear to end of screen."""
+    sys.stdout.write(f"\033[{n}A\033[J")
+    sys.stdout.flush()
 
 
 def _select(question: str, options: list[T], labels: list[str]) -> T:
@@ -38,6 +45,9 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     selected = options[index]
     label = labels[index]
 
+    # Overwrite the ◆ question + │ bar that stayed on screen
+    _clear_lines(2)
+
     _console.print(f"[bold green]◇[/]  {question}")
     _console.print(f"[dim]│[/]  {label}")
     _print_bar()
@@ -57,6 +67,10 @@ def _confirm(question: str, default: bool = True) -> bool:
     result = default if answer == "" else answer in ("y", "yes")
 
     display = "Yes" if result else "No"
+
+    # Overwrite the ◆ question + │ bar + │ [Y/n] input line
+    _clear_lines(3)
+
     _console.print(f"[bold green]◇[/]  {question}")
     _console.print(f"[dim]│[/]  {display}")
     _print_bar()

@@ -23,6 +23,7 @@ def main() -> None:
 
 
 _FILE_DESCRIPTIONS: dict[str, str] = {
+    "pyproject.toml": "project dependencies",
     "ode.py": "mathematical definition",
     "config.py": "training configuration",
     "train.py": "execution script",
@@ -90,5 +91,5 @@ def create(
         _console.print(f"[dim]│[/]  {name}{desc_str}")
 
     _console.print("[dim]│[/]")
-    _console.print(f"[bold cyan]●[/]  Done! cd {project_name} && python train.py")
+    _console.print(f"[bold cyan]●[/]  Done! cd {project_name} && uv sync && uv run train.py")
     _console.print()

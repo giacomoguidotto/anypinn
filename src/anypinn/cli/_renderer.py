@@ -25,6 +25,38 @@ _TEMPLATES: dict[Template, ModuleType] = {
     Template.BLANK: blank,
 }
 
+_BASE_DEPS: list[str] = [
+    "anypinn",
+    "torch",
+    "numpy",
+    "scipy",
+    "pandas",
+]
+
+_LIGHTNING_DEPS: list[str] = [
+    "lightning",
+    "tensorboard",
+]
+
+
+def _pyproject_toml(project_name: str, lightning: bool) -> str:
+    """Generate a minimal pyproject.toml for the scaffolded project."""
+    deps = _BASE_DEPS + (_LIGHTNING_DEPS if lightning else [])
+    deps_str = "\n".join(f'    "{d}",' for d in deps)
+
+    return f"""\
+[project]
+name = "{project_name}"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+{deps_str}
+]
+
+[tool.uv]
+package = false
+"""
+
 
 def render_project(
     project_dir: Path,
@@ -40,7 +72,10 @@ def render_project(
     project_dir.mkdir(parents=True)
     (project_dir / "data").mkdir()
 
+    pyproject = _pyproject_toml(project_dir.name, lightning)
+    (project_dir / "pyproject.toml").write_text(pyproject)
+
     for filename, content in files.items():
         (project_dir / filename).write_text(content)
 
-    return [*files.keys(), "data/"]
+    return ["pyproject.toml", *files.keys(), "data/"]
