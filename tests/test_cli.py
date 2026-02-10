@@ -249,3 +249,43 @@ class TestCreateCommand:
         config_content = (project_dir / "config.py").read_text()
         assert "GenerationConfig" in config_content
         assert "linspace" in config_content
+
+    def test_pyproject_includes_torchdiffeq_for_synthetic(self, project_dir: Path) -> None:
+        """Synthetic data projects must include torchdiffeq dependency."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        pyproject = (project_dir / "pyproject.toml").read_text()
+        assert '"torchdiffeq"' in pyproject
+
+    def test_pyproject_excludes_torchdiffeq_for_csv(self, project_dir: Path) -> None:
+        """CSV data projects must not include torchdiffeq dependency."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "csv",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        pyproject = (project_dir / "pyproject.toml").read_text()
+        assert '"torchdiffeq"' not in pyproject

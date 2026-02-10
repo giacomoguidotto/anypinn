@@ -43,13 +43,16 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
 
     index: int = int(raw_index)
     selected = options[index]
-    label = labels[index]
 
     # Overwrite the ◆ question + │ bar that stayed on screen
     _clear_lines(2)
 
     _console.print(f"[bold green]◇[/]  {question}")
-    _console.print(f"[dim]│[/]  {label}")
+    for i, lbl in enumerate(labels):
+        if i == index:
+            _console.print(f"[dim]│[/]  [bold green]●[/] {lbl}")
+        else:
+            _console.print(f"[dim]│[/]    [dim s]{lbl}[/]")
     _print_bar()
 
     return selected
