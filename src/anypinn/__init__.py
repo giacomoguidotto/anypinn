@@ -1,4 +1,4 @@
-"""PINN: Physics-Informed Neural Networks library."""
+"""AnyPINN: Physics-Informed Neural Networks library."""
 
 from importlib.metadata import PackageNotFoundError, version
 

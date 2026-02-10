@@ -1,12 +1,207 @@
+"""Integration tests for the anypinn CLI."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
 from typer.testing import CliRunner
 
-from fact.cli import app
+from anypinn.cli import app
+from anypinn.cli._types import DataSource, Template
+
+runner = CliRunner()
 
 
-def test_main() -> None:
-    """Test the main function of the CLI."""
+@pytest.fixture
+def project_dir(tmp_path: Path) -> Path:
+    return tmp_path / "test-project"
 
-    runner = CliRunner()
-    result = runner.invoke(app, ["5"])
-    assert result.exit_code == 0
-    assert "fact(5) = 120" in result.output
+
+class TestCreateCommand:
+    """Tests for the `create` command with non-interactive flags."""
+
+    @pytest.mark.parametrize("template", list(Template))
+    @pytest.mark.parametrize("data_source", list(DataSource))
+    @pytest.mark.parametrize("lightning", [True, False])
+    def test_all_combinations(
+        self,
+        tmp_path: Path,
+        template: Template,
+        data_source: DataSource,
+        lightning: bool,
+    ) -> None:
+        """Every template x data_source x lightning combo generates valid Python."""
+        name = f"proj-{template.value}-{data_source.value}-{lightning}"
+        project = tmp_path / name
+
+        lightning_flag = "--lightning" if lightning else "--no-lightning"
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project),
+                "--template",
+                template.value,
+                "--data",
+                data_source.value,
+                lightning_flag,
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+
+        # All templates produce ode.py, config.py, train.py, data/
+        assert (project / "ode.py").exists()
+        assert (project / "config.py").exists()
+        assert (project / "train.py").exists()
+        assert (project / "data").is_dir()
+
+        # Every generated .py must be valid syntax
+        for py_file in project.glob("*.py"):
+            source = py_file.read_text()
+            compile(source, str(py_file), "exec")
+
+    def test_existing_directory_fails(self, project_dir: Path) -> None:
+        """Creating a project in an existing directory should fail."""
+        project_dir.mkdir(parents=True)
+
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 1
+        assert "already exists" in result.output
+
+    def test_no_lightning_contamination(self, project_dir: Path) -> None:
+        """Core-only train.py must not reference Lightning imports."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--no-lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        train_content = (project_dir / "train.py").read_text()
+        assert "lightning" not in train_content.lower()
+        assert "Trainer" not in train_content
+
+    def test_lightning_includes_trainer(self, project_dir: Path) -> None:
+        """Lightning train.py must reference Trainer."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        train_content = (project_dir / "train.py").read_text()
+        assert "Trainer" in train_content
+        assert "PINNModule" in train_content
+
+    def test_no_stray_format_braces(self, project_dir: Path) -> None:
+        """Generated files should not contain stray { or } from f-string bugs."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        for py_file in project_dir.glob("*.py"):
+            source = py_file.read_text()
+            # Valid Python should compile without errors
+            compile(source, str(py_file), "exec")
+
+    def test_output_shows_done(self, project_dir: Path) -> None:
+        """CLI output includes the 'Done!' message."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "blank",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+        assert "Done!" in result.output
+
+    def test_csv_data_source_references_csv(self, project_dir: Path) -> None:
+        """CSV data source should reference IngestionConfig in config.py."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "csv",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        config_content = (project_dir / "config.py").read_text()
+        assert "IngestionConfig" in config_content
+        assert "df_path" in config_content
+
+    def test_synthetic_data_source_references_generation(self, project_dir: Path) -> None:
+        """Synthetic data source should reference GenerationConfig in config.py."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        config_content = (project_dir / "config.py").read_text()
+        assert "GenerationConfig" in config_content
+        assert "linspace" in config_content
