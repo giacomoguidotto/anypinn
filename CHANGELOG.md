@@ -1,6 +1,44 @@
 # CHANGELOG
 
 
+## v0.2.0 (2026-02-10)
+
+### Build System
+
+- Derive version from git tags via uv-dynamic-versioning
+  ([`2105d38`](https://github.com/giacomoguidotto/anypinn/commit/2105d38602f2674bd515b9ce4f7bdbd07ac762fc))
+
+Switch build backend from uv_build to hatchling + uv-dynamic-versioning so semantic-release only
+  creates a git tag without a version-bump commit. Version is now read from importlib.metadata at
+  runtime.
+
+### Documentation
+
+- Add contributing guidelines
+  ([`d744f71`](https://github.com/giacomoguidotto/anypinn/commit/d744f71d8a7c10edde68b2dcbf1b89180f2cfa6d))
+
+- Replace fact blueprint template with anypinn user guide
+  ([`1ec4fe9`](https://github.com/giacomoguidotto/anypinn/commit/1ec4fe9200021464ce382658b7ed067069ac8b99))
+
+The generated docs still contained the python-blueprint's fact example. Rewrites index.md with
+  actual anypinn content (installation, examples, architecture, problem definition guide), fixes
+  mkdocs edit_uri, and removes stale src/fact/cli.py reference from CLAUDE.md.
+
+### Features
+
+- Implement scaffolding cli
+  ([`77f1bcf`](https://github.com/giacomoguidotto/anypinn/commit/77f1bcf1ca4c0a09992a1b18734e7098900ccb77))
+
+Add a Typer-based CLI that bootstraps PINN projects with clack-style interactive prompts. Supports 6
+  templates (SIR, SEIR, Damped Oscillator, Lotka-Volterra, Custom, Blank), synthetic/CSV data
+  sources, and Lightning/core-only training modes. All options accept flags for non-interactive use.
+
+- Move rich, typer-slim, simple-term-menu to package dependencies - Delete placeholder src/fact/
+  package and its tests - Add cli module: app, prompts, renderer, types, and template system -
+  Generated projects split into ode.py, config.py, train.py, data/ - 53 tests covering all 24
+  template combinations and edge cases
+
+
 ## v0.1.0 (2026-02-09)
 
 ### Bug Fixes
@@ -33,6 +71,9 @@
 
 - Without scaling hospitalized run
   ([`76e38e5`](https://github.com/giacomoguidotto/anypinn/commit/76e38e5e356a6ef7c2400d310e4c94b7c60f7a65))
+
+- **release**: V0.1.0
+  ([`59133b4`](https://github.com/giacomoguidotto/anypinn/commit/59133b48c93a882ffec7a0e215ceb642bf6388b4))
 
 ### Continuous Integration
 
