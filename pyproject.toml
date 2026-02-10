@@ -213,7 +213,3 @@ fallback-version = "0.0.0"
 [tool.semantic_release]
 branch = "main"
 tag_format = "v{version}"
-no_git_commit = true
-
-[tool.semantic_release.changelog]
-changelog_file = false
