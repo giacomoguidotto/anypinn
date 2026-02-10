@@ -51,7 +51,8 @@ class TestCreateCommand:
 
         assert result.exit_code == 0, result.output
 
-        # All templates produce ode.py, config.py, train.py, data/
+        # All templates produce pyproject.toml, ode.py, config.py, train.py, data/
+        assert (project / "pyproject.toml").exists()
         assert (project / "ode.py").exists()
         assert (project / "config.py").exists()
         assert (project / "train.py").exists()
@@ -184,6 +185,49 @@ class TestCreateCommand:
         config_content = (project_dir / "config.py").read_text()
         assert "IngestionConfig" in config_content
         assert "df_path" in config_content
+
+    def test_pyproject_includes_lightning_deps(self, project_dir: Path) -> None:
+        """Lightning project pyproject.toml must list lightning dependency."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        pyproject = (project_dir / "pyproject.toml").read_text()
+        assert '"lightning"' in pyproject
+        assert '"tensorboard"' in pyproject
+
+    def test_pyproject_excludes_lightning_deps(self, project_dir: Path) -> None:
+        """Core-only project pyproject.toml must not list lightning dependency."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--no-lightning",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        pyproject = (project_dir / "pyproject.toml").read_text()
+        assert '"anypinn"' in pyproject
+        assert '"torch"' in pyproject
+        assert '"lightning"' not in pyproject
 
     def test_synthetic_data_source_references_generation(self, project_dir: Path) -> None:
         """Synthetic data source should reference GenerationConfig in config.py."""
