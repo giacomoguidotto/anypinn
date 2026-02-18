@@ -74,6 +74,20 @@ src/anypinn/
 │   ├── lotka_volterra.py  ← LotkaVolterraDataModule, constants
 │   └── seir.py            ← SEIRDataModule, constants
 │
+├── cli/                   ← STANDALONE, no dependency on core/lightning
+│   ├── app.py             ← Typer app, `create` command entry point
+│   ├── _types.py          ← Template, DataSource enums
+│   ├── _prompts.py        ← Interactive prompts (Rich + simple-term-menu)
+│   ├── _renderer.py       ← Project scaffolding / file generation
+│   └── templates/         ← One module per template (sir, seir, etc.)
+│       ├── _base.py       ← Shared train.py boilerplate (Lightning + core)
+│       ├── _blank.py
+│       ├── _sir.py
+│       ├── _seir.py
+│       ├── _damped_oscillator.py
+│       ├── _lotka_volterra.py
+│       └── _custom.py
+│
 └── lib/
     └── utils.py           ← General-purpose helpers
 ```
@@ -86,6 +100,7 @@ anypinn.problems  ──depends on──▶ anypinn.core
 anypinn.catalog   ──depends on──▶ anypinn.problems + anypinn.core
 anypinn.lightning ──does NOT depend on──▶ anypinn.problems or anypinn.catalog
 anypinn.core      ──does NOT depend on──▶ anything in anypinn.*
+anypinn.cli       ──does NOT depend on──▶ anything in anypinn.*
 ```
 
 This means:
@@ -94,6 +109,7 @@ This means:
 - `anypinn.lightning` only knows about core abstractions, never specific problems
 - `anypinn.problems` builds on core abstractions but doesn't require Lightning
 - `anypinn.catalog` provides problem-specific building blocks (ODE functions, DataModules)
+- `anypinn.cli` is a pure scaffolding tool — it generates project files but imports nothing from the library at runtime
 - Examples wire everything together
 
 ### Core Abstractions (`anypinn.core`)
@@ -268,17 +284,25 @@ for batch in your_dataloader:
     optimizer.step()
 ```
 
-## Future: Bootstrap CLI (`anypinn create`)
+## Bootstrap CLI (`anypinn create`)
 
-Planned scaffolding tool (like `npx create-next-app`) to generate boilerplate:
+Scaffolding tool (like `npx create-next-app`) that generates a complete, runnable project:
 
-- Pick from supported templates (SIR, SEIR, Lotka-Volterra, Damped Oscillator, ...)
-- Define a new ODE problem interactively
-- Start from a blank project
-- Choose data source (synthetic or CSV)
-- Choose whether to include Lightning wrapper
+```bash
+anypinn create my-project [--template sir|seir|damped-oscillator|lotka-volterra|custom|blank]
+                          [--data synthetic|csv]
+                          [--lightning|--no-lightning]
+```
 
-This will be implemented using Typer.
+Without flags the CLI runs interactively. Generated files:
+
+- `pyproject.toml` — dependencies (conditionally includes `lightning`, `torchdiffeq`)
+- `ode.py` — ODE function stub matching the `ODECallable` protocol
+- `config.py` — hyperparameters with sensible defaults
+- `train.py` — full training script (Lightning `Trainer` or plain PyTorch loop)
+- `data/` — data directory
+
+Implemented with Typer (`anypinn.cli`). Entry point: `anypinn.cli:app`.
 
 ## Code Style
 

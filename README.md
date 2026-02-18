@@ -212,16 +212,25 @@ See `examples/` for complete implementations:
 - `lotka_volterra/` — Predator-prey dynamics
 - `seir_inverse/` — SEIR epidemic model
 
-## Future: Bootstrap CLI (`anypinn create`)
+## Bootstrap CLI (`anypinn create`)
 
-Planned: a scaffolding tool inspired by `npx create-next-app` that lets you bootstrap a new PINN project interactively:
+A scaffolding tool inspired by `create-next-app` that bootstraps a new PINN project interactively.
+
+```bash
+anypinn create my-project
+```
+
+The CLI walks you through three choices and generates a complete, runnable project:
 
 ```
 $ anypinn create my-project
 
 ? Choose a starting point:
-  > From a template (SIR, SEIR, Lotka-Volterra, Damped Oscillator, ...)
-    Define a new ODE problem
+  > SIR Epidemic Model
+    SEIR Epidemic Model
+    Damped Oscillator
+    Lotka-Volterra
+    Custom ODE
     Blank project
 
 ? Select training data source:
@@ -231,14 +240,34 @@ $ anypinn create my-project
 ? Include Lightning training wrapper? (Y/n)
 
 Creating my-project/...
-  my_problem.py     — problem definition
-  train.py          — training script
-  config.py         — hyperparameters
-  data/             — data directory
-Done.
+  pyproject.toml   — project dependencies
+  ode.py           — mathematical definition
+  config.py        — training configuration
+  train.py         — execution script
+  data/            — data directory
+
+Done! cd my-project && uv sync && uv run train.py
 ```
 
-This will lower the barrier for experimenters who want to try a known problem with their own data without writing boilerplate.
+### Options
+
+All prompts can also be passed as flags to skip the interactive flow:
+
+| Flag | Values | Description |
+|------|--------|-------------|
+| `--template, -t` | `sir`, `seir`, `damped-oscillator`, `lotka-volterra`, `custom`, `blank` | Starting template |
+| `--data, -d` | `synthetic`, `csv` | Training data source |
+| `--lightning / --no-lightning` | — | Include PyTorch Lightning wrapper |
+
+### Generated Project
+
+The scaffolded project reflects your choices:
+
+- **`pyproject.toml`** — Dependencies, conditionally including `lightning` and `torchdiffeq`
+- **`ode.py`** — ODE function matching the `ODECallable` protocol
+- **`config.py`** — Hyperparameters with sensible defaults for your data source
+- **`train.py`** — Full training script (Lightning `Trainer` or a plain PyTorch loop, depending on your choice)
+- **`data/`** — Data directory (pre-populated with CSV placeholders when relevant)
 
 ## Development
 
