@@ -24,6 +24,9 @@ jobs:
         with:
           version: ${{ env.UV_VERSION }}
 
+      - name: Install just
+        uses: extractions/setup-just@v3
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -33,4 +36,4 @@ jobs:
         run: uv sync --locked
 
       - name: Publish Docs
-        run: uv run nox -s docs_github_pages
+        run: just docs-deploy

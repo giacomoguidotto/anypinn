@@ -83,10 +83,10 @@ class PINNDataset(Dataset[TrainingBatch]):
         return (self.total_data + self.K - 1) // self.K
 
     @override
-    def __getitem__(self, idx: int) -> TrainingBatch:
+    def __getitem__(self, index: int) -> TrainingBatch:
         """Return one sample containing K data points and C collocation points."""
-        data_idx = self._get_data_indices(idx)
-        coll_idx = self._get_coll_indices(idx)
+        data_idx = self._get_data_indices(index)
+        coll_idx = self._get_coll_indices(index)
 
         x_data = self.x_data[data_idx]
         y_data = self.y_data[data_idx]

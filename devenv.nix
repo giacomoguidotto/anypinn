@@ -1,5 +1,5 @@
 {
-  # pkgs,
+  pkgs,
   # lib,
   # config,
   # inputs,
@@ -11,7 +11,7 @@
   # env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  # packages = [ pkgs.git ];
+  packages = [ pkgs.just ];
 
   # https://devenv.sh/languages/
   # languages.rust.enable = true;

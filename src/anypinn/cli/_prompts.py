@@ -38,7 +38,7 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     )
     raw_index = menu.show()
 
-    if raw_index is None:
+    if raw_index is None or isinstance(raw_index, tuple):
         raise SystemExit(1)
 
     index: int = int(raw_index)

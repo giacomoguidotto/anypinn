@@ -109,13 +109,14 @@ class SIRInvDataModule(PINNDataModule):
     def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
         """Generate synthetic data."""
         assert self.gen_props is not None, "SIR properties are required to generate data"
+        gen_props = self.gen_props
 
-        args = self.gen_props.args.copy()
+        args = gen_props.args.copy()
         args.update(config.args_to_train)
 
         data = odeint(
-            lambda x, y: self.gen_props.ode(x, y, args),
-            self.gen_props.y0,
+            lambda x, y: gen_props.ode(x, y, args),
+            gen_props.y0,
             config.x,
         )
 
