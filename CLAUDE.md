@@ -44,6 +44,14 @@ uv run pytest tests/                    # Run tests directly
 uv run pytest tests/test_foo.py::test_bar  # Run single test
 ```
 
+## Commit Conventions
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) with semantic-release. Commit prefixes trigger automated releases:
+
+- `fix:` — patch release (0.0.X)
+- `feat:` — minor release (0.X.0)
+- `feat!:` / `BREAKING CHANGE:` — major release (X.0.0)
+
 ## Architecture
 
 ### Module Map
