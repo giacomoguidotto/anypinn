@@ -27,20 +27,21 @@ The library serves three user profiles:
 # Setup
 uv sync                      # Install dependencies
 
-# Testing & Quality (via nox)
-uv run nox -s test           # Run tests (multi-Python, requires 100% coverage)
-uv run nox -s lint           # Check code style
-uv run nox -s fmt            # Format code (isort + ruff)
-uv run nox -s lint_fix       # Auto-fix linting issues
-uv run nox -s type_check     # MyPy strict type checking
+# Testing & Quality (via just)
+just test                    # Run tests with coverage
+just lint                    # Check code style
+just fmt                     # Format code (isort + ruff)
+just lint-fix                # Auto-fix linting issues
+just check                   # ty type checking
+just ci                      # Run lint + check + test
 
 # Documentation
-uv run nox -s docs           # Build mkdocs
-uv run nox -s docs_serve     # Serve docs locally
+just docs                    # Build mkdocs
+just docs-serve              # Serve docs locally
 
 # Direct invocation
-pytest tests/                # Run tests directly
-pytest tests/test_foo.py::test_bar  # Run single test
+uv run pytest tests/                    # Run tests directly
+uv run pytest tests/test_foo.py::test_bar  # Run single test
 ```
 
 ## Architecture
@@ -309,7 +310,7 @@ Implemented with Typer (`anypinn.cli`). Entry point: `anypinn.cli:app`.
 - Line length: 99
 - Ruff linter with rules: F, E, I, N, UP, RUF, B, C4, ISC, PIE, PT, PTH, SIM, TID
 - Absolute imports only (no relative imports)
-- MyPy strict mode with exhaustive-match enabled
+- ty type checking
 - All config dataclasses: `@dataclass(frozen=True, kw_only=True)`
 - Protocols for callable interfaces (`ODECallable`, `LogFn`, `PredictDataFn`)
 - Registries (typed dicts) for flexible composition over rigid inheritance

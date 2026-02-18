@@ -34,7 +34,7 @@ class SMMAStopping(Callback):
         self.smma_buffer: list[float] = []
 
     @override
-    def on_train_epoch_end(self, trainer: Trainer, module: LightningModule) -> None:
+    def on_train_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
         """
         Called when the train epoch ends. Updates SMMA and checks stopping condition.
         """
@@ -62,7 +62,7 @@ class SMMAStopping(Callback):
         smma = ((n - 1) * smma + loss) / n
         self.smma_buffer.append(smma)
 
-        module.log(self.log_key, smma)
+        pl_module.log(self.log_key, smma)
         if len(self.smma_buffer) < self.config.lookback:
             return
 
@@ -153,18 +153,18 @@ class PredictionsWriter(BasePredictionWriter):
     def write_on_epoch_end(
         self,
         trainer: Trainer,
-        module: LightningModule,
-        predictions_list: Sequence[Predictions],
+        pl_module: LightningModule,
+        predictions: Sequence[Predictions],
         batch_indices: Sequence[Any],
     ) -> None:
         """
         Writes predictions to disk or calls the hook at the end of the epoch.
         """
         if self.on_prediction is not None:
-            self.on_prediction(trainer, module, predictions_list, batch_indices)
+            self.on_prediction(trainer, pl_module, predictions, batch_indices)
 
         if self.predictions_path is not None:
-            torch.save(predictions_list, self.predictions_path)
+            torch.save(predictions, self.predictions_path)
 
         if self.batch_indices_path is not None:
             torch.save(batch_indices, self.batch_indices_path)

@@ -2,15 +2,13 @@
 
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
 [![uv][uv-badge]](https://github.com/astral-sh/uv)
-[![Nox][nox-badge]](https://github.com/wntrblm/nox)
 [![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
-[![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
+[![Type checked with ty][ty-badge]](https://docs.astral.sh/ty/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/actions/workflows/ci.yml/badge.svg
 [uv-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json
-[nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
-[mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
+[ty-badge]: https://img.shields.io/badge/ty-typed-blue
 
 A modular, extensible Python library for solving differential equations using Physics-Informed Neural Networks (PINNs). Built for scalability — from one-click experiments to fully custom problem definitions.
 
@@ -273,24 +271,25 @@ The scaffolded project reflects your choices:
 
 ### Tooling
 
-| Tool                                      | Purpose                |
-| ----------------------------------------- | ---------------------- |
+| Tool                                       | Purpose                |
+| ------------------------------------------ | ---------------------- |
 | [uv](https://github.com/astral-sh/uv)     | Dependency management  |
-| [Nox](https://github.com/wntrblm/nox)     | Task automation        |
+| [just](https://github.com/casey/just)      | Task automation        |
 | [Ruff](https://github.com/astral-sh/ruff) | Linting and formatting |
-| [pytest](https://docs.pytest.org/)        | Testing                |
-| [mypy](https://mypy-lang.org/)            | Strict type checking   |
+| [pytest](https://docs.pytest.org/)         | Testing                |
+| [ty](https://docs.astral.sh/ty/)           | Type checking          |
 
 ### Commands
 
 ```bash
-uv run nox -s test           # Run tests (100% coverage required)
-uv run nox -s lint           # Check code style
-uv run nox -s fmt            # Format code (isort + ruff)
-uv run nox -s lint_fix       # Auto-fix linting issues
-uv run nox -s type_check     # MyPy strict type checking
-uv run nox -s docs           # Build documentation
-uv run nox -s docs_serve     # Serve docs locally
+just test           # Run tests with coverage
+just lint           # Check code style
+just fmt            # Format code (isort + ruff)
+just lint-fix       # Auto-fix linting issues
+just check          # ty type checking
+just docs           # Build documentation
+just docs-serve     # Serve docs locally
+just ci             # Run lint + check + test
 ```
 
 ## Contributing
