@@ -64,6 +64,7 @@ anypinn create my-project \
 | Flag                           | Values                                                                  | Description                       |
 | ------------------------------ | ----------------------------------------------------------------------- | --------------------------------- |
 | `--template, -t`               | built-in template name, `custom`, or `blank`                            | Starting template                 |
+| `--list-templates, -l`         | —                                                                       | Print all templates with descriptions and exit |
 | `--data, -d`                   | `synthetic`, `csv`                                                      | Training data source              |
 | `--lightning / --no-lightning` | —                                                                       | Include PyTorch Lightning wrapper |
 
