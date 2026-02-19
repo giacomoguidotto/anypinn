@@ -41,7 +41,7 @@ RUN pip install "uv==${UV_VERSION}"
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 
 # Copy in project dependency specification.
-COPY pyproject.toml uv.lock LICENSE.txt ./
+COPY pyproject.toml uv.lock LICENSE ./
 
 # Install only project dependencies, as this is cached until pyproject.toml uv.lock are updated.
 RUN uv sync --locked --no-default-groups --no-install-project
@@ -72,7 +72,7 @@ RUN mkdir -p ${HOME}
 
 # Create the user so the program doesn't run as root. This increases security of the container.
 RUN groupadd -r user && \
-    useradd -r -g user -d ${HOME} -s /sbin/nologin -c "Container image user" user
+  useradd -r -g user -d ${HOME} -s /sbin/nologin -c "Container image user" user
 
 # Setup application install directory.
 RUN mkdir ${APP_HOME}
