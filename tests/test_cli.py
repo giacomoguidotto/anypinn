@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import click
 import pytest
 from typer.testing import CliRunner
 
@@ -354,5 +355,8 @@ class TestListTemplates:
 
     def test_help_mentions_list_templates(self) -> None:
         result = runner.invoke(app, ["create", "--help"])
-        assert "--list-templates" in result.output
+        # Strip ANSI codes before checking: on CI (GITHUB_ACTIONS=true) Typer's Rich
+        # renderer forces terminal mode and splits hyphenated names with escape sequences,
+        # so "--list-templates" would not appear as a contiguous plain-text substring.
+        assert "--list-templates" in click.unstyle(result.output)
         assert result.exit_code == 0
