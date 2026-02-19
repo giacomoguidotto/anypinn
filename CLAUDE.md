@@ -330,6 +330,7 @@ Implemented with Typer (`anypinn.cli`). Entry point: `anypinn.cli:app`.
 
 Located in `examples/`, each is a self-contained training script:
 
+- `exponential_decay/exponential_decay.py` — **Minimal core-only example.** No Lightning. Learns decay rate k in dy/dt = -ky.
 - `sir_inverse/sir_inverse.py` — Full SIR epidemic model
 - `sir_inverse/reduced_sir_inverse.py` — Reduced SIR (single equation)
 - `sir_inverse/hospitalized_sir_inverse.py` — SIR with hospitalization

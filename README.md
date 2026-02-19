@@ -99,6 +99,14 @@ Ready-made examples live in `examples/`. Each is a self-contained script coverin
 uv run python examples/<name>/<name>.py
 ```
 
+| Example | Description |
+|---|---|
+| `examples/exponential_decay/` | **Start here.** Minimal core-only script (~80 lines). Learns decay rate `k` with a plain PyTorch loop — no Lightning. |
+| `examples/sir_inverse/` | Full SIR epidemic model (Lightning stack) |
+| `examples/seir_inverse/` | SEIR epidemic model (Lightning stack) |
+| `examples/damped_oscillator/` | Damped harmonic oscillator (Lightning stack) |
+| `examples/lotka_volterra/` | Predator-prey dynamics (Lightning stack) |
+
 ## Defining Your Own Problem
 
 If you want to go beyond the built-in templates, here is the full workflow for defining a custom ODE inverse problem.

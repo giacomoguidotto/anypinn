@@ -126,10 +126,12 @@ dy_dt = torch.stack([
 
 **Resolved:** Added `ODEProperties.expected_args` (optional `frozenset[str]`) and construction-time validation of field count vs y0 length in `ResidualsConstraint` and `ICConstraint`. When `expected_args` is set, missing keys are reported immediately.
 
-### D4. Squeeze/unsqueeze assumptions are fragile
+### ~~D4. Squeeze/unsqueeze assumptions are fragile~~ ✅
 **File:** `core/problem.py:135-138`
 
-`f(x).squeeze(-1)` silently drops dimensions. If a Field accidentally outputs shape `(N, 1, 1)`, `squeeze(-1)` produces `(N, 1)` — different from the `(N,)` expected downstream. Explicit reshape with documented shape contracts would be safer.
+~~`f(x).squeeze(-1)` silently drops dimensions. If a Field accidentally outputs shape `(N, 1, 1)`, `squeeze(-1)` produces `(N, 1)` — different from the `(N,)` expected downstream. Explicit reshape with documented shape contracts would be safer.~~
+
+**Resolved:** Added `reshape(n, -1)` before every `squeeze(-1)` on field/param outputs.
 
 ### D5. `ColumnRef` resolution assumes evenly-spaced integer indices
 **File:** `core/validation.py:115`
@@ -139,24 +141,30 @@ idx = x.squeeze(-1).round().to(torch.int32)
 ```
 This only works when x values are integer indices (0, 1, 2, ...). For continuous or irregularly-spaced x it silently returns wrong values. Needs interpolation or an explicit index-mapping strategy.
 
-### D6. `ColumnRef` re-reads CSV on every resolution
+### ~~D6. `ColumnRef` re-reads CSV on every resolution~~ ✅
 **File:** `core/validation.py:99`
 
-Each `ColumnRef` in the registry triggers a fresh `pd.read_csv(df_path)`. If there are 5 validated parameters, the CSV is read 5 times. Read once and share.
+~~Each `ColumnRef` in the registry triggers a fresh `pd.read_csv(df_path)`. If there are 5 validated parameters, the CSV is read 5 times. Read once and share.~~
 
-### D7. `y` shape handling in `load_data` is inconsistent
+**Resolved:** DataFrame cached in a local variable before the loop; `pd.read_csv` called at most once.
+
+### ~~D7. `y` shape handling in `load_data` is inconsistent~~ ✅
 **File:** `core/dataset.py:157-158`
 
-```python
+~~```python
 if y.shape[1] != 1:
     y = y.unsqueeze(-1)
 ```
-For a single-column y with shape `(N, 1)`, the condition is false and no unsqueeze happens — correct. But for `y` with shape `(N,)` (1-D), the `y.shape[1]` access raises an `IndexError` before the guard can act.
+For a single-column y with shape `(N, 1)`, the condition is false and no unsqueeze happens — correct. But for `y` with shape `(N,)` (1-D), the `y.shape[1]` access raises an `IndexError` before the guard can act.~~
 
-### D8. No "hello world" minimal example
+**Resolved:** Replaced with `if y.ndim == 1` — handles 1-D tensors safely and doesn't unsqueeze multi-column `(N, k)` output.
+
+### ~~D8. No "hello world" minimal example~~ ✅
 **Files:** `examples/`
 
-Every example uses the full Lightning stack with scaling, SMMA stopping, custom progress bars. A 20-line example using only `anypinn.core` with a manual training loop would dramatically lower the onboarding barrier.
+~~Every example uses the full Lightning stack with scaling, SMMA stopping, custom progress bars. A 20-line example using only `anypinn.core` with a manual training loop would dramatically lower the onboarding barrier.~~
+
+**Resolved:** Added `examples/exponential_decay/exponential_decay.py` — ~80 lines, pure PyTorch loop, no Lightning, no catalog. Learns decay rate k in dy/dt = -ky with analytic ground truth.
 
 ---
 
@@ -250,9 +258,9 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | ~~P2~~ | ~~Perf~~ | ~~Low~~ | ~~Small~~ | ~~Minor~~ ✅ |
 | ~~P4~~ | ~~Perf~~ | ~~Low~~ | ~~Small~~ | ~~Only matters for huge lookback~~ ✅ |
 | ~~P5~~ | ~~Perf~~ | ~~Low~~ | ~~Small~~ | ~~Diagnostic overhead~~ ✅ |
-| D6 | DX | Low | Small | Repeated I/O |
-| D7 | DX | Low | Small | Edge-case crash |
-| D8 | DX | Medium | Small | Onboarding |
+| ~~D6~~ | ~~DX~~ | ~~Low~~ | ~~Small~~ | ~~Repeated I/O~~ ✅ |
+| ~~D7~~ | ~~DX~~ | ~~Low~~ | ~~Small~~ | ~~Edge-case crash~~ ✅ |
+| ~~D8~~ | ~~DX~~ | ~~Medium~~ | ~~Small~~ | ~~Onboarding~~ ✅ |
 | PDE6 | PDE | Medium | Medium | Quality of PDE solutions |
 | PDE7 | PDE | Medium | Small | Multi-scale PDE accuracy |
 | PDE8 | PDE | Medium | Large | Coupled-system expressiveness |
