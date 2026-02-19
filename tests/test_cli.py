@@ -289,3 +289,56 @@ class TestCreateCommand:
 
         pyproject = (project_dir / "pyproject.toml").read_text()
         assert '"torchdiffeq"' not in pyproject
+
+
+class TestListTemplates:
+    def test_list_templates_exits_zero(self) -> None:
+        result = runner.invoke(app, ["create", "unused", "--list-templates"])
+        assert result.exit_code == 0
+
+    def test_list_templates_shorthand(self) -> None:
+        # -l works without a project name (eager option fires before arg validation)
+        result = runner.invoke(app, ["create", "-l"])
+        assert result.exit_code == 0
+
+    def test_list_templates_shows_all_template_values(self) -> None:
+        result = runner.invoke(app, ["create", "unused", "--list-templates"])
+        for t in Template:
+            assert t.value in result.output
+
+    def test_list_templates_shows_descriptions(self) -> None:
+        result = runner.invoke(app, ["create", "unused", "--list-templates"])
+        # Normalize whitespace to handle Rich line-wrapping
+        normalized_output = " ".join(result.output.split())
+        for t in Template:
+            normalized_desc = " ".join(t.description.split())
+            assert normalized_desc in normalized_output
+
+    def test_list_templates_does_not_create_directory(self, tmp_path: Path) -> None:
+        name = str(tmp_path / "should-not-exist")
+        runner.invoke(app, ["create", name, "--list-templates"])
+        assert not Path(name).exists()
+
+    def test_invalid_template_exits_nonzero(self, tmp_path: Path) -> None:
+        result = runner.invoke(
+            app,
+            ["create", str(tmp_path / "proj"), "--template", "bad-value",
+             "--data", "synthetic", "--lightning"],
+        )
+        assert result.exit_code != 0
+        assert "bad-value" in result.output
+        for t in Template:
+            assert t.value in result.output
+
+    def test_invalid_template_exit_code_is_2(self, tmp_path: Path) -> None:
+        result = runner.invoke(
+            app,
+            ["create", str(tmp_path / "proj"), "--template", "notreal",
+             "--data", "synthetic", "--lightning"],
+        )
+        assert result.exit_code == 2
+
+    def test_help_mentions_list_templates(self) -> None:
+        result = runner.invoke(app, ["create", "--help"])
+        assert "--list-templates" in result.output
+        assert result.exit_code == 0

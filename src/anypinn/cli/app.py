@@ -31,11 +31,34 @@ _FILE_DESCRIPTIONS: dict[str, str] = {
 }
 
 
+def _print_templates() -> None:
+    _console.print()
+    _console.print("[bold cyan]◆[/]  Available templates")
+    _console.print("[dim]│[/]")
+    for t in Template:
+        _console.print(f"[dim]│[/]  [bold cyan]{t.value:<22}[/] [bold]{t.label}[/]")
+        _console.print(f"[dim]│[/]  {' ' * 22} [dim]{t.description}[/]")
+        _console.print("[dim]│[/]")
+    _console.print()
+
+
+def _list_templates_callback(value: bool) -> None:
+    if value:
+        _print_templates()
+        raise Exit()
+
+
 @app.command()
 def create(
     project_name: Annotated[str, Argument(help="Name for the new project directory")],
-    template: Annotated[
-        Template | None, Option("--template", "-t", help="Project template")
+    template_str: Annotated[
+        str | None,
+        Option(
+            "--template",
+            "-t",
+            help="Project template. Run with --list-templates / -l to see all options.",
+            show_default=False,
+        ),
     ] = None,
     data_source: Annotated[
         DataSource | None, Option("--data", "-d", help="Training data source")
@@ -44,6 +67,17 @@ def create(
         bool | None,
         Option("--lightning/--no-lightning", help="Include Lightning wrapper"),
     ] = None,
+    list_templates: Annotated[
+        bool,
+        Option(
+            "--list-templates",
+            "-l",
+            help="List all available templates and exit.",
+            callback=_list_templates_callback,
+            is_eager=True,
+            expose_value=False,
+        ),
+    ] = False,
 ) -> None:
     """Create a new PINN project."""
     project_dir = Path(project_name)
@@ -51,6 +85,20 @@ def create(
     if project_dir.exists():
         _console.print(f"[bold red]Error:[/] Directory '{project_name}' already exists.")
         raise Exit(code=1)
+
+    template: Template | None = None
+    if template_str is not None:
+        try:
+            template = Template(template_str)
+        except ValueError:
+            valid = ", ".join(f"'{t.value}'" for t in Template)
+            _console.print()
+            _console.print(
+                f"[bold red]Error:[/] [bold]{template_str!r}[/] is not a valid template."
+            )
+            _console.print(f"[dim]Valid values:[/] {valid}")
+            _print_templates()
+            raise Exit(code=2)
 
     # Header
     _console.print()
