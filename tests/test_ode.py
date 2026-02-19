@@ -73,6 +73,21 @@ class TestResidualsConstraint:
         loss2 = c2.loss(batch, nn.MSELoss())
         assert loss2.item() == pytest.approx(loss1.item() * 2.0, rel=1e-5)
 
+    def test_loss_multi_field(self):
+        fields = _make_fields(2)
+        params = _make_params()
+        props = _make_props(2)
+        constraint = ResidualsConstraint(props, fields, params, weight=1.0)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        loss = constraint.loss(batch, nn.MSELoss())
+        assert loss.shape == ()
+        assert loss.item() >= 0.0
+
     def test_loss_with_logging(self):
         fields = _make_fields(1)
         params = _make_params()
