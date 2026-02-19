@@ -136,8 +136,9 @@ class Problem(nn.Module):
 
         x, y = batch
 
-        preds = {name: f(x).squeeze(-1) for name, f in self.fields.items()}
-        preds |= {name: p(x).squeeze(-1) for name, p in self.params.items()}
+        n = x.shape[0]
+        preds = {name: f(x).reshape(n, -1).squeeze(-1) for name, f in self.fields.items()}
+        preds |= {name: p(x).reshape(n, -1).squeeze(-1) for name, p in self.params.items()}
 
         return (x.squeeze(-1), y.squeeze(-1)), preds
 
@@ -148,7 +149,7 @@ class Problem(nn.Module):
         """
 
         return {
-            name: p_true.squeeze(-1)
+            name: p_true.reshape(x.shape[0], -1).squeeze(-1)
             for name, p in self.params.items()
             if (p_true := self._get_true_param(name, x)) is not None
         } or None

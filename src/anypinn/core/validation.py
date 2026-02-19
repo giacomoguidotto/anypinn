@@ -81,6 +81,7 @@ def resolve_validation(
     """
 
     resolved: ResolvedValidation = {}
+    df: pd.DataFrame | None = None
 
     for name, source in registry.items():
         if source is None:
@@ -96,7 +97,8 @@ def resolve_validation(
                     "Either pass a df_path or use a callable instead of ColumnRef."
                 )
 
-            df = pd.read_csv(df_path)
+            if df is None:
+                df = pd.read_csv(df_path)
 
             if source.column not in df.columns:
                 raise ValueError(

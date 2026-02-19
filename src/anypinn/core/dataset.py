@@ -162,7 +162,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
 
         y = torch.tensor(df[config.y_columns].values, dtype=torch.float32)
 
-        if y.shape[1] != 1:
+        if y.ndim == 1:
             y = y.unsqueeze(-1)
 
         return x.unsqueeze(-1), y
