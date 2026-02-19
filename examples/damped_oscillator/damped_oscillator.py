@@ -36,8 +36,8 @@ from anypinn.core import (
     Parameter,
     ParamsRegistry,
     Predictions,
-    ScalarConfig,
     ReduceLROnPlateauConfig,
+    ScalarConfig,
     ValidationRegistry,
 )
 from anypinn.lightning import PINNModule, SMMAStopping

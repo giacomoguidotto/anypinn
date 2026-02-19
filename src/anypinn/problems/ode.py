@@ -89,9 +89,7 @@ class ResidualsConstraint(Constraint):
         dy_dt_pred = self.ode(x_coll, y, self.args)
 
         ones = torch.ones_like(preds[0])
-        dy_dt = torch.stack(
-            torch.autograd.grad(preds, x_copies, [ones] * n, create_graph=True)
-        )
+        dy_dt = torch.stack(torch.autograd.grad(preds, x_copies, [ones] * n, create_graph=True))
 
         loss: Tensor = self.weight * criterion(dy_dt, dy_dt_pred)
 
