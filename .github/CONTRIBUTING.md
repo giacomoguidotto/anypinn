@@ -1,44 +1,61 @@
 # Contributing
 
-Welcome to Blueprint! We're thrilled that you'd like to contribute. Your help is essential for making it better.
+Welcome! Contributions are warmly appreciated — bug reports, new problem templates, constraint types, documentation improvements, and more.
 
-## Getting Started
+## Setup
 
-Before you start contributing, please make sure you have read and understood our [Code of Conduct](.github/CODE_OF_CONDUCT.md).
+```bash
+git clone https://github.com/your-org/anypinn
+cd anypinn
+uv sync
+```
 
-1. Fork the Repository
+All common tasks are driven by `just`:
 
-First, fork the [repository](https://github.com/giacomoguidotto/blueprint) to your own GitHub account. This will create a copy of the project under your account.
+```bash
+just test           # Run tests with coverage
+just lint           # Check code style
+just fmt            # Format code (isort + ruff)
+just lint-fix       # Auto-fix linting issues
+just check          # Type checking (ty)
+just docs-serve     # Serve docs locally
+just ci             # lint + check + test (full CI suite)
+```
 
-2. Clone the Repository
+## Workflow
 
-   ```sh
-   git clone https://github.com/giacomoguidotto/blueprint
+1. Fork the repository and create a branch for your change:
+   ```bash
+   git checkout -b feat/my-feature
    ```
 
-3. Navigate to the project directory 📁
-
-   ```sh
-   cd blueprint
+2. Make your changes, then verify everything passes:
+   ```bash
+   just ci
    ```
 
-4. Create a new branch for your feature or bug fix:
-
-   ```sh
-   git checkout -b feat/feature-branch
+3. Commit following [Conventional Commits](https://www.conventionalcommits.org/):
+   ```bash
+   git commit -m "feat: add Brusselator ODE template"
    ```
 
-5. Make your changes and commit them following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification:
+   | Prefix | Effect |
+   |--------|--------|
+   | `fix:` | Patch release (0.0.X) |
+   | `feat:` | Minor release (0.X.0) |
+   | `feat!:` / `BREAKING CHANGE:` | Major release (X.0.0) |
 
-   ```sh
-   git add .
-   git commit -m "feat: description of your changes"
-   ```
+4. Push and open a pull request.
 
-6. Push your changes to your fork:
+## Code Style
 
-   ```sh
-   git push origin feature-branch
-   ```
+- Line length: 99
+- Ruff linter with rules: F, E, I, N, UP, RUF, B, C4, ISC, PIE, PT, PTH, SIM, TID
+- Absolute imports only — no relative imports
+- All config dataclasses: `@dataclass(frozen=True, kw_only=True)`
 
-7. Finally Click on Create Pull request to contribute on this repository.
+## Architecture Guidelines
+
+- Keep the layer separation: `anypinn.core` stays pure PyTorch, Lightning stays optional.
+- `anypinn.core` must not import from `anypinn.lightning`, `anypinn.problems`, or `anypinn.catalog`.
+- If you change the architecture or data flow, update both `CLAUDE.md` and `README.md`.
