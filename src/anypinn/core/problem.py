@@ -104,9 +104,13 @@ class Problem(nn.Module):
         """
         _, x_coll = batch
 
-        total = torch.tensor(0.0, device=x_coll.device)
-        for c in self.constraints:
-            total = total + c.loss(batch, self.criterion, log)
+        if not self.constraints:
+            total = torch.tensor(0.0, device=x_coll.device)
+        else:
+            losses = iter(self.constraints)
+            total = next(losses).loss(batch, self.criterion, log)
+            for c in losses:
+                total = total + c.loss(batch, self.criterion, log)
 
         if log is not None:
             for name, param in self.params.items():

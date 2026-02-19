@@ -48,10 +48,12 @@ Analysis of `anypinn` covering scaling, performance, developer experience, and P
 
 **Resolved:** Tensors are moved to device on first `loss()` call and cached for subsequent calls.
 
-### S7. Loss accumulator creates an unnecessary zero tensor
+### ~~S7. Loss accumulator creates an unnecessary zero tensor~~ ✅
 **File:** `core/problem.py:107`
 
-`torch.tensor(0.0, device=...)` starts the accumulator. Starting from the first constraint's loss and summing the rest avoids one extra tensor + addition.
+~~`torch.tensor(0.0, device=...)` starts the accumulator. Starting from the first constraint's loss and summing the rest avoids one extra tensor + addition.~~
+
+**Resolved:** Start accumulation from the first constraint's loss; only allocate a zero tensor for the empty-constraints edge case.
 
 ---
 
@@ -228,7 +230,7 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | ~~S4~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor allocation overhead~~ ✅ |
 | ~~S5~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Easy GPU bandwidth win~~ ✅ |
 | ~~S6~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor per-step overhead~~ ✅ |
-| S7 | Scale | Low | Small | Trivial |
+| ~~S7~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Trivial~~ ✅ |
 | P2 | Perf | Low | Small | Minor |
 | P4 | Perf | Low | Small | Only matters for huge lookback |
 | P5 | Perf | Low | Small | Diagnostic overhead |
