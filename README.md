@@ -10,6 +10,8 @@
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
 [ty-badge]: https://img.shields.io/badge/ty-typed-blue
 
+> **Work in Progress** — This project is under active development and APIs may change. If you run into any issues, please [open an issue on GitHub](https://github.com/giacomopiccinini/anypinn/issues).
+
 **A modular Python library for solving differential equations with Physics-Informed Neural Networks.**
 
 AnyPINN lets you go from zero to a running PINN experiment in seconds, or give you the full control to define custom physics, constraints, and training loops. You decide how deep to go.
