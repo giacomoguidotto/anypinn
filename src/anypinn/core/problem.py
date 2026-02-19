@@ -11,6 +11,7 @@ import torch.nn as nn
 from anypinn.core.context import InferredContext
 from anypinn.core.nn import FieldsRegistry, Parameter, ParamsRegistry
 from anypinn.core.types import LOSS_KEY, DataBatch, LogFn, TrainingBatch
+from anypinn.core.validation import _ColumnLookup
 
 
 class Constraint(ABC):
@@ -168,7 +169,14 @@ class Problem(nn.Module):
         if param_name not in self.context.validation:
             return None
 
-        return self.context.validation[param_name](x)
+        fn = self.context.validation[param_name]
+
+        if isinstance(fn, _ColumnLookup):
+            domain = self.context.domain
+            x_idx = ((x.squeeze(-1) - domain.x0) / domain.dx).round().unsqueeze(-1)
+            return fn(x_idx)
+
+        return fn(x)
 
     @torch.no_grad()
     def _param_validation_loss(

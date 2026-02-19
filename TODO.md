@@ -133,13 +133,15 @@ dy_dt = torch.stack([
 
 **Resolved:** Added `reshape(n, -1)` before every `squeeze(-1)` on field/param outputs.
 
-### D5. `ColumnRef` resolution assumes evenly-spaced integer indices
+### ~~D5. `ColumnRef` resolution assumes evenly-spaced integer indices~~ ✅
 **File:** `core/validation.py:115`
 
-```python
+~~```python
 idx = x.squeeze(-1).round().to(torch.int32)
 ```
-This only works when x values are integer indices (0, 1, 2, ...). For continuous or irregularly-spaced x it silently returns wrong values. Needs interpolation or an explicit index-mapping strategy.
+This only works when x values are integer indices (0, 1, 2, ...). For continuous or irregularly-spaced x it silently returns wrong values. Needs interpolation or an explicit index-mapping strategy.~~
+
+**Resolved:** `make_lookup_fn` now returns a `_ColumnLookup` wrapper. `Problem._get_true_param` detects it and converts domain coordinates to row indices via `(x - x0) / dx` using the inferred domain before calling the lookup. Pure callable validation sources receive actual coordinates unchanged.
 
 ### ~~D6. `ColumnRef` re-reads CSV on every resolution~~ ✅
 **File:** `core/validation.py:99`
@@ -245,7 +247,7 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | ~~D2~~ | ~~DX~~ | ~~High~~ | ~~Small~~ | ~~Bad error messages~~ ✅ |
 | ~~S1~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~ | ~~Portability across hardware~~ ✅ |
 | ~~S2~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~ | ~~O(n) wasted device transfers~~ ✅ |
-| D5 | DX | Medium | Medium | Wrong validation on non-integer data |
+| ~~D5~~ | ~~DX~~ | ~~Medium~~ | ~~Medium~~ | ~~Wrong validation on non-integer data~~ ✅ |
 | PDE3 | PDE | High | Medium | Core utility for PDE constraints |
 | PDE4 | PDE | High | Medium | Needed for any 2D+ problem |
 | ~~P3~~ | ~~Perf~~ | ~~Medium~~ | ~~Medium~~ | ~~L-BFGS convergence gains~~ ✅ |
