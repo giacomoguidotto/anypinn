@@ -63,12 +63,12 @@ anypinn create my-project \
   --lightning
 ```
 
-| Flag                           | Values                                                                  | Description                       |
-| ------------------------------ | ----------------------------------------------------------------------- | --------------------------------- |
-| `--template, -t`               | built-in template name, `custom`, or `blank`                            | Starting template                 |
-| `--list-templates, -l`         | —                                                                       | Print all templates with descriptions and exit |
-| `--data, -d`                   | `synthetic`, `csv`                                                      | Training data source              |
-| `--lightning / --no-lightning` | —                                                                       | Include PyTorch Lightning wrapper |
+| Flag                           | Values                                       | Description                                    |
+| ------------------------------ | -------------------------------------------- | ---------------------------------------------- |
+| `--template, -t`               | built-in template name, `custom`, or `blank` | Starting template                              |
+| `--list-templates, -l`         | —                                            | Print all templates with descriptions and exit |
+| `--data, -d`                   | `synthetic`, `csv`                           | Training data source                           |
+| `--lightning / --no-lightning` | —                                            | Include PyTorch Lightning wrapper              |
 
 ## Who Is This For?
 
@@ -99,13 +99,13 @@ Ready-made examples live in `examples/`. Each is a self-contained script coverin
 uv run python examples/<name>/<name>.py
 ```
 
-| Example | Description |
-|---|---|
+| Example                       | Description                                                                                                           |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `examples/exponential_decay/` | **Start here.** Minimal core-only script (~80 lines). Learns decay rate `k` with a plain PyTorch loop — no Lightning. |
-| `examples/sir_inverse/` | Full SIR epidemic model (Lightning stack) |
-| `examples/seir_inverse/` | SEIR epidemic model (Lightning stack) |
-| `examples/damped_oscillator/` | Damped harmonic oscillator (Lightning stack) |
-| `examples/lotka_volterra/` | Predator-prey dynamics (Lightning stack) |
+| `examples/sir_inverse/`       | Full SIR epidemic model (Lightning stack)                                                                             |
+| `examples/seir_inverse/`      | SEIR epidemic model (Lightning stack)                                                                                 |
+| `examples/damped_oscillator/` | Damped harmonic oscillator (Lightning stack)                                                                          |
+| `examples/lotka_volterra/`    | Predator-prey dynamics (Lightning stack)                                                                              |
 
 ## Defining Your Own Problem
 
@@ -220,7 +220,7 @@ graph TD
 
 ### `anypinn.core` — The Math Layer
 
-Pure PyTorch. Defines what a PINN problem *is*, with no opinions about training.
+Pure PyTorch. Defines what a PINN problem _is_, with no opinions about training.
 
 - **`Problem`** — Aggregates constraints, fields, and parameters. Provides `training_loss()` and `predict()`.
 - **`Constraint`** (ABC) — A single loss term. Subclass it to express any physics equation, boundary condition, or data-matching objective.
@@ -228,7 +228,7 @@ Pure PyTorch. Defines what a PINN problem *is*, with no opinions about training.
 - **`Parameter`** — Learnable scalar or function-valued parameter (e.g., `β` in SIR).
 - **`InferredContext`** — Runtime domain bounds and validation references, extracted from data and injected into constraints automatically.
 
-### `anypinn.lightning` — The Training Engine *(optional)*
+### `anypinn.lightning` — The Training Engine _(optional)_
 
 A thin wrapper plugging a `Problem` into PyTorch Lightning:
 
@@ -251,13 +251,13 @@ Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catal
 
 ## Tooling
 
-| Tool | Purpose |
-|------|---------|
-| [uv](https://github.com/astral-sh/uv) | Dependency management |
-| [just](https://github.com/casey/just) | Task automation |
+| Tool                                      | Purpose                |
+| ----------------------------------------- | ---------------------- |
+| [uv](https://github.com/astral-sh/uv)     | Dependency management  |
+| [just](https://github.com/casey/just)     | Task automation        |
 | [Ruff](https://github.com/astral-sh/ruff) | Linting and formatting |
-| [pytest](https://docs.pytest.org/) | Testing |
-| [ty](https://docs.astral.sh/ty/) | Type checking |
+| [pytest](https://docs.pytest.org/)        | Testing                |
+| [ty](https://docs.astral.sh/ty/)          | Type checking          |
 
 All common tasks (test, lint, format, type-check, docs) are available via `just`.
 
