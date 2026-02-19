@@ -184,7 +184,7 @@ from anypinn.core import (
     GenerationConfig,
     IngestionConfig,
     MLPConfig,
-    SchedulerConfig,
+    ReduceLROnPlateauConfig,
 )
 from anypinn.problems import ODEHyperparameters
 
@@ -230,7 +230,7 @@ hp = ODEHyperparameters(
         activation="tanh",
         output_activation="softplus",
     ),
-    scheduler=SchedulerConfig(
+    scheduler=ReduceLROnPlateauConfig(
         mode="min",
         factor=0.5,
         patience=55,

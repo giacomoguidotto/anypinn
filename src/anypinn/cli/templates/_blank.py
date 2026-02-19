@@ -75,7 +75,7 @@ from anypinn.core import (
     IngestionConfig,
     MLPConfig,
     ScalarConfig,
-    SchedulerConfig,
+    ReduceLROnPlateauConfig,
 )
 from anypinn.problems import ODEHyperparameters
 

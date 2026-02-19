@@ -5,11 +5,14 @@ from torch import Tensor
 import torch.nn as nn
 
 from anypinn.core.config import (
+    AdamConfig,
+    CosineAnnealingConfig,
     GenerationConfig,
+    LBFGSConfig,
     MLPConfig,
     PINNHyperparameters,
+    ReduceLROnPlateauConfig,
     ScalarConfig,
-    SchedulerConfig,
 )
 from anypinn.core.context import InferredContext
 from anypinn.core.nn import Field, Parameter
@@ -23,7 +26,10 @@ class FixedConstraint(Constraint):
         return torch.tensor(1.0)
 
 
-def _make_hp(scheduler: SchedulerConfig | None = None) -> PINNHyperparameters:
+def _make_hp(
+    scheduler: ReduceLROnPlateauConfig | CosineAnnealingConfig | None = None,
+    optimizer: AdamConfig | LBFGSConfig | None = None,
+) -> PINNHyperparameters:
     return PINNHyperparameters(
         lr=1e-3,
         training_data=GenerationConfig(
@@ -36,6 +42,7 @@ def _make_hp(scheduler: SchedulerConfig | None = None) -> PINNHyperparameters:
         ),
         fields_config=MLPConfig(in_dim=1, out_dim=1, hidden_layers=[8], activation="tanh"),
         params_config=ScalarConfig(init_value=0.5),
+        optimizer=optimizer,
         scheduler=scheduler,
     )
 
@@ -59,7 +66,30 @@ class TestPINNModule:
         assert isinstance(result, torch.optim.Adam)
 
     def test_configure_optimizers_with_scheduler(self):
-        sch = SchedulerConfig(mode="min", factor=0.5, patience=10, threshold=1e-4, min_lr=1e-6)
+        sch = ReduceLROnPlateauConfig(
+            mode="min", factor=0.5, patience=10, threshold=1e-4, min_lr=1e-6
+        )
+        hp = _make_hp(scheduler=sch)
+        module = PINNModule(_make_problem(), hp)
+        result = module.configure_optimizers()
+        assert isinstance(result, dict)
+        assert "optimizer" in result
+        assert "lr_scheduler" in result
+
+    def test_configure_optimizers_with_adam_config(self):
+        hp = _make_hp(optimizer=AdamConfig(lr=1e-4, weight_decay=1e-5))
+        module = PINNModule(_make_problem(), hp)
+        result = module.configure_optimizers()
+        assert isinstance(result, torch.optim.Adam)
+
+    def test_configure_optimizers_with_lbfgs_config(self):
+        hp = _make_hp(optimizer=LBFGSConfig(lr=0.5, max_iter=10))
+        module = PINNModule(_make_problem(), hp)
+        result = module.configure_optimizers()
+        assert isinstance(result, torch.optim.LBFGS)
+
+    def test_configure_optimizers_with_cosine_annealing(self):
+        sch = CosineAnnealingConfig(T_max=100)
         hp = _make_hp(scheduler=sch)
         module = PINNModule(_make_problem(), hp)
         result = module.configure_optimizers()

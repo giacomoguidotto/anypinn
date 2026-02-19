@@ -8,7 +8,7 @@ import torch
 from torch import Tensor
 
 from anypinn.core import LOSS_KEY, LogFn, Predictions, Problem, TrainingBatch
-from anypinn.core.config import PINNHyperparameters
+from anypinn.core.config import AdamConfig, CosineAnnealingConfig, LBFGSConfig, PINNHyperparameters
 from anypinn.core.types import PredictionBatch
 
 
@@ -32,7 +32,6 @@ class PINNModule(pl.LightningModule):
 
         self.problem = problem
         self.hp = hp
-        self.scheduler = hp.scheduler
 
         def _log(key: str, value: Tensor, progress_bar: bool = False) -> None:
             self.log(
@@ -85,17 +84,53 @@ class PINNModule(pl.LightningModule):
         """
         Configures the optimizer and learning rate scheduler.
         """
-        opt = torch.optim.Adam(self.parameters(), lr=self.hp.lr)
-        if not self.scheduler:
+        opt_cfg = self.hp.optimizer
+        if isinstance(opt_cfg, LBFGSConfig):
+            opt = torch.optim.LBFGS(
+                self.parameters(),
+                lr=opt_cfg.lr,
+                max_iter=opt_cfg.max_iter,
+                max_eval=opt_cfg.max_eval,
+                history_size=opt_cfg.history_size,
+                line_search_fn=opt_cfg.line_search_fn,
+            )
+        elif isinstance(opt_cfg, AdamConfig):
+            opt = torch.optim.Adam(
+                self.parameters(),
+                lr=opt_cfg.lr,
+                betas=opt_cfg.betas,
+                weight_decay=opt_cfg.weight_decay,
+            )
+        else:
+            opt = torch.optim.Adam(self.parameters(), lr=self.hp.lr)
+
+        sch_cfg = self.hp.scheduler
+        if not sch_cfg:
             return opt
+
+        if isinstance(sch_cfg, CosineAnnealingConfig):
+            sch = torch.optim.lr_scheduler.CosineAnnealingLR(
+                opt,
+                T_max=sch_cfg.T_max,
+                eta_min=sch_cfg.eta_min,
+            )
+            return {
+                "optimizer": opt,
+                "lr_scheduler": {
+                    "name": "lr",
+                    "scheduler": sch,
+                    "interval": "epoch",
+                    "frequency": 1,
+                },
+            }
 
         sch = torch.optim.lr_scheduler.ReduceLROnPlateau(
             opt,
-            mode=self.scheduler.mode,
-            factor=self.scheduler.factor,
-            patience=self.scheduler.patience,
-            threshold=self.scheduler.threshold,
-            min_lr=self.scheduler.min_lr,
+            mode=sch_cfg.mode,
+            factor=sch_cfg.factor,
+            patience=sch_cfg.patience,
+            threshold=sch_cfg.threshold,
+            min_lr=sch_cfg.min_lr,
         )
 
         return {
