@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
+from os import cpu_count
 from typing import cast, override
 
 import lightning as pl
@@ -235,7 +236,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         return DataLoader[TrainingBatch](
             self.pinn_ds,
             batch_size=None,  # handled internally
-            num_workers=7,
+            num_workers=cpu_count() or 1,
             persistent_workers=True,
         )
 
@@ -247,7 +248,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         return DataLoader[PredictionBatch](
             cast(Dataset[PredictionBatch], self.predict_ds),
             batch_size=self._data_size,
-            num_workers=7,
+            num_workers=cpu_count() or 1,
             persistent_workers=True,
         )
 

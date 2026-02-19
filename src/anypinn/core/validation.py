@@ -111,9 +111,14 @@ def resolve_validation(
                 column_values = source.transform(column_values)
 
             def make_lookup_fn(values: Tensor) -> Callable[[Tensor], Tensor]:
+                cache: dict[torch.device, Tensor] = {}
+
                 def lookup(x: Tensor) -> Tensor:
+                    device = x.device
+                    if device not in cache:
+                        cache[device] = values.to(device)
                     idx = x.squeeze(-1).round().to(torch.int32)
-                    return values.to(x.device)[idx]
+                    return cache[device][idx]
 
                 return lookup
 

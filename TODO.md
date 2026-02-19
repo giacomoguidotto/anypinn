@@ -6,20 +6,26 @@ Analysis of `anypinn` covering scaling, performance, developer experience, and P
 
 ## 1. Scaling
 
-### S1. Hard-coded `num_workers=7` in DataLoaders
+### ~~S1. Hard-coded `num_workers=7` in DataLoaders~~ ✅
 **File:** `core/dataset.py:238,250`
 
-Both `train_dataloader()` and `predict_dataloader()` fix `num_workers=7`. This is machine-specific — it will over-subscribe on a 4-core laptop and under-utilise a 64-core server. Workers should be configurable (or default to `os.cpu_count()`).
+~~Both `train_dataloader()` and `predict_dataloader()` fix `num_workers=7`. This is machine-specific — it will over-subscribe on a 4-core laptop and under-utilise a 64-core server. Workers should be configurable (or default to `os.cpu_count()`).~~
 
-### S2. Repeated device transfers in validation lookups
+**Resolved:** Defaulted `num_workers` to `cpu_count() or 1`.
+
+### ~~S2. Repeated device transfers in validation lookups~~ ✅
 **File:** `core/validation.py:114-116`
 
-`make_lookup_fn` calls `values.to(x.device)` on every forward pass. The tensor should be moved once (e.g. via a `register_buffer` pattern or a device-aware closure) instead of per-call.
+~~`make_lookup_fn` calls `values.to(x.device)` on every forward pass. The tensor should be moved once (e.g. via a `register_buffer` pattern or a device-aware closure) instead of per-call.~~
 
-### S3. Scalar `Argument` allocates a new tensor every call
+**Resolved:** Added per-device cache in `make_lookup_fn` closure.
+
+### ~~S3. Scalar `Argument` allocates a new tensor every call~~ ✅
 **File:** `core/nn.py:146`
 
-`torch.tensor(self._value, device=x.device)` in `Argument.__call__` creates a fresh tensor each forward pass. For fixed-value arguments called millions of times per training run, cache the tensor per device.
+~~`torch.tensor(self._value, device=x.device)` in `Argument.__call__` creates a fresh tensor each forward pass. For fixed-value arguments called millions of times per training run, cache the tensor per device.~~
+
+**Resolved:** Added per-device `_tensor_cache` in `Argument`.
 
 ### S4. Collocation generator instantiates a new `torch.Generator` per batch
 **File:** `core/dataset.py:113`
@@ -205,14 +211,14 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | PDE5 | PDE | Critical | Small | Blocks all PDE work |
 | D1 | DX | High | Small | Silent production failures |
 | D2 | DX | High | Small | Bad error messages |
-| S1 | Scale | Medium | Small | Portability across hardware |
-| S2 | Scale | Medium | Small | O(n) wasted device transfers |
+| ~~S1~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~ | ~~Portability across hardware~~ ✅ |
+| ~~S2~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~ | ~~O(n) wasted device transfers~~ ✅ |
 | D5 | DX | Medium | Medium | Wrong validation on non-integer data |
 | PDE3 | PDE | High | Medium | Core utility for PDE constraints |
 | PDE4 | PDE | High | Medium | Needed for any 2D+ problem |
 | P3 | Perf | Medium | Medium | L-BFGS convergence gains |
 | D3 | DX | Medium | Medium | Prevents misconfiguration |
-| S3 | Scale | Low | Small | Minor allocation overhead |
+| ~~S3~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor allocation overhead~~ ✅ |
 | S4 | Scale | Low | Small | Minor allocation overhead |
 | S5 | Scale | Low | Small | Easy GPU bandwidth win |
 | S6 | Scale | Low | Small | Minor per-step overhead |
