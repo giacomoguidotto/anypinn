@@ -59,37 +59,47 @@ Analysis of `anypinn` covering scaling, performance, developer experience, and P
 
 ## 2. Performance
 
-### P1. Per-field autograd loop in `ResidualsConstraint`
+### ~~P1. Per-field autograd loop in `ResidualsConstraint`~~ ✅
 **File:** `problems/ode.py:90-95`
 
-Gradients are computed one field at a time in a list comprehension:
+~~Gradients are computed one field at a time in a list comprehension:~~
 ```python
 dy_dt = torch.stack([
     torch.autograd.grad(pred, x_coll, torch.ones_like(pred), create_graph=True)[0]
     for pred in preds
 ])
 ```
-This creates N separate backward graphs. Computing a single batched Jacobian (via `torch.vmap` + `jacrev`, or stacking outputs first) would be faster and use less memory for systems with many state variables.
+~~This creates N separate backward graphs. Computing a single batched Jacobian (via `torch.vmap` + `jacrev`, or stacking outputs first) would be faster and use less memory for systems with many state variables.~~
 
-### P2. `DataScaling` recomputes min/max without caching
+**Resolved:** Batched autograd calls in `ResidualsConstraint.loss`.
+
+### ~~P2. `DataScaling` recomputes min/max without caching~~ ✅
 **File:** `lightning/callbacks.py:192-194`
 
-`x.min()` and `x.max()` are called multiple times within `transform_data`. The results should be computed once and stored.
+~~`x.min()` and `x.max()` are called multiple times within `transform_data`. The results should be computed once and stored.~~
 
-### P3. Only Adam optimizer with ReduceLROnPlateau
+**Resolved:** Cached min/max in `DataScaling.transform_data`.
+
+### ~~P3. Only Adam optimizer with ReduceLROnPlateau~~ ✅
 **File:** `lightning/module.py:88-110`
 
-The optimizer and scheduler are hard-coded. L-BFGS is a well-known strong performer for PINN training (often converges in 10x fewer iterations). Users should be able to select the optimiser and scheduler family via config.
+~~The optimizer and scheduler are hard-coded. L-BFGS is a well-known strong performer for PINN training (often converges in 10x fewer iterations). Users should be able to select the optimiser and scheduler family via config.~~
 
-### P4. `SMMAStopping` uses a Python list as a ring buffer
+**Resolved:** Configurable optimizer and scheduler.
+
+### ~~P4. `SMMAStopping` uses a Python list as a ring buffer~~ ✅
 **File:** `lightning/callbacks.py:72-73`
 
-`self.smma_buffer.pop(0)` is O(n). For large lookback windows, use `collections.deque(maxlen=...)`.
+~~`self.smma_buffer.pop(0)` is O(n). For large lookback windows, use `collections.deque(maxlen=...)`.~~
 
-### P5. Validation loss computed during training even if only logged
+**Resolved:** Replaced list with `collections.deque(maxlen=lookback)`, removing manual `pop(0)`.
+
+### ~~P5. Validation loss computed during training even if only logged~~ ✅
 **File:** `core/problem.py:112-115`
 
-`_param_validation_loss` runs a full forward + MSE against ground truth every step inside `training_loss`. This is diagnostic, not part of the optimised loss, but it still appears on the backward graph. Consider detaching or computing it only every N epochs.
+~~`_param_validation_loss` runs a full forward + MSE against ground truth every step inside `training_loss`. This is diagnostic, not part of the optimised loss, but it still appears on the backward graph. Consider detaching or computing it only every N epochs.~~
+
+**Resolved:** Wrapped `_param_validation_loss` with `@torch.no_grad()` to avoid unnecessary graph construction.
 
 ---
 
@@ -213,7 +223,7 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 
 | ID | Category | Severity | Effort | Impact |
 |----|----------|----------|--------|--------|
-| P1 | Perf | High | Medium | 2-3x residual training speedup |
+| ~~P1~~ | ~~Perf~~ | ~~High~~ | ~~Medium~~ | ~~2-3x residual training speedup~~ ✅ |
 | PDE1 | PDE | Critical | Large | Blocks all PDE work |
 | PDE2 | PDE | Critical | Large | Blocks all PDE work |
 | PDE5 | PDE | Critical | Small | Blocks all PDE work |
@@ -224,16 +234,16 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | D5 | DX | Medium | Medium | Wrong validation on non-integer data |
 | PDE3 | PDE | High | Medium | Core utility for PDE constraints |
 | PDE4 | PDE | High | Medium | Needed for any 2D+ problem |
-| P3 | Perf | Medium | Medium | L-BFGS convergence gains |
+| ~~P3~~ | ~~Perf~~ | ~~Medium~~ | ~~Medium~~ | ~~L-BFGS convergence gains~~ ✅ |
 | D3 | DX | Medium | Medium | Prevents misconfiguration |
 | ~~S3~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor allocation overhead~~ ✅ |
 | ~~S4~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor allocation overhead~~ ✅ |
 | ~~S5~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Easy GPU bandwidth win~~ ✅ |
 | ~~S6~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor per-step overhead~~ ✅ |
 | ~~S7~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Trivial~~ ✅ |
-| P2 | Perf | Low | Small | Minor |
-| P4 | Perf | Low | Small | Only matters for huge lookback |
-| P5 | Perf | Low | Small | Diagnostic overhead |
+| ~~P2~~ | ~~Perf~~ | ~~Low~~ | ~~Small~~ | ~~Minor~~ ✅ |
+| ~~P4~~ | ~~Perf~~ | ~~Low~~ | ~~Small~~ | ~~Only matters for huge lookback~~ ✅ |
+| ~~P5~~ | ~~Perf~~ | ~~Low~~ | ~~Small~~ | ~~Diagnostic overhead~~ ✅ |
 | D6 | DX | Low | Small | Repeated I/O |
 | D7 | DX | Low | Small | Edge-case crash |
 | D8 | DX | Medium | Small | Onboarding |
