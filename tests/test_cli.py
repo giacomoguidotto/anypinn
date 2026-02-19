@@ -322,8 +322,15 @@ class TestListTemplates:
     def test_invalid_template_exits_nonzero(self, tmp_path: Path) -> None:
         result = runner.invoke(
             app,
-            ["create", str(tmp_path / "proj"), "--template", "bad-value",
-             "--data", "synthetic", "--lightning"],
+            [
+                "create",
+                str(tmp_path / "proj"),
+                "--template",
+                "bad-value",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
         )
         assert result.exit_code != 0
         assert "bad-value" in result.output
@@ -333,8 +340,15 @@ class TestListTemplates:
     def test_invalid_template_exit_code_is_2(self, tmp_path: Path) -> None:
         result = runner.invoke(
             app,
-            ["create", str(tmp_path / "proj"), "--template", "notreal",
-             "--data", "synthetic", "--lightning"],
+            [
+                "create",
+                str(tmp_path / "proj"),
+                "--template",
+                "notreal",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
         )
         assert result.exit_code == 2
 

@@ -26,17 +26,19 @@ from anypinn.problems import ODEHyperparameters, ODEInverseProblem, ODEPropertie
 # ── 1. Ground-truth data (analytic solution) ─────────────────────────────────
 K_TRUE = 0.7
 t = torch.linspace(0, 5, 60).unsqueeze(-1)  # (60, 1)
-y = torch.exp(-K_TRUE * t)                   # (60, 1)
-t_coll = torch.rand(500, 1) * 5             # (500, 1) collocation points
+y = torch.exp(-K_TRUE * t)  # (60, 1)
+t_coll = torch.rand(500, 1) * 5  # (500, 1) collocation points
 
 # ── 2. Dataset + DataLoader ───────────────────────────────────────────────────
 dataset = PINNDataset(x_data=t, y_data=y, x_coll=t_coll, batch_size=30, data_ratio=10)
 loader = DataLoader(dataset, batch_size=None, num_workers=0)
 
+
 # ── 3. ODE: dy/dt = -k·y ─────────────────────────────────────────────────────
 def exp_decay(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     (y_hat,) = y
     return torch.stack([-args["k"](x) * y_hat])
+
 
 # ── 4. Fields, parameters, problem ───────────────────────────────────────────
 mlp = MLPConfig(in_dim=1, out_dim=1, hidden_layers=[32, 32], activation="tanh")
@@ -85,6 +87,5 @@ for epoch in range(200):
     if (epoch + 1) % 50 == 0:
         k_hat = params["k"](t[:1]).item()
         print(
-            f"epoch {epoch + 1:4d}  loss={loss.item():.3e}"
-            f"  k_learned={k_hat:.4f}  k_true={K_TRUE}"
+            f"epoch {epoch + 1:4d}  loss={loss.item():.3e}  k_learned={k_hat:.4f}  k_true={K_TRUE}"
         )
