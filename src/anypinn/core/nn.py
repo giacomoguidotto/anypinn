@@ -32,7 +32,10 @@ class Domain1D:
     @classmethod
     def from_x(cls, x: Tensor) -> Domain1D:
         """Create a domain from x coordinates."""
-        assert x.shape[0] > 1, "At least two points are required to infer the domain."
+        if x.shape[0] <= 1:
+            raise ValueError(
+                f"At least two points are required to infer the domain, got {x.shape[0]}."
+            )
 
         x0, x1 = x[0].item(), x[-1].item()
         dx = (x[1] - x[0]).item()
@@ -217,7 +220,8 @@ class Parameter(nn.Module, Argument):
         if self.mode == "scalar":
             return self.value if x is None else self.value.expand_as(x)
         else:
-            assert x is not None, "Function-valued parameter requires input"
+            if x is None:
+                raise TypeError("Function-valued parameter requires input.")
             return cast(Tensor, self.net(x))
 
 

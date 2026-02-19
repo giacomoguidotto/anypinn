@@ -59,6 +59,16 @@ class AdamConfig:
     betas: tuple[float, float] = (0.9, 0.999)
     weight_decay: float = 0.0
 
+    def __post_init__(self) -> None:
+        if self.lr <= 0:
+            raise ValueError(f"lr must be positive, got {self.lr}.")
+        if self.weight_decay < 0:
+            raise ValueError(f"weight_decay must be non-negative, got {self.weight_decay}.")
+        if not (0 < self.betas[0] < 1):
+            raise ValueError(f"betas[0] must be in (0, 1), got {self.betas[0]}.")
+        if not (0 < self.betas[1] < 1):
+            raise ValueError(f"betas[1] must be in (0, 1), got {self.betas[1]}.")
+
 
 @dataclass(kw_only=True)
 class LBFGSConfig:
@@ -71,6 +81,14 @@ class LBFGSConfig:
     max_eval: int | None = None
     history_size: int = 100
     line_search_fn: str | None = "strong_wolfe"
+
+    def __post_init__(self) -> None:
+        if self.lr <= 0:
+            raise ValueError(f"lr must be positive, got {self.lr}.")
+        if self.max_iter <= 0:
+            raise ValueError(f"max_iter must be positive, got {self.max_iter}.")
+        if self.history_size <= 0:
+            raise ValueError(f"history_size must be positive, got {self.history_size}.")
 
 
 @dataclass(kw_only=True)
@@ -85,6 +103,12 @@ class ReduceLROnPlateauConfig:
     threshold: float
     min_lr: float
 
+    def __post_init__(self) -> None:
+        if not (0 < self.factor < 1):
+            raise ValueError(f"factor must be in (0, 1), got {self.factor}.")
+        if self.patience <= 0:
+            raise ValueError(f"patience must be positive, got {self.patience}.")
+
 
 @dataclass(kw_only=True)
 class CosineAnnealingConfig:
@@ -95,6 +119,10 @@ class CosineAnnealingConfig:
     T_max: int
     eta_min: float = 0.0
 
+    def __post_init__(self) -> None:
+        if self.T_max <= 0:
+            raise ValueError(f"T_max must be positive, got {self.T_max}.")
+
 
 @dataclass(kw_only=True)
 class EarlyStoppingConfig:
@@ -104,6 +132,10 @@ class EarlyStoppingConfig:
 
     patience: int
     mode: Literal["min", "max"]
+
+    def __post_init__(self) -> None:
+        if self.patience <= 0:
+            raise ValueError(f"patience must be positive, got {self.patience}.")
 
 
 @dataclass(kw_only=True)
@@ -116,6 +148,14 @@ class SMMAStoppingConfig:
     threshold: float
     lookback: int
 
+    def __post_init__(self) -> None:
+        if self.window <= 0:
+            raise ValueError(f"window must be positive, got {self.window}.")
+        if self.lookback <= 0:
+            raise ValueError(f"lookback must be positive, got {self.lookback}.")
+        if self.threshold <= 0:
+            raise ValueError(f"threshold must be positive, got {self.threshold}.")
+
 
 @dataclass(kw_only=True)
 class TrainingDataConfig:
@@ -126,6 +166,20 @@ class TrainingDataConfig:
     batch_size: int
     data_ratio: int | float
     collocations: int
+
+    def __post_init__(self) -> None:
+        if self.batch_size <= 0:
+            raise ValueError(f"batch_size must be positive, got {self.batch_size}.")
+        if self.collocations < 0:
+            raise ValueError(f"collocations must be non-negative, got {self.collocations}.")
+        if isinstance(self.data_ratio, float):
+            if not (0.0 <= self.data_ratio <= 1.0):
+                raise ValueError(f"Float data_ratio must be in [0.0, 1.0], got {self.data_ratio}.")
+        else:
+            if not (0 <= self.data_ratio <= self.batch_size):
+                raise ValueError(
+                    f"Integer data_ratio must be in [0, {self.batch_size}], got {self.data_ratio}."
+                )
 
 
 @dataclass(kw_only=True)
@@ -166,3 +220,7 @@ class PINNHyperparameters:
     scheduler: ReduceLROnPlateauConfig | CosineAnnealingConfig | None = None
     early_stopping: EarlyStoppingConfig | None = None
     smma_stopping: SMMAStoppingConfig | None = None
+
+    def __post_init__(self) -> None:
+        if self.lr <= 0:
+            raise ValueError(f"lr must be positive, got {self.lr}.")

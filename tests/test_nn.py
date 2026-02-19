@@ -29,7 +29,7 @@ class TestDomain1D:
 
     def test_from_x_single_point_raises(self):
         x = torch.tensor([5.0]).unsqueeze(-1)
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError, match="At least two points"):
             Domain1D.from_x(x)
 
     def test_repr(self):
@@ -162,7 +162,7 @@ class TestParameter:
         assert out.shape == (5, 1)
 
     def test_mlp_requires_input(self, mlp_param: Parameter):
-        with pytest.raises(AssertionError):
+        with pytest.raises(TypeError):
             mlp_param(None)
 
     def test_scalar_is_learnable(self, scalar_param: Parameter):
