@@ -105,20 +105,26 @@ dy_dt = torch.stack([
 
 ## 3. Developer Experience (DX)
 
-### D1. Assertions instead of `ValueError` / `TypeError`
+### ~~D1. Assertions instead of `ValueError` / `TypeError`~~ ✅
 **File:** `core/dataset.py:198-204`, `core/nn.py:35`, `core/dataset.py:62,65,68`
 
-All shape and value checks use `assert`, which is stripped by `python -O`. These should be proper `ValueError` raises with descriptive messages explaining the expected vs. actual shape.
+~~All shape and value checks use `assert`, which is stripped by `python -O`. These should be proper `ValueError` raises with descriptive messages explaining the expected vs. actual shape.~~
 
-### D2. No config validation in `__post_init__`
+**Resolved:** Replaced all `assert` statements with `ValueError`, `TypeError`, and `RuntimeError` with descriptive messages in `nn.py` and `dataset.py`.
+
+### ~~D2. No config validation in `__post_init__`~~ ✅
 **File:** `core/config.py` (all dataclasses)
 
-`lr`, `batch_size`, `data_ratio`, `collocations`, etc. are never validated at construction time. A negative `lr` or zero `batch_size` only surfaces as a cryptic runtime error deep in training. Add `__post_init__` guards.
+~~`lr`, `batch_size`, `data_ratio`, `collocations`, etc. are never validated at construction time. A negative `lr` or zero `batch_size` only surfaces as a cryptic runtime error deep in training. Add `__post_init__` guards.~~
 
-### D3. Registry key mismatches are silent
+**Resolved:** Added `__post_init__` validation to `AdamConfig`, `LBFGSConfig`, `ReduceLROnPlateauConfig`, `CosineAnnealingConfig`, `EarlyStoppingConfig`, `SMMAStoppingConfig`, `TrainingDataConfig`, and `PINNHyperparameters`.
+
+### ~~D3. Registry key mismatches are silent~~ ✅
 **Files:** `core/problem.py`, `problems/ode.py`
 
-If the keys in `FieldsRegistry` don't match the outputs expected by the ODE callable, the error surfaces as a shape mismatch or `KeyError` deep in autograd. A factory or builder that validates registry keys against the ODE signature would catch this at construction time.
+~~If the keys in `FieldsRegistry` don't match the outputs expected by the ODE callable, the error surfaces as a shape mismatch or `KeyError` deep in autograd. A factory or builder that validates registry keys against the ODE signature would catch this at construction time.~~
+
+**Resolved:** Added `ODEProperties.expected_args` (optional `frozenset[str]`) and construction-time validation of field count vs y0 length in `ResidualsConstraint` and `ICConstraint`. When `expected_args` is set, missing keys are reported immediately.
 
 ### D4. Squeeze/unsqueeze assumptions are fragile
 **File:** `core/problem.py:135-138`
@@ -227,15 +233,15 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | PDE1 | PDE | Critical | Large | Blocks all PDE work |
 | PDE2 | PDE | Critical | Large | Blocks all PDE work |
 | PDE5 | PDE | Critical | Small | Blocks all PDE work |
-| D1 | DX | High | Small | Silent production failures |
-| D2 | DX | High | Small | Bad error messages |
+| ~~D1~~ | ~~DX~~ | ~~High~~ | ~~Small~~ | ~~Silent production failures~~ ✅ |
+| ~~D2~~ | ~~DX~~ | ~~High~~ | ~~Small~~ | ~~Bad error messages~~ ✅ |
 | ~~S1~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~ | ~~Portability across hardware~~ ✅ |
 | ~~S2~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~ | ~~O(n) wasted device transfers~~ ✅ |
 | D5 | DX | Medium | Medium | Wrong validation on non-integer data |
 | PDE3 | PDE | High | Medium | Core utility for PDE constraints |
 | PDE4 | PDE | High | Medium | Needed for any 2D+ problem |
 | ~~P3~~ | ~~Perf~~ | ~~Medium~~ | ~~Medium~~ | ~~L-BFGS convergence gains~~ ✅ |
-| D3 | DX | Medium | Medium | Prevents misconfiguration |
+| ~~D3~~ | ~~DX~~ | ~~Medium~~ | ~~Medium~~ | ~~Prevents misconfiguration~~ ✅ |
 | ~~S3~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor allocation overhead~~ ✅ |
 | ~~S4~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor allocation overhead~~ ✅ |
 | ~~S5~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Easy GPU bandwidth win~~ ✅ |

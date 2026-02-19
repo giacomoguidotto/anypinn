@@ -60,13 +60,18 @@ class PINNDataset(Dataset[TrainingBatch]):
         data_ratio: float | int,
     ):
         super().__init__()
-        assert batch_size > 0
+        if batch_size <= 0:
+            raise ValueError(f"batch_size must be positive, got {batch_size}.")
 
         if isinstance(data_ratio, float):
-            assert 0.0 <= data_ratio <= 1.0
+            if not (0.0 <= data_ratio <= 1.0):
+                raise ValueError(f"Float data_ratio must be in [0.0, 1.0], got {data_ratio}.")
             self.K = round(data_ratio * batch_size)
         else:
-            assert 0 <= data_ratio <= batch_size
+            if not (0 <= data_ratio <= batch_size):
+                raise ValueError(
+                    f"Integer data_ratio must be in [0, {batch_size}], got {data_ratio}."
+                )
             self.K = data_ratio
 
         self.x_data = x_data
@@ -198,13 +203,16 @@ class PINNDataModule(pl.LightningDataModule, ABC):
 
         x_data, y_data = self.data
 
-        assert x_data.shape[0] == y_data.shape[0], "Size mismatch between x and y."
-        assert x_data.ndim == 2, "x shape differs than (n, 1)."
-        assert x_data.shape[1] == 1, "x shape differs than (n, 1)."
-        assert y_data.ndim > 1, "y shape cannot be (n)."
-        assert y_data.shape[-1] == 1, "y shape differs than (n, 1)."
-        assert self.coll.ndim == 2, "coll shape differs than (m, 1)."
-        assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
+        if x_data.shape[0] != y_data.shape[0]:
+            raise ValueError(
+                f"Size mismatch: x has {x_data.shape[0]} rows, y has {y_data.shape[0]} rows."
+            )
+        if x_data.ndim != 2 or x_data.shape[1] != 1:
+            raise ValueError(f"Expected x shape (n, 1), got {tuple(x_data.shape)}.")
+        if y_data.ndim < 2 or y_data.shape[-1] != 1:
+            raise ValueError(f"Expected y shape (n, ..., 1), got {tuple(y_data.shape)}.")
+        if self.coll.ndim != 2 or self.coll.shape[1] != 1:
+            raise ValueError(f"Expected coll shape (m, 1), got {tuple(self.coll.shape)}.")
 
         self._data_size = x_data.shape[0]
 
@@ -258,7 +266,6 @@ class PINNDataModule(pl.LightningDataModule, ABC):
 
     @property
     def context(self) -> InferredContext:
-        assert self._context is not None, (
-            "Context does not exist. `setup` stage not completed yet."
-        )
+        if self._context is None:
+            raise RuntimeError("Context does not exist. Call setup() before accessing context.")
         return self._context

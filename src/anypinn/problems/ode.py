@@ -37,11 +37,14 @@ class ODEProperties:
         ode: The ODE function (callable).
         args: Arguments/Parameters for the ODE.
         y0: Initial conditions.
+        expected_args: Optional set of arg keys the ODE function accesses.
+            When provided, validated against the merged args+params at construction time.
     """
 
     ode: ODECallable
     args: ArgsRegistry
     y0: Tensor
+    expected_args: frozenset[str] | None = None
 
 
 class ResidualsConstraint(Constraint):
@@ -63,6 +66,21 @@ class ResidualsConstraint(Constraint):
         params: ParamsRegistry,
         weight: float = 1.0,
     ):
+        if len(fields) != len(props.y0):
+            raise ValueError(
+                f"Number of fields ({len(fields)}) must match number of initial conditions "
+                f"in y0 ({len(props.y0)}). Field keys: {list(fields)}."
+            )
+
+        merged_args: dict[str, object] = {**props.args, **params}
+        if props.expected_args is not None:
+            missing = props.expected_args - merged_args.keys()
+            if missing:
+                raise ValueError(
+                    f"ODE function expects args {sorted(missing)!r} but they are not in "
+                    f"props.args or params. Available keys: {sorted(merged_args.keys())!r}."
+                )
+
         self.fields = fields
         self.weight = weight
 
@@ -115,6 +133,12 @@ class ICConstraint(Constraint):
         fields: FieldsRegistry,
         weight: float = 1.0,
     ):
+        if len(fields) != len(props.y0):
+            raise ValueError(
+                f"Number of fields ({len(fields)}) must match number of initial conditions "
+                f"in y0 ({len(props.y0)}). Field keys: {list(fields)}."
+            )
+
         self.Y0 = props.y0.clone().reshape(-1, 1, 1)
         self.fields = fields
         self.weight = weight

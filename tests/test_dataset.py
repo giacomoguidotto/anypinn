@@ -67,7 +67,7 @@ class TestPINNDataset:
         assert ds.C == 0
 
     def test_batch_size_zero_raises(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError, match="batch_size must be positive"):
             PINNDataset(
                 torch.randn(10, 1),
                 torch.randn(10, 1),
@@ -77,7 +77,7 @@ class TestPINNDataset:
             )
 
     def test_invalid_float_ratio_raises(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError, match="Float data_ratio must be in"):
             PINNDataset(
                 torch.randn(10, 1),
                 torch.randn(10, 1),
