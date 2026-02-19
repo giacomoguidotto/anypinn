@@ -79,6 +79,8 @@ class PINNDataset(Dataset[TrainingBatch]):
         self.total_data = x_data.shape[0]
         self.total_coll = x_coll.shape[0]
 
+        self._coll_gen = torch.Generator()
+
     def __len__(self) -> int:
         """Number of steps per epoch to see all data points once. Ceiling division."""
         return (self.total_data + self.K - 1) // self.K
@@ -111,8 +113,8 @@ class PINNDataset(Dataset[TrainingBatch]):
         if self.total_coll == 0:
             return torch.empty(0, 1)
 
-        temp_gen = torch.Generator().manual_seed(idx)
-        return torch.randint(0, self.total_coll, (self.C,), generator=temp_gen)
+        self._coll_gen.manual_seed(idx)
+        return torch.randint(0, self.total_coll, (self.C,), generator=self._coll_gen)
 
 
 class PINNDataModule(pl.LightningDataModule, ABC):
@@ -238,6 +240,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
             batch_size=None,  # handled internally
             num_workers=cpu_count() or 1,
             persistent_workers=True,
+            pin_memory=True,
         )
 
     @override
@@ -250,6 +253,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
             batch_size=self._data_size,
             num_workers=cpu_count() or 1,
             persistent_workers=True,
+            pin_memory=True,
         )
 
     @property
