@@ -80,18 +80,17 @@ class ResidualsConstraint(Constraint):
         log: LogFn | None = None,
     ) -> Tensor:
         _, x_coll = batch
-        x_coll.requires_grad_()
 
-        preds = [f(x_coll) for f in self.fields.values()]
+        n = len(self.fields)
+        x_copies = [x_coll.detach().clone().requires_grad_(True) for _ in range(n)]
+        preds = [f(x_copies[i]) for i, f in enumerate(self.fields.values())]
         y = torch.stack(preds)
 
         dy_dt_pred = self.ode(x_coll, y, self.args)
 
+        ones = torch.ones_like(preds[0])
         dy_dt = torch.stack(
-            [
-                torch.autograd.grad(pred, x_coll, torch.ones_like(pred), create_graph=True)[0]
-                for pred in preds
-            ]
+            torch.autograd.grad(preds, x_copies, [ones] * n, create_graph=True)
         )
 
         loss: Tensor = self.weight * criterion(dy_dt, dy_dt_pred)
