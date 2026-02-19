@@ -189,10 +189,12 @@ class DataScaling(DataCallback):
     def transform_data(self, data: DataBatch, coll: Tensor) -> tuple[DataBatch, Tensor]:
         x, y = data
 
-        self.x_scale = x.max() - x.min()
+        x_min, x_max = x.min(), x.max()
+        self.x_scale = x_max - x_min
+        x = (x - x_min) / self.x_scale
 
-        x = (x - x.min()) / (x.max() - x.min())
-        coll = (coll - coll.min()) / (coll.max() - coll.min())
+        coll_min, coll_max = coll.min(), coll.max()
+        coll = (coll - coll_min) / (coll_max - coll_min)
 
         n_series = y.shape[1] if y.ndim == 3 else 1
 
