@@ -129,6 +129,7 @@ class Argument:
 
     def __init__(self, value: float | Callable[[Tensor], Tensor]):
         self._value = value
+        self._tensor_cache: dict[torch.device, Tensor] = {}
 
     def __call__(self, x: Tensor) -> Tensor:
         """
@@ -142,8 +143,10 @@ class Argument:
         """
         if callable(self._value):
             return self._value(x)
-        else:
-            return torch.tensor(self._value, device=x.device)
+        device = x.device
+        if device not in self._tensor_cache:
+            self._tensor_cache[device] = torch.tensor(self._value, device=device)
+        return self._tensor_cache[device]
 
     @override
     def __repr__(self) -> str:
