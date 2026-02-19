@@ -27,20 +27,26 @@ Analysis of `anypinn` covering scaling, performance, developer experience, and P
 
 **Resolved:** Added per-device `_tensor_cache` in `Argument`.
 
-### S4. Collocation generator instantiates a new `torch.Generator` per batch
+### ~~S4. Collocation generator instantiates a new `torch.Generator` per batch~~ ✅
 **File:** `core/dataset.py:113`
 
-`torch.Generator().manual_seed(idx)` is allocated in `__getitem__`. A single reusable generator re-seeded each call would avoid repeated object allocation at scale.
+~~`torch.Generator().manual_seed(idx)` is allocated in `__getitem__`. A single reusable generator re-seeded each call would avoid repeated object allocation at scale.~~
 
-### S5. No GPU memory pinning or prefetching
+**Resolved:** Created `self._coll_gen` once in `__init__` and re-seed it each call.
+
+### ~~S5. No GPU memory pinning or prefetching~~ ✅
 **File:** `core/dataset.py:235-252`
 
-Neither `pin_memory=True` nor any prefetch factor is set on the DataLoaders. For GPU training this leaves easy bandwidth on the table.
+~~Neither `pin_memory=True` nor any prefetch factor is set on the DataLoaders. For GPU training this leaves easy bandwidth on the table.~~
 
-### S6. `ICConstraint` moves tensors to device every loss call
+**Resolved:** Added `pin_memory=True` to both `train_dataloader` and `predict_dataloader`.
+
+### ~~S6. `ICConstraint` moves tensors to device every loss call~~ ✅
 **File:** `problems/ode.py:141-142`
 
-`self.t0.to(device)` and `self.Y0.to(device)` inside `loss()` re-run every step. These should be moved once at `inject_context` time or registered as buffers.
+~~`self.t0.to(device)` and `self.Y0.to(device)` inside `loss()` re-run every step. These should be moved once at `inject_context` time or registered as buffers.~~
+
+**Resolved:** Tensors are moved to device on first `loss()` call and cached for subsequent calls.
 
 ### S7. Loss accumulator creates an unnecessary zero tensor
 **File:** `core/problem.py:107`
@@ -219,9 +225,9 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | P3 | Perf | Medium | Medium | L-BFGS convergence gains |
 | D3 | DX | Medium | Medium | Prevents misconfiguration |
 | ~~S3~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor allocation overhead~~ ✅ |
-| S4 | Scale | Low | Small | Minor allocation overhead |
-| S5 | Scale | Low | Small | Easy GPU bandwidth win |
-| S6 | Scale | Low | Small | Minor per-step overhead |
+| ~~S4~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor allocation overhead~~ ✅ |
+| ~~S5~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Easy GPU bandwidth win~~ ✅ |
+| ~~S6~~ | ~~Scale~~ | ~~Low~~ | ~~Small~~ | ~~Minor per-step overhead~~ ✅ |
 | S7 | Scale | Low | Small | Trivial |
 | P2 | Perf | Low | Small | Minor |
 | P4 | Perf | Low | Small | Only matters for huge lookback |

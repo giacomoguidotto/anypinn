@@ -138,12 +138,13 @@ class ICConstraint(Constraint):
     ) -> Tensor:
         device = batch[1].device
 
-        t0 = self.t0.to(device)
-        Y0 = self.Y0.to(device)
+        if self.t0.device != device:
+            self.t0 = self.t0.to(device)
+            self.Y0 = self.Y0.to(device)
 
-        Y0_preds = torch.stack([f(t0) for f in self.fields.values()])
+        Y0_preds = torch.stack([f(self.t0) for f in self.fields.values()])
 
-        loss: Tensor = criterion(Y0_preds, Y0)
+        loss: Tensor = criterion(Y0_preds, self.Y0)
         loss = self.weight * loss
 
         if log is not None:
