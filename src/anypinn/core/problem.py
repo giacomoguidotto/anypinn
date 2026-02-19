@@ -169,6 +169,7 @@ class Problem(nn.Module):
 
         return self.context.validation[param_name](x)
 
+    @torch.no_grad()
     def _param_validation_loss(
         self, param_name: str, param: Parameter, x_coll: Tensor
     ) -> Tensor | None:

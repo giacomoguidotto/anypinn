@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import deque
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any, Literal, TypeAlias, override
@@ -31,7 +32,7 @@ class SMMAStopping(Callback):
         self.loss_key = loss_key
         self.log_key = log_key
         self.loss_buffer: list[float] = []
-        self.smma_buffer: list[float] = []
+        self.smma_buffer: deque[float] = deque(maxlen=self.config.lookback)
 
     @override
     def on_train_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
@@ -69,7 +70,6 @@ class SMMAStopping(Callback):
         # phase 3: compute the improvement between the current and the `lookback` SMMA
         smma_lookback = self.smma_buffer[0]
         improvement = (smma_lookback - smma) / smma_lookback
-        self.smma_buffer.pop(0)
 
         if 0 < improvement < self.config.threshold:
             trainer.should_stop = True
