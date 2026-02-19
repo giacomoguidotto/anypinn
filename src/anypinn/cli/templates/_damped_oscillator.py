@@ -207,7 +207,7 @@ from anypinn.core import (
     IngestionConfig,
     MLPConfig,
     ScalarConfig,
-    SchedulerConfig,
+    ReduceLROnPlateauConfig,
 )
 from anypinn.problems import ODEHyperparameters
 
@@ -249,7 +249,7 @@ hp = ODEHyperparameters(
     params_config=ScalarConfig(
         init_value=0.3,
     ),
-    scheduler=SchedulerConfig(
+    scheduler=ReduceLROnPlateauConfig(
         mode="min",
         factor=0.5,
         patience=55,

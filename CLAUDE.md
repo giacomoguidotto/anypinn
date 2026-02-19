@@ -148,7 +148,8 @@ PINNHyperparameters
 ├── fields_config: MLPConfig
 │   └── in_dim, out_dim, hidden_layers, activation, output_activation, encode
 ├── params_config: MLPConfig | ScalarConfig
-├── scheduler: SchedulerConfig | None
+├── optimizer: AdamConfig | LBFGSConfig | None
+├── scheduler: ReduceLROnPlateauConfig | CosineAnnealingConfig | None
 ├── early_stopping: EarlyStoppingConfig | None
 └── smma_stopping: SMMAStoppingConfig | None
 ```

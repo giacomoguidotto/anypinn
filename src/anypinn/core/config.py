@@ -50,7 +50,31 @@ class ScalarConfig:
 
 
 @dataclass(kw_only=True)
-class SchedulerConfig:
+class AdamConfig:
+    """
+    Configuration for the Adam optimizer.
+    """
+
+    lr: float = 1e-3
+    betas: tuple[float, float] = (0.9, 0.999)
+    weight_decay: float = 0.0
+
+
+@dataclass(kw_only=True)
+class LBFGSConfig:
+    """
+    Configuration for the L-BFGS optimizer.
+    """
+
+    lr: float = 1.0
+    max_iter: int = 20
+    max_eval: int | None = None
+    history_size: int = 100
+    line_search_fn: str | None = "strong_wolfe"
+
+
+@dataclass(kw_only=True)
+class ReduceLROnPlateauConfig:
     """
     Configuration for Learning Rate Scheduler (ReduceLROnPlateau).
     """
@@ -60,6 +84,16 @@ class SchedulerConfig:
     patience: int
     threshold: float
     min_lr: float
+
+
+@dataclass(kw_only=True)
+class CosineAnnealingConfig:
+    """
+    Configuration for Cosine Annealing LR Scheduler.
+    """
+
+    T_max: int
+    eta_min: float = 0.0
 
 
 @dataclass(kw_only=True)
@@ -128,6 +162,7 @@ class PINNHyperparameters:
     training_data: IngestionConfig | GenerationConfig
     fields_config: MLPConfig
     params_config: MLPConfig | ScalarConfig
-    scheduler: SchedulerConfig | None = None
+    optimizer: AdamConfig | LBFGSConfig | None = None
+    scheduler: ReduceLROnPlateauConfig | CosineAnnealingConfig | None = None
     early_stopping: EarlyStoppingConfig | None = None
     smma_stopping: SMMAStoppingConfig | None = None

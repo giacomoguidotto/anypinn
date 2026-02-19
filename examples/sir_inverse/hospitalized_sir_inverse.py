@@ -29,7 +29,7 @@ from anypinn.core import (
     Parameter,
     ParamsRegistry,
     Predictions,
-    SchedulerConfig,
+    ReduceLROnPlateauConfig,
     ValidationRegistry,
 )
 from anypinn.lightning import PINNModule, SMMAStopping
@@ -129,7 +129,7 @@ def main(config: RunConfig) -> None:
             activation="tanh",
             output_activation="softplus",
         ),
-        scheduler=SchedulerConfig(
+        scheduler=ReduceLROnPlateauConfig(
             mode="min",
             factor=0.5,
             patience=55,
