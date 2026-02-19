@@ -30,8 +30,8 @@ class Template(str, Enum):
         descriptions: dict[Template, str] = {
             Template.SIR: "Classic S→I→R compartmental model. Learns transmission rate β.",
             Template.SEIR: "Extended epidemic model with exposed compartment E. Learns β.",
-            Template.DAMPED_OSCILLATOR: "Harmonic oscillator with damping. Learns damping ratio ζ.",
-            Template.LOTKA_VOLTERRA: "Predator-prey dynamics with Fourier encoding. Learns predation rate β.",
+            Template.DAMPED_OSCILLATOR: "Harmonic oscillator with damping. Learns damping ratio ζ.",  # noqa: E501
+            Template.LOTKA_VOLTERRA: "Predator-prey dynamics with Fourier encoding. Learns predation rate β.",  # noqa: E501
             Template.CUSTOM: "Minimal skeleton for a user-defined ODE. All factories are stubs.",
             Template.BLANK: "Empty project structure with no ODE—start from scratch.",
         }

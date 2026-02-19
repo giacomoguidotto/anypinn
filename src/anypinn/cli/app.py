@@ -98,7 +98,7 @@ def create(
             )
             _console.print(f"[dim]Valid values:[/] {valid}")
             _print_templates()
-            raise Exit(code=2)
+            raise Exit(code=2) from None
 
     # Header
     _console.print()
