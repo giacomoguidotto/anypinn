@@ -206,5 +206,7 @@ style = "semver"
 fallback-version = "0.0.0"
 
 [tool.semantic_release]
-branch = "main"
 tag_format = "v{version}"
+
+[tool.semantic_release.branches.main]
+match = "(main|master)"
