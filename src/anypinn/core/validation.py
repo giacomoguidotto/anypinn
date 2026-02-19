@@ -35,6 +35,24 @@ class ColumnRef:
     transform: Callable[[Tensor], Tensor] | None = None
 
 
+class _ColumnLookup:
+    """
+    Internal wrapper for ColumnRef-resolved lookup functions.
+
+    Signals to Problem._get_true_param that the wrapped function expects
+    integer row indices rather than domain coordinates, so the caller
+    can perform the coordinate → index mapping using the known domain.
+    """
+
+    __slots__ = ("_fn",)
+
+    def __init__(self, fn: Callable[[Tensor], Tensor]) -> None:
+        self._fn = fn
+
+    def __call__(self, x: Tensor) -> Tensor:
+        return self._fn(x)
+
+
 ValidationSource: TypeAlias = Callable[[Tensor], Tensor] | ColumnRef | None
 """
 A source for ground truth values. Can be:
@@ -124,6 +142,6 @@ def resolve_validation(
 
                 return lookup
 
-            resolved[name] = make_lookup_fn(column_values)
+            resolved[name] = _ColumnLookup(make_lookup_fn(column_values))
 
     return resolved
