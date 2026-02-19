@@ -17,7 +17,7 @@ license-files = ["LICENSE*"]
 
 # https://pypi.org/classifiers/
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
@@ -210,4 +210,3 @@ tag_format = "v{version}"
 
 [tool.semantic_release.branches.main]
 match = "(main|master)"
-

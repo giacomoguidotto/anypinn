@@ -52,6 +52,8 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/) w
 - `feat:` — minor release (0.X.0)
 - `feat!:` / `BREAKING CHANGE:` — major release (X.0.0)
 
+**Do not `git commit --amend` after pushing to `main`.** Semantic-release tags the original commit SHA; amending creates a new SHA and orphans the tag, causing the next release to skip with "already been released."
+
 ## Architecture
 
 ### Module Map
