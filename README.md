@@ -242,8 +242,11 @@ All common tasks (test, lint, format, type-check, docs) are available via `just`
 > **devenv users:** [devenv](https://devenv.sh) redirects `uv sync` installs to `.devenv/state/venv` instead of the standard `.venv`, so ty cannot auto-discover it. Create a gitignored `ty.toml` at the project root with:
 > ```toml
 > [environment]
+> python-version = "3.13"
 > python = "./.devenv/state/venv"
+> root = ["./src"]
 > ```
+> (`ty.toml` takes full precedence over `pyproject.toml`, so all three settings are required.)
 
 ## 🤝 Contributing
 
