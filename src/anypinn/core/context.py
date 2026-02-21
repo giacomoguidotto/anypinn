@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 from torch import Tensor
 
-from anypinn.core.nn import Domain1D
+from anypinn.core.nn import Domain
 from anypinn.core.validation import ResolvedValidation
 
 
@@ -33,5 +33,5 @@ class InferredContext:
             validation: Resolved validation dictionary.
         """
 
-        self.domain = Domain1D.from_x(x)
+        self.domain = Domain.from_x(x)
         self.validation = validation

@@ -55,7 +55,7 @@ class TestSIRInvDataModule:
     def test_gen_coll_shape(self):
         from anypinn.catalog.sir import SIRInvDataModule
         from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
-        from anypinn.core.nn import Domain1D
+        from anypinn.core.nn import Domain
         from anypinn.problems.ode import ODEHyperparameters
 
         hp = ODEHyperparameters(
@@ -73,7 +73,7 @@ class TestSIRInvDataModule:
         )
 
         dm = SIRInvDataModule(hp=hp)
-        domain = Domain1D(x0=0.0, x1=50.0, dx=0.5)
+        domain = Domain(bounds=[(0.0, 50.0)], dx=[0.5])
         coll = dm.gen_coll(domain)
 
         assert coll.shape == (200, 1)
@@ -84,7 +84,7 @@ class TestDampedOscillatorDataModule:
     def test_gen_coll_shape(self):
         from anypinn.catalog.damped_oscillator import DampedOscillatorDataModule
         from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
-        from anypinn.core.nn import Domain1D
+        from anypinn.core.nn import Domain
         from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
         hp = ODEHyperparameters(
@@ -106,7 +106,7 @@ class TestDampedOscillatorDataModule:
 
         props = ODEProperties(ode=osc_ode, args={}, y0=torch.tensor([1.0, 0.0]))
         dm = DampedOscillatorDataModule(hp=hp, gen_props=props)
-        domain = Domain1D(x0=0.0, x1=10.0, dx=0.2)
+        domain = Domain(bounds=[(0.0, 10.0)], dx=[0.2])
         coll = dm.gen_coll(domain)
 
         assert coll.shape == (100, 1)
@@ -118,7 +118,7 @@ class TestLotkaVolterraDataModule:
     def test_gen_coll_shape(self):
         from anypinn.catalog.lotka_volterra import LotkaVolterraDataModule
         from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
-        from anypinn.core.nn import Domain1D
+        from anypinn.core.nn import Domain
         from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
         hp = ODEHyperparameters(
@@ -140,7 +140,7 @@ class TestLotkaVolterraDataModule:
 
         props = ODEProperties(ode=lv_ode, args={}, y0=torch.tensor([10.0, 5.0]))
         dm = LotkaVolterraDataModule(hp=hp, gen_props=props)
-        domain = Domain1D(x0=0.0, x1=10.0, dx=0.2)
+        domain = Domain(bounds=[(0.0, 10.0)], dx=[0.2])
         coll = dm.gen_coll(domain)
 
         assert coll.shape == (100, 1)
@@ -150,7 +150,7 @@ class TestSEIRDataModule:
     def test_gen_coll_shape(self):
         from anypinn.catalog.seir import SEIRDataModule
         from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
-        from anypinn.core.nn import Domain1D
+        from anypinn.core.nn import Domain
         from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
         hp = ODEHyperparameters(
@@ -172,7 +172,7 @@ class TestSEIRDataModule:
 
         props = ODEProperties(ode=seir_ode, args={}, y0=torch.tensor([990.0, 0.0, 10.0]))
         dm = SEIRDataModule(hp=hp, gen_props=props)
-        domain = Domain1D(x0=0.0, x1=10.0, dx=0.2)
+        domain = Domain(bounds=[(0.0, 10.0)], dx=[0.2])
         coll = dm.gen_coll(domain)
 
         assert coll.shape == (100, 1)

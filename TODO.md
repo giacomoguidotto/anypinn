@@ -197,15 +197,15 @@ y = y.unsqueeze(-1)
 
 ## 4. PDE Expansion Readiness
 
-### PDE1. `Domain1D` is the only domain representation — Critical
+### ~~PDE1. `Domain1D` is the only domain representation — Critical~~ ✅
 
-**File:** `core/nn.py:18-44`
+~~**File:** `core/nn.py:18-44`~~
 
-The domain is hard-coded as a 1-D interval `[x0, x1]` with scalar step `dx`. PDEs require multi-dimensional domains (rectangles, circles, irregular meshes). A `Domain` base class with `Domain1D`, `Domain2D`, `DomainND` subclasses is needed. This cascades through:
+~~The domain is hard-coded as a 1-D interval `[x0, x1]` with scalar step `dx`. PDEs require multi-dimensional domains (rectangles, circles, irregular meshes). A `Domain` base class with `Domain1D`, `Domain2D`, `DomainND` subclasses is needed. This cascades through:~~
 
-- `InferredContext` (holds a single `Domain1D`)
-- `PINNDataModule.gen_coll()` signature (takes `Domain1D`)
-- `PINNDataset` shape assertions (hard-code `shape[1] == 1`)
+~~- `InferredContext` (holds a single `Domain1D`)~~
+~~- `PINNDataModule.gen_coll()` signature (takes `Domain1D`)~~
+~~- `PINNDataset` shape assertions (hard-code `shape[1] == 1`)~~
 
 ### PDE2. No boundary condition abstraction
 
@@ -278,7 +278,7 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | ID     | Category  | Severity   | Effort     | Impact                                      |
 | ------ | --------- | ---------- | ---------- | ------------------------------------------- |
 | ~~P1~~ | ~~Perf~~  | ~~High~~   | ~~Medium~~ | ~~2-3x residual training speedup~~ ✅       |
-| PDE1   | PDE       | Critical   | Large      | Blocks all PDE work                         |
+| ~~PDE1~~ | ~~PDE~~ | ~~Critical~~ | ~~Large~~ | ~~Blocks all PDE work~~ ✅                |
 | PDE2   | PDE       | Critical   | Large      | Blocks all PDE work                         |
 | PDE5   | PDE       | Critical   | Small      | Blocks all PDE work                         |
 | ~~D1~~ | ~~DX~~    | ~~High~~   | ~~Small~~  | ~~Silent production failures~~ ✅           |

@@ -173,7 +173,13 @@ class Problem(nn.Module):
 
         if isinstance(fn, _ColumnLookup):
             domain = self.context.domain
-            x_idx = ((x.squeeze(-1) - domain.x0) / domain.dx).round().unsqueeze(-1)
+            if domain.dx is None:
+                raise ValueError(
+                    f"Cannot perform ColumnRef lookup for '{param_name}': "
+                    "domain step size (dx) is unknown. Ensure the domain was inferred from "
+                    "a uniformly-spaced coordinate tensor, or use a callable validation source."
+                )
+            x_idx = ((x.squeeze(-1) - domain.x0) / domain.dx[0]).round().unsqueeze(-1)
             return fn(x_idx)
 
         return fn(x)

@@ -7,13 +7,7 @@ import torch
 from torch import Tensor
 from torchdiffeq import odeint
 
-from anypinn.core import (
-    DataCallback,
-    Domain1D,
-    GenerationConfig,
-    PINNDataModule,
-    ValidationRegistry,
-)
+from anypinn.core import DataCallback, Domain, GenerationConfig, PINNDataModule, ValidationRegistry
 from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
 X_KEY = "x"
@@ -40,7 +34,7 @@ class LotkaVolterraDataModule(PINNDataModule):
         self.noise_frac = noise_frac
 
     @override
-    def gen_coll(self, domain: Domain1D) -> Tensor:
+    def gen_coll(self, domain: Domain) -> Tensor:
         """Generate uniform collocation points."""
         coll = torch.rand((self.hp.training_data.collocations, 1))
         x0 = torch.tensor(domain.x0, dtype=torch.float32)

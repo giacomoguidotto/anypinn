@@ -13,7 +13,7 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset
 
 from anypinn.core.config import GenerationConfig, IngestionConfig, PINNHyperparameters
 from anypinn.core.context import InferredContext
-from anypinn.core.nn import Domain1D
+from anypinn.core.nn import Domain
 from anypinn.core.types import DataBatch, PredictionBatch, TrainingBatch
 from anypinn.core.validation import ValidationRegistry, resolve_validation
 
@@ -172,7 +172,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         """Generate synthetic data from GenerationConfig."""
 
     @abstractmethod
-    def gen_coll(self, domain: Domain1D) -> Tensor:
+    def gen_coll(self, domain: Domain) -> Tensor:
         """Generate collocation points."""
 
     @override
@@ -195,7 +195,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         )
 
         self.coll = self.gen_coll(
-            Domain1D.from_x(self.data[0]),
+            Domain.from_x(self.data[0]),
         )
 
         for callback in self.callbacks:
@@ -207,12 +207,19 @@ class PINNDataModule(pl.LightningDataModule, ABC):
             raise ValueError(
                 f"Size mismatch: x has {x_data.shape[0]} rows, y has {y_data.shape[0]} rows."
             )
-        if x_data.ndim != 2 or x_data.shape[1] != 1:
-            raise ValueError(f"Expected x shape (n, 1), got {tuple(x_data.shape)}.")
+        if x_data.ndim != 2 or x_data.shape[1] < 1:
+            raise ValueError(f"Expected x shape (n, d) with d >= 1, got {tuple(x_data.shape)}.")
         if y_data.ndim < 2 or y_data.shape[-1] != 1:
             raise ValueError(f"Expected y shape (n, ..., 1), got {tuple(y_data.shape)}.")
-        if self.coll.ndim != 2 or self.coll.shape[1] != 1:
-            raise ValueError(f"Expected coll shape (m, 1), got {tuple(self.coll.shape)}.")
+        if self.coll.ndim != 2 or self.coll.shape[1] < 1:
+            raise ValueError(
+                f"Expected coll shape (m, d) with d >= 1, got {tuple(self.coll.shape)}."
+            )
+        if x_data.shape[1] != self.coll.shape[1]:
+            raise ValueError(
+                f"Spatial dimension mismatch: x_data has d={x_data.shape[1]}, "
+                f"coll has d={self.coll.shape[1]}. Both must share the same number of dimensions."
+            )
 
         self._data_size = x_data.shape[0]
 
