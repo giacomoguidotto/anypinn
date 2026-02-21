@@ -1,7 +1,3 @@
----
-icon: material/scale-balance
----
-
 # Design Rationale & Future Work
 
 This document addresses two questions: **why AnyPINN exists** given the breadth of existing PINN

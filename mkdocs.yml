@@ -85,6 +85,8 @@ plugins:
       # These links are valid but htmlproofer cannot resolve them correctly.
       ignore_urls:
         - "*#anypinn.*"
+hooks:
+  - docs/hooks/page_icons.py
 watch:
   # Watch src/ directory to reload on changes to docstrings for mkdocstrings plugin.
   - src
