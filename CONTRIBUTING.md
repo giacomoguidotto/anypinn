@@ -2,6 +2,8 @@
 
 Welcome! Contributions are warmly appreciated — bug reports, new problem templates, constraint types, documentation improvements, and more.
 
+By participating in this project you agree to abide by the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## 🛠️ Setup
 
 > **Prerequisites:** Python 3.11+, [uv](https://github.com/astral-sh/uv).

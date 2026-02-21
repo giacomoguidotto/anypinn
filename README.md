@@ -250,4 +250,4 @@ All common tasks (test, lint, format, type-check, docs) are available via `just`
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for setup instructions, code style guidelines, and the pull request workflow.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, code style guidelines, and the pull request workflow.
