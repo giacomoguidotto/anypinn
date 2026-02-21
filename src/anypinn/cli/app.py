@@ -65,7 +65,7 @@ def create(
     ] = None,
     lightning: Annotated[
         bool | None,
-        Option("--lightning/-L/--no-lightning/-NL", help="Include Lightning wrapper"),
+        Option("--lightning/--no-lightning", "-L/-NL", help="Include Lightning wrapper"),
     ] = None,
     list_templates: Annotated[
         bool,
