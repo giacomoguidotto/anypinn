@@ -7,7 +7,6 @@ Material for MkDocs features.
 
 from __future__ import annotations
 
-
 PAGE_ICONS: dict[str, str] = {
     "index.md": "material/math-integral-box",
     "CONTRIBUTING.md": "material/source-pull",
