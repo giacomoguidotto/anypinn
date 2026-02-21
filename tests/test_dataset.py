@@ -1,9 +1,45 @@
-"""Tests for anypinn.core.dataset — PINNDataset."""
+"""Tests for anypinn.core.dataset — PINNDataset and PINNDataModule."""
 
 import pytest
 import torch
+from torch import Tensor
+from typing_extensions import override
 
-from anypinn.core.dataset import PINNDataset
+from anypinn.core.config import GenerationConfig, MLPConfig, PINNHyperparameters, ScalarConfig
+from anypinn.core.dataset import PINNDataModule, PINNDataset
+from anypinn.core.nn import Domain
+from anypinn.core.types import DataBatch
+
+_HP = PINNHyperparameters(
+    lr=1e-3,
+    training_data=GenerationConfig(
+        batch_size=16,
+        data_ratio=0.5,
+        collocations=50,
+        x=torch.linspace(0, 1, 40).unsqueeze(-1),
+        noise_level=0.0,
+        args_to_train={},
+    ),
+    fields_config=MLPConfig(in_dim=2, out_dim=1, hidden_layers=[8], activation="tanh"),
+    params_config=ScalarConfig(init_value=1.0),
+)
+
+
+class _Dummy2DDataModule(PINNDataModule):
+    """Concrete DataModule with 2-D spatial inputs for testing."""
+
+    @override
+    def gen_data(self, config: GenerationConfig) -> DataBatch:
+        x = torch.rand(40, 2)
+        y = torch.rand(40, 1)
+        return x, y
+
+    @override
+    def gen_coll(self, domain: Domain) -> Tensor:
+        pts = torch.rand(50, domain.ndim)
+        for i, (lo, hi) in enumerate(domain.bounds):
+            pts[:, i] = pts[:, i] * (hi - lo) + lo
+        return pts
 
 
 class TestPINNDataset:
@@ -95,3 +131,39 @@ class TestPINNDataset:
         (x_b, _y_b), coll_b = ds[0]
         assert x_b.shape[1] == 2
         assert coll_b.shape[1] == 2
+
+
+class TestPINNDataModuleSetup:
+    def _make_dm(self) -> _Dummy2DDataModule:
+        return _Dummy2DDataModule(hp=_HP)
+
+    def test_setup_succeeds_with_2d_data(self):
+        """setup() must not raise when x_data and coll both have d=2."""
+        dm = self._make_dm()
+        dm.setup()
+
+    def test_context_domain_has_correct_ndim(self):
+        """InferredContext.domain.ndim must equal the input spatial dimension."""
+        dm = self._make_dm()
+        dm.setup()
+        assert dm.context.domain.ndim == 2
+
+    def test_pinn_dataset_batch_shapes_are_multidim(self):
+        """Batches produced by the dataset must preserve d=2 in x and coll."""
+        dm = self._make_dm()
+        dm.setup()
+        (x_b, _), coll_b = dm.pinn_ds[0]
+        assert x_b.shape[1] == 2
+        assert coll_b.shape[1] == 2
+
+    def test_setup_rejects_dimension_mismatch(self):
+        """setup() must raise ValueError when x_data.d != coll.d."""
+
+        class _MismatchedDM(_Dummy2DDataModule):
+            @override
+            def gen_coll(self, domain: Domain) -> Tensor:
+                return torch.rand(50, 1)  # d=1 while x_data has d=2
+
+        dm = _MismatchedDM(hp=_HP)
+        with pytest.raises(ValueError, match="Spatial dimension mismatch"):
+            dm.setup()

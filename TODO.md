@@ -242,16 +242,18 @@ A differential operator utility (e.g. `grad(u, x, order=2)`, `laplacian(u, coord
 - `LatinHypercubeSampler`
 - `AdaptiveSampler` (residual-based refinement)
 
-### PDE5. Shape assertions block multi-dimensional inputs
+### ~~PDE5. Shape assertions block multi-dimensional inputs~~ ✅
 
-**File:** `core/dataset.py:199-204`
+~~**File:** `core/dataset.py:199-204`~~
 
 ```python
 assert x_data.shape[1] == 1, "x shape differs than (n, 1)."
 assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 ```
 
-These must be relaxed to `shape[1] == d` where `d` is the spatial dimension. Otherwise no PDE can pass through `PINNDataModule.setup()`.
+~~These must be relaxed to `shape[1] == d` where `d` is the spatial dimension. Otherwise no PDE can pass through `PINNDataModule.setup()`.~~
+
+**Resolved:** Assertions replaced with `ValueError` checks allowing `d >= 1` and enforcing `x_data.shape[1] == coll.shape[1]`. Test coverage added in `tests/test_dataset.py::TestPINNDataModuleSetup`.
 
 ### PDE6. `Field` input encoding assumes 1-D
 
@@ -280,7 +282,7 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | ~~P1~~ | ~~Perf~~  | ~~High~~   | ~~Medium~~ | ~~2-3x residual training speedup~~ ✅       |
 | ~~PDE1~~ | ~~PDE~~ | ~~Critical~~ | ~~Large~~ | ~~Blocks all PDE work~~ ✅                |
 | ~~PDE2~~ | ~~PDE~~ | ~~Critical~~ | ~~Large~~ | ~~Blocks all PDE work~~ ✅                |
-| PDE5   | PDE       | Critical   | Small      | Blocks all PDE work                         |
+| ~~PDE5~~ | ~~PDE~~ | ~~Critical~~ | ~~Small~~ | ~~Blocks all PDE work~~ ✅                |
 | ~~D1~~ | ~~DX~~    | ~~High~~   | ~~Small~~  | ~~Silent production failures~~ ✅           |
 | ~~D2~~ | ~~DX~~    | ~~High~~   | ~~Small~~  | ~~Bad error messages~~ ✅                   |
 | ~~S1~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~  | ~~Portability across hardware~~ ✅          |

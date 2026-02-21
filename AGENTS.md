@@ -44,6 +44,14 @@ uv run pytest tests/                    # Run tests directly
 uv run pytest tests/test_foo.py::test_bar  # Run single test
 ```
 
+## Verification
+
+**Always run `just ci` to verify your work.** This is the single command that runs lint, type checking, and the full test suite in one shot. Do not run individual tools (`ruff`, `ty`, `pytest`) separately — `just ci` is the canonical check.
+
+```bash
+just ci   # lint + type check + full test suite (must pass before committing)
+```
+
 ## Commit Conventions
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/) with semantic-release. Commit prefixes trigger automated releases:
