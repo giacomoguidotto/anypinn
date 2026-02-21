@@ -1,3 +1,6 @@
+---
+icon: material/handshake
+---
 
 # Contributor Covenant Code of Conduct
 

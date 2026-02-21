@@ -1,3 +1,7 @@
+---
+icon: material/math-integral-box
+---
+
 # AnyPINN
 
 [![CI][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)

@@ -1,3 +1,7 @@
+---
+icon: material/source-pull
+---
+
 # Contributing
 
 Welcome! Contributions are warmly appreciated — bug reports, new problem templates, constraint types, documentation improvements, and more.
