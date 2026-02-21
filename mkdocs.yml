@@ -96,5 +96,8 @@ repo_url: https://github.com/giacomoguidotto/anypinn
 edit_uri: edit/main/docs/
 nav:
   - index.md
+  - Design Rationale & Future Work: rationale.md
+  - Contributing: CONTRIBUTING.md
+  - Code of Conduct: CODE_OF_CONDUCT.md
   - Third Party Licenses:
     - licenses/license_report.md
