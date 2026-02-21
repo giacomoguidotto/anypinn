@@ -1,4 +1,4 @@
-"""Tests for anypinn.core.nn — Field, Parameter, Argument, Domain1D."""
+"""Tests for anypinn.core.nn — Field, Parameter, Argument, Domain."""
 
 import pytest
 import torch
@@ -6,37 +6,52 @@ from torch import Tensor
 import torch.nn as nn
 
 from anypinn.core.config import MLPConfig
-from anypinn.core.nn import Argument, Domain1D, Field, Parameter, get_activation
+from anypinn.core.nn import Argument, Domain, Field, Parameter, get_activation
 from anypinn.core.types import Activations
 
-# ── Domain1D ──────────────────────────────────────────────────────────
+# ── Domain ────────────────────────────────────────────────────────────
 
 
-class TestDomain1D:
-    def test_from_x_basic(self):
-        x = torch.tensor([0.0, 0.5, 1.0, 1.5, 2.0]).unsqueeze(-1)
-        d = Domain1D.from_x(x)
+class TestDomain:
+    def test_from_x_1d(self):
+        x = torch.tensor([[0.0], [0.5], [1.0], [1.5], [2.0]])
+        d = Domain.from_x(x)
+        assert d.ndim == 1
         assert d.x0 == pytest.approx(0.0)
         assert d.x1 == pytest.approx(2.0)
-        assert d.dx == pytest.approx(0.5)
+        assert d.dx == pytest.approx([0.5])
 
     def test_from_x_two_points(self):
-        x = torch.tensor([3.0, 7.0]).unsqueeze(-1)
-        d = Domain1D.from_x(x)
+        x = torch.tensor([[3.0], [7.0]])
+        d = Domain.from_x(x)
         assert d.x0 == pytest.approx(3.0)
         assert d.x1 == pytest.approx(7.0)
-        assert d.dx == pytest.approx(4.0)
+        assert d.dx == pytest.approx([4.0])
+
+    def test_from_x_2d(self):
+        x = torch.rand(50, 2)
+        d = Domain.from_x(x)
+        assert d.ndim == 2
+        assert len(d.bounds) == 2
 
     def test_from_x_single_point_raises(self):
-        x = torch.tensor([5.0]).unsqueeze(-1)
+        x = torch.tensor([[5.0]])
         with pytest.raises(ValueError, match="At least two points"):
-            Domain1D.from_x(x)
+            Domain.from_x(x)
+
+    def test_from_x_1d_tensor_raises(self):
+        x = torch.tensor([0.0, 1.0, 2.0])
+        with pytest.raises(ValueError, match="2-D coordinate tensor"):
+            Domain.from_x(x)
 
     def test_repr(self):
-        d = Domain1D(x0=0.0, x1=1.0, dx=0.1)
-        assert "Domain1D" in repr(d)
-        assert "0.0" in repr(d)
-        assert "1.0" in repr(d)
+        d = Domain(bounds=[(0.0, 1.0)], dx=[0.1])
+        assert "Domain" in repr(d)
+
+    def test_manual_construction_no_dx(self):
+        d = Domain(bounds=[(0.0, 1.0), (0.0, 1.0)])
+        assert d.ndim == 2
+        assert d.dx is None
 
 
 # ── get_activation ────────────────────────────────────────────────────

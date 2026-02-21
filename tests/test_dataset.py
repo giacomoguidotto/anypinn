@@ -85,3 +85,13 @@ class TestPINNDataset:
                 batch_size=16,
                 data_ratio=1.5,
             )
+
+    def test_pinndata_accepts_multidim_x(self):
+        """PINNDataset must not reject x/coll with d > 1."""
+        x = torch.rand(100, 2)
+        y = torch.rand(100, 3, 1)
+        coll = torch.rand(200, 2)
+        ds = PINNDataset(x_data=x, y_data=y, x_coll=coll, batch_size=10, data_ratio=0.5)
+        (x_b, _y_b), coll_b = ds[0]
+        assert x_b.shape[1] == 2
+        assert coll_b.shape[1] == 2

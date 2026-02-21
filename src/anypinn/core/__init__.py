@@ -19,7 +19,7 @@ from anypinn.core.dataset import DataCallback, PINNDataModule, PINNDataset
 from anypinn.core.nn import (
     ArgsRegistry,
     Argument,
-    Domain1D,
+    Domain,
     Field,
     FieldsRegistry,
     Parameter,
@@ -47,7 +47,7 @@ __all__ = [
     "CosineAnnealingConfig",
     "DataBatch",
     "DataCallback",
-    "Domain1D",
+    "Domain",
     "EarlyStoppingConfig",
     "Field",
     "FieldsRegistry",

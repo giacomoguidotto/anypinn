@@ -6,7 +6,7 @@ from torch import Tensor
 
 from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
 from anypinn.core.context import InferredContext
-from anypinn.core.nn import Argument, Domain1D, Field, Parameter
+from anypinn.core.nn import Argument, Domain, Field, Parameter
 from anypinn.core.types import TrainingBatch
 from anypinn.core.validation import ResolvedValidation
 
@@ -76,8 +76,8 @@ def training_batch(x_tensor: Tensor, y_tensor: Tensor) -> TrainingBatch:
 
 
 @pytest.fixture
-def domain() -> Domain1D:
-    return Domain1D(x0=0.0, x1=10.0, dx=0.2)
+def domain() -> Domain:
+    return Domain(bounds=[(0.0, 10.0)], dx=[0.2])
 
 
 @pytest.fixture

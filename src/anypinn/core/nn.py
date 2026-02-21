@@ -15,36 +15,59 @@ from anypinn.core.types import Activations
 
 
 @dataclass
-class Domain1D:
+class Domain:
     """
-    One-dimensional domain: time interval [x0, x1] with step size dx.
+    N-dimensional rectangular domain.
 
     Attributes:
-        x0: Start of the interval.
-        x1: End of the interval.
-        dx: Step size for discretization (if applicable).
+        bounds: Per-dimension (min, max) pairs. ``bounds[i]`` covers dimension i.
+        dx: Per-dimension step size (``None`` when not applicable).
     """
 
-    x0: float
-    x1: float
-    dx: float
+    bounds: list[tuple[float, float]]
+    dx: list[float] | None = None
+
+    @property
+    def ndim(self) -> int:
+        """Number of spatial dimensions."""
+        return len(self.bounds)
+
+    @property
+    def x0(self) -> float:
+        """Lower bound of the first dimension (convenience for 1-D / time-axis access)."""
+        return self.bounds[0][0]
+
+    @property
+    def x1(self) -> float:
+        """Upper bound of the first dimension."""
+        return self.bounds[0][1]
 
     @classmethod
-    def from_x(cls, x: Tensor) -> Domain1D:
-        """Create a domain from x coordinates."""
-        if x.shape[0] <= 1:
+    def from_x(cls, x: Tensor) -> Domain:
+        """
+        Infer domain bounds and step sizes from a coordinate tensor of shape (N, d).
+
+        Args:
+            x: Coordinate tensor of shape ``(N, d)``.
+
+        Returns:
+            Domain with bounds and dx inferred from the data.
+        """
+        if x.ndim != 2:
+            raise ValueError(f"Expected 2-D coordinate tensor (N, d), got shape {tuple(x.shape)}.")
+        if x.shape[0] < 2:
             raise ValueError(
                 f"At least two points are required to infer the domain, got {x.shape[0]}."
             )
 
-        x0, x1 = x[0].item(), x[-1].item()
-        dx = (x[1] - x[0]).item()
-
-        return cls(x0=x0, x1=x1, dx=dx)
+        d = x.shape[1]
+        bounds = [(x[:, i].min().item(), x[:, i].max().item()) for i in range(d)]
+        dx = [(x[1, i] - x[0, i]).item() for i in range(d)]
+        return cls(bounds=bounds, dx=dx)
 
     @override
     def __repr__(self) -> str:
-        return f"Domain1D(x0={self.x0}, x1={self.x1}, dx={self.dx})"
+        return f"Domain(ndim={self.ndim}, bounds={self.bounds}, dx={self.dx})"
 
 
 def get_activation(name: Activations) -> nn.Module:
