@@ -10,10 +10,20 @@ from anypinn.problems.ode import (
     PredictDataFn,
     ResidualsConstraint,
 )
+from anypinn.problems.pde import (
+    BCValueFn,
+    BoundaryCondition,
+    DirichletBCConstraint,
+    NeumannBCConstraint,
+)
 
 __all__ = [
+    "BCValueFn",
+    "BoundaryCondition",
     "DataConstraint",
+    "DirichletBCConstraint",
     "ICConstraint",
+    "NeumannBCConstraint",
     "ODECallable",
     "ODEHyperparameters",
     "ODEInverseProblem",
