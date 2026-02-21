@@ -239,7 +239,11 @@ Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catal
 
 All common tasks (test, lint, format, type-check, docs) are available via `just`.
 
-> **devenv users:** `pyproject.toml` contains a `python = "./.devenv/state/venv"` entry under `[tool.ty.environment]`. This is required because [devenv](https://devenv.sh) redirects `uv sync` installs to `.devenv/state/venv` instead of the standard `.venv`. If you are not using devenv, remove that line — ty will auto-discover `.venv` on its own.
+> **devenv users:** [devenv](https://devenv.sh) redirects `uv sync` installs to `.devenv/state/venv` instead of the standard `.venv`, so ty cannot auto-discover it. Create a gitignored `ty.toml` at the project root with:
+> ```toml
+> [environment]
+> python = "./.devenv/state/venv"
+> ```
 
 ## 🤝 Contributing
 

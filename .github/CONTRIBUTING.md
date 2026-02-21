@@ -12,7 +12,11 @@ cd anypinn
 uv sync
 ```
 
-> **Note on `[tool.ty.environment]` in `pyproject.toml`:** The `python = "./.devenv/state/venv"` entry is only needed when using [devenv](https://devenv.sh), which redirects `uv sync` installs away from the standard `.venv` directory. If you are not using devenv, remove or comment out that line — ty will auto-discover `.venv` as usual.
+> **devenv users:** [devenv](https://devenv.sh) redirects `uv sync` installs to `.devenv/state/venv` instead of the standard `.venv`, so ty cannot auto-discover it. Create a gitignored `ty.toml` at the project root with:
+> ```toml
+> [environment]
+> python = "./.devenv/state/venv"
+> ```
 
 All common tasks are driven by `just`:
 

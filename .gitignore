@@ -1,4 +1,5 @@
 .idea
+ty.toml
 .mypy_cache
 .nox
 .pytest_cache

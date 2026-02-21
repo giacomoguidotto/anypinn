@@ -112,9 +112,6 @@ default-groups = "all"
 
 [tool.ty.environment]
 python-version = "3.13"
-# devenv (https://devenv.sh) redirects `uv sync` to .devenv/state/venv instead of .venv.
-# Remove this line if you are not using devenv — ty will auto-detect .venv instead.
-python = "./.devenv/state/venv"
 root = ["./src"]
 
 [tool.ty.src]
