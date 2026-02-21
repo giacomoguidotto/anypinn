@@ -207,17 +207,17 @@ y = y.unsqueeze(-1)
 ~~- `PINNDataModule.gen_coll()` signature (takes `Domain1D`)~~
 ~~- `PINNDataset` shape assertions (hard-code `shape[1] == 1`)~~
 
-### PDE2. No boundary condition abstraction
+### ~~PDE2. No boundary condition abstraction~~
 
-**File:** `problems/ode.py`
+~~**File:** `problems/ode.py`~~
 
-The three constraint types (`ResidualsConstraint`, `ICConstraint`, `DataConstraint`) are ODE-specific. PDEs need:
+~~The three constraint types (`ResidualsConstraint`, `ICConstraint`, `DataConstraint`) are ODE-specific. PDEs need:~~
 
-- **Dirichlet** BC: `u(x) = g(x)` on boundary
-- **Neumann** BC: `du/dn = h(x)` on boundary
-- **Robin / periodic / mixed** BCs
+~~- **Dirichlet** BC: `u(x) = g(x)` on boundary~~
+~~- **Neumann** BC: `du/dn = h(x)` on boundary~~
+~~- **Robin / periodic / mixed** BCs~~
 
-These should live in a new `anypinn.problems.pde` module as `Constraint` subclasses, each receiving a boundary region and a target function.
+~~These should live in a new `anypinn.problems.pde` module as `Constraint` subclasses, each receiving a boundary region and a target function.~~ ✅
 
 ### PDE3. No higher-order or mixed derivative utilities
 
@@ -279,7 +279,7 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | ------ | --------- | ---------- | ---------- | ------------------------------------------- |
 | ~~P1~~ | ~~Perf~~  | ~~High~~   | ~~Medium~~ | ~~2-3x residual training speedup~~ ✅       |
 | ~~PDE1~~ | ~~PDE~~ | ~~Critical~~ | ~~Large~~ | ~~Blocks all PDE work~~ ✅                |
-| PDE2   | PDE       | Critical   | Large      | Blocks all PDE work                         |
+| ~~PDE2~~ | ~~PDE~~ | ~~Critical~~ | ~~Large~~ | ~~Blocks all PDE work~~ ✅                |
 | PDE5   | PDE       | Critical   | Small      | Blocks all PDE work                         |
 | ~~D1~~ | ~~DX~~    | ~~High~~   | ~~Small~~  | ~~Silent production failures~~ ✅           |
 | ~~D2~~ | ~~DX~~    | ~~High~~   | ~~Small~~  | ~~Bad error messages~~ ✅                   |

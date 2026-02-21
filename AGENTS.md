@@ -75,9 +75,11 @@ src/anypinn/
 │                             PredictionsWriter, DataScaling
 │
 ├── problems/              ← GENERALIZED ODE ABSTRACTIONS, depends on core
-│   └── ode.py             ← ResidualsConstraint, ICConstraint, DataConstraint,
-│                             ODECallable, ODEProperties, ODEHyperparameters,
-│                             ODEInverseProblem, PredictDataFn
+│   ├── ode.py             ← ResidualsConstraint, ICConstraint, DataConstraint,
+│   │                         ODECallable, ODEProperties, ODEHyperparameters,
+│   │                         ODEInverseProblem, PredictDataFn
+│   └── pde.py             ← DirichletBCConstraint, NeumannBCConstraint,
+│                             BoundaryCondition, BCValueFn
 │
 ├── catalog/               ← PROBLEM-SPECIFIC BUILDING BLOCKS, depends on problems
 │   ├── sir.py             ← SIR/rSIR ODE functions, SIRInvDataModule, constants
@@ -244,7 +246,9 @@ nn.Module
 Constraint (ABC)
 ├── ResidualsConstraint   (ODE residual loss)
 ├── ICConstraint          (initial condition loss)
-└── DataConstraint        (data-matching loss)
+├── DataConstraint        (data-matching loss)
+├── DirichletBCConstraint (Dirichlet BC: u = g on boundary)
+└── NeumannBCConstraint   (Neumann BC: du/dn = h on boundary)
 
 pl.LightningDataModule
 └── PINNDataModule (ABC)
