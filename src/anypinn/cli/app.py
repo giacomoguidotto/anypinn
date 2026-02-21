@@ -13,7 +13,7 @@ from anypinn.cli._prompts import prompt_data_source, prompt_lightning, prompt_te
 from anypinn.cli._renderer import render_project
 from anypinn.cli._types import DataSource, Template
 
-app = Typer(add_completion=False)
+app = Typer(add_completion=False, context_settings={"help_option_names": ["-h", "--help"]})
 _console = Console()
 
 
@@ -65,7 +65,7 @@ def create(
     ] = None,
     lightning: Annotated[
         bool | None,
-        Option("--lightning/--no-lightning", help="Include Lightning wrapper"),
+        Option("--lightning/-L/--no-lightning/-NL", help="Include Lightning wrapper"),
     ] = None,
     list_templates: Annotated[
         bool,

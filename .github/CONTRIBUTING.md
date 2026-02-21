@@ -2,13 +2,17 @@
 
 Welcome! Contributions are warmly appreciated — bug reports, new problem templates, constraint types, documentation improvements, and more.
 
-## Setup
+## 🛠️ Setup
+
+> **Prerequisites:** Python 3.11+, [uv](https://github.com/astral-sh/uv).
 
 ```bash
 git clone https://github.com/your-org/anypinn
 cd anypinn
 uv sync
 ```
+
+> **Note on `[tool.ty.environment]` in `pyproject.toml`:** The `python = "./.devenv/state/venv"` entry is only needed when using [devenv](https://devenv.sh), which redirects `uv sync` installs away from the standard `.venv` directory. If you are not using devenv, remove or comment out that line — ty will auto-discover `.venv` as usual.
 
 All common tasks are driven by `just`:
 
@@ -22,7 +26,7 @@ just docs-serve     # Serve docs locally
 just ci             # lint + check + test (full CI suite)
 ```
 
-## Workflow
+## 🔁 Workflow
 
 1. Fork the repository and create a branch for your change:
    ```bash
@@ -47,14 +51,14 @@ just ci             # lint + check + test (full CI suite)
 
 4. Push and open a pull request.
 
-## Code Style
+## ✍️ Code Style
 
 - Line length: 99
 - Ruff linter with rules: F, E, I, N, UP, RUF, B, C4, ISC, PIE, PT, PTH, SIM, TID
 - Absolute imports only — no relative imports
 - All config dataclasses: `@dataclass(frozen=True, kw_only=True)`
 
-## Architecture Guidelines
+## 🏗️ Architecture Guidelines
 
 - Keep the layer separation: `anypinn.core` stays pure PyTorch, Lightning stays optional.
 - `anypinn.core` must not import from `anypinn.lightning`, `anypinn.problems`, or `anypinn.catalog`.

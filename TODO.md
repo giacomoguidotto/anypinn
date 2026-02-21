@@ -175,16 +175,18 @@ idx = x.squeeze(-1).round().to(torch.int32)
 
 **File:** `core/dataset.py:157-158`
 
-~~```python
+```python
 if y.shape[1] != 1:
 y = y.unsqueeze(-1)
 
-````
-For a single-column y with shape `(N, 1)`, the condition is false and no unsqueeze happens — correct. But for `y` with shape `(N,)` (1-D), the `y.shape[1]` access raises an `IndexError` before the guard can act.~~
+```
+
+~~For a single-column y with shape `(N, 1)`, the condition is false and no unsqueeze happens — correct. But for `y` with shape `(N,)` (1-D), the `y.shape[1]` access raises an `IndexError` before the guard can act.~~
 
 **Resolved:** Replaced with `if y.ndim == 1` — handles 1-D tensors safely and doesn't unsqueeze multi-column `(N, k)` output.
 
 ### ~~D8. No "hello world" minimal example~~ ✅
+
 **Files:** `examples/`
 
 ~~Every example uses the full Lightning stack with scaling, SMMA stopping, custom progress bars. A 20-line example using only `anypinn.core` with a manual training loop would dramatically lower the onboarding barrier.~~
@@ -196,17 +198,21 @@ For a single-column y with shape `(N, 1)`, the condition is false and no unsquee
 ## 4. PDE Expansion Readiness
 
 ### PDE1. `Domain1D` is the only domain representation — Critical
+
 **File:** `core/nn.py:18-44`
 
 The domain is hard-coded as a 1-D interval `[x0, x1]` with scalar step `dx`. PDEs require multi-dimensional domains (rectangles, circles, irregular meshes). A `Domain` base class with `Domain1D`, `Domain2D`, `DomainND` subclasses is needed. This cascades through:
+
 - `InferredContext` (holds a single `Domain1D`)
 - `PINNDataModule.gen_coll()` signature (takes `Domain1D`)
 - `PINNDataset` shape assertions (hard-code `shape[1] == 1`)
 
 ### PDE2. No boundary condition abstraction
+
 **File:** `problems/ode.py`
 
 The three constraint types (`ResidualsConstraint`, `ICConstraint`, `DataConstraint`) are ODE-specific. PDEs need:
+
 - **Dirichlet** BC: `u(x) = g(x)` on boundary
 - **Neumann** BC: `du/dn = h(x)` on boundary
 - **Robin / periodic / mixed** BCs
@@ -214,9 +220,11 @@ The three constraint types (`ResidualsConstraint`, `ICConstraint`, `DataConstrai
 These should live in a new `anypinn.problems.pde` module as `Constraint` subclasses, each receiving a boundary region and a target function.
 
 ### PDE3. No higher-order or mixed derivative utilities
+
 **File:** `problems/ode.py:90-95`
 
 Only first-order temporal derivatives (`dy/dt`) are computed. PDEs commonly need:
+
 - Second-order: `d²u/dx²` (heat, wave equations)
 - Mixed partials: `d²u/dxdy`
 - Laplacian: `nabla²u`
@@ -224,21 +232,24 @@ Only first-order temporal derivatives (`dy/dt`) are computed. PDEs commonly need
 A differential operator utility (e.g. `grad(u, x, order=2)`, `laplacian(u, coords)`) would make PDE constraints composable without re-implementing autograd boilerplate in every constraint.
 
 ### PDE4. Collocation generation is 1-D only
+
 **Files:** `core/dataset.py:167`, `catalog/*.py`
 
 `gen_coll(domain: Domain1D) -> Tensor` produces shape `(M, 1)`. Multi-dimensional PDEs need `(M, d)` collocation points over complex geometries. The collocation strategy should be decoupled into a `CollocationSampler` protocol with implementations:
+
 - `UniformSampler` (grid)
 - `RandomSampler` (uniform random)
 - `LatinHypercubeSampler`
 - `AdaptiveSampler` (residual-based refinement)
 
 ### PDE5. Shape assertions block multi-dimensional inputs
+
 **File:** `core/dataset.py:199-204`
 
 ```python
 assert x_data.shape[1] == 1, "x shape differs than (n, 1)."
 assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
-````
+```
 
 These must be relaxed to `shape[1] == d` where `d` is the spatial dimension. Otherwise no PDE can pass through `PINNDataModule.setup()`.
 

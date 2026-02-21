@@ -16,19 +16,18 @@
 
 AnyPINN lets you go from zero to a running PINN experiment in seconds, or give you the full control to define custom physics, constraints, and training loops. You decide how deep to go.
 
-## Quick Start
+## 🚀 Quick Start
 
-The fastest way to start is the bootstrap CLI. It scaffolds a complete, runnable project interactively:
+The fastest way to start is the bootstrap CLI. It scaffolds a complete, runnable project interactively. Run it with [uvx](https://docs.astral.sh/uv/guides/tools/) (ships with `uv`):
 
 ```bash
 uvx anypinn create my-project
 ```
 
-or
+or with [pipx](https://pipx.pypa.io/stable/installation/):
 
 ```bash
-pip install anypinn
-anypinn create my-project
+pipx run anypinn create my-project
 ```
 
 ```
@@ -63,16 +62,18 @@ anypinn create my-project \
   --lightning
 ```
 
-| Flag                           | Values                                       | Description                                    |
-| ------------------------------ | -------------------------------------------- | ---------------------------------------------- |
-| `--template, -t`               | built-in template name, `custom`, or `blank` | Starting template                              |
-| `--list-templates, -l`         | —                                            | Print all templates with descriptions and exit |
-| `--data, -d`                   | `synthetic`, `csv`                           | Training data source                           |
-| `--lightning / --no-lightning` | —                                            | Include PyTorch Lightning wrapper              |
+| Flag                    | Values                                       | Description                                    |
+| ----------------------- | -------------------------------------------- | ---------------------------------------------- |
+| `--help, -h`            | —                                            | Show help and exit                             |
+| `--list-templates, -l`  | —                                            | Print all templates with descriptions and exit |
+| `--template, -t`        | built-in template name, `custom`, or `blank` | Starting template                              |
+| `--data, -d`            | `synthetic`, `csv`                           | Training data source                           |
+| `--lightning, -L`       | —                                            | Include PyTorch Lightning wrapper              |
+| `--no-lightning, -NL`   | —                                            | Exclude PyTorch Lightning wrapper              |
 
-## Who Is This For?
+## 👥 Who Is This For?
 
-AnyPINN is built around **progressive complexity** — start simple, go deeper only when you need to.
+AnyPINN is built around **progressive complexity**. Start simple, go deeper only when you need to.
 
 | User                  | Goal                                               | How                                                                   |
 | --------------------- | -------------------------------------------------- | --------------------------------------------------------------------- |
@@ -80,34 +81,11 @@ AnyPINN is built around **progressive complexity** — start simple, go deeper o
 | **Researcher**        | Define new physics or custom constraints           | Subclass `Constraint` and `Problem`, use the provided training engine |
 | **Framework builder** | Custom training loops, novel architectures         | Use `anypinn.core` directly — zero Lightning required                 |
 
-## Installation
+## 💡 Examples
 
-> **Prerequisites:** Python 3.11+, [uv](https://github.com/astral-sh/uv) (recommended).
+The `examples/` directory has ready-made, self-contained scripts covering epidemic models, oscillators, predator-prey dynamics, and more — from a minimal ~80-line core-only script to full Lightning stacks. They're a great source of inspiration when defining your own problem.
 
-```bash
-# Install from source (development)
-git clone https://github.com/your-org/anypinn
-cd anypinn
-uv sync
-```
-
-## Examples
-
-Ready-made examples live in `examples/`. Each is a self-contained script covering a different ODE system (epidemic models, oscillators, predator-prey dynamics, and more). Browse the directory and run any of them directly:
-
-```bash
-uv run python examples/<name>/<name>.py
-```
-
-| Example                       | Description                                                                                                           |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `examples/exponential_decay/` | **Start here.** Minimal core-only script (~80 lines). Learns decay rate `k` with a plain PyTorch loop — no Lightning. |
-| `examples/sir_inverse/`       | Full SIR epidemic model (Lightning stack)                                                                             |
-| `examples/seir_inverse/`      | SEIR epidemic model (Lightning stack)                                                                                 |
-| `examples/damped_oscillator/` | Damped harmonic oscillator (Lightning stack)                                                                          |
-| `examples/lotka_volterra/`    | Predator-prey dynamics (Lightning stack)                                                                              |
-
-## Defining Your Own Problem
+## 🔬 Defining Your Own Problem
 
 If you want to go beyond the built-in templates, here is the full workflow for defining a custom ODE inverse problem.
 
@@ -172,7 +150,7 @@ for batch in dataloader:
     optimizer.step()
 ```
 
-## Architecture
+## 🏗️ Architecture
 
 AnyPINN is split into four layers with a strict dependency direction — outer layers depend on inner ones, never the reverse.
 
@@ -249,7 +227,7 @@ Ready-made constraints for ODE inverse problems:
 
 Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catalog/` for the full list.
 
-## Tooling
+## 🛠️ Tooling
 
 | Tool                                      | Purpose                |
 | ----------------------------------------- | ---------------------- |
@@ -261,6 +239,8 @@ Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catal
 
 All common tasks (test, lint, format, type-check, docs) are available via `just`.
 
-## Contributing
+> **devenv users:** `pyproject.toml` contains a `python = "./.devenv/state/venv"` entry under `[tool.ty.environment]`. This is required because [devenv](https://devenv.sh) redirects `uv sync` installs to `.devenv/state/venv` instead of the standard `.venv`. If you are not using devenv, remove that line — ty will auto-discover `.venv` on its own.
+
+## 🤝 Contributing
 
 See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for setup instructions, code style guidelines, and the pull request workflow.
