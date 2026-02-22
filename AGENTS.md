@@ -110,6 +110,7 @@ src/anypinn/
 │       └── _custom.py
 │
 └── lib/
+    ├── diff.py            ← Differential operators (grad, partial, laplacian, …)
     └── utils.py           ← General-purpose helpers
 ```
 

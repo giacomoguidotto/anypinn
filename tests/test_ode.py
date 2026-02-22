@@ -107,6 +107,23 @@ class TestResidualsConstraint:
         constraint.loss(batch, nn.MSELoss(), log=log_fn)
         assert "loss/res" in logged
 
+    def test_gradient_flows_through_loss(self):
+        """Loss must be differentiable w.r.t. field parameters after refactor to diff utilities."""
+        fields = _make_fields(1)
+        params = _make_params()
+        props = _make_props(1)
+        constraint = ResidualsConstraint(props, fields, params, weight=1.0)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        loss = constraint.loss(batch, nn.MSELoss())
+        loss.backward()
+        grads = [p.grad for p in fields["u0"].parameters()]
+        assert any(g is not None for g in grads)
+
 
 class TestICConstraint:
     def test_loss_computes(self):

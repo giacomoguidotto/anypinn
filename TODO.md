@@ -219,17 +219,19 @@ y = y.unsqueeze(-1)
 
 ~~These should live in a new `anypinn.problems.pde` module as `Constraint` subclasses, each receiving a boundary region and a target function.~~ ✅
 
-### PDE3. No higher-order or mixed derivative utilities
+### ~~PDE3. No higher-order or mixed derivative utilities~~ ✅
 
-**File:** `problems/ode.py:90-95`
+~~**File:** `problems/ode.py:90-95`~~
 
-Only first-order temporal derivatives (`dy/dt`) are computed. PDEs commonly need:
+~~Only first-order temporal derivatives (`dy/dt`) are computed. PDEs commonly need:~~
 
-- Second-order: `d²u/dx²` (heat, wave equations)
-- Mixed partials: `d²u/dxdy`
-- Laplacian: `nabla²u`
+~~- Second-order: `d²u/dx²` (heat, wave equations)~~
+~~- Mixed partials: `d²u/dxdy`~~
+~~- Laplacian: `nabla²u`~~
 
-A differential operator utility (e.g. `grad(u, x, order=2)`, `laplacian(u, coords)`) would make PDE constraints composable without re-implementing autograd boilerplate in every constraint.
+~~A differential operator utility (e.g. `grad(u, x, order=2)`, `laplacian(u, coords)`) would make PDE constraints composable without re-implementing autograd boilerplate in every constraint.~~
+
+**Resolved:** Added `lib/diff.py` with composable operators (`grad`, `partial`, `mixed_partial`, `laplacian`, `divergence`, `hessian`). Refactored `ResidualsConstraint` and `NeumannBCConstraint` to use the shared utilities.
 
 ### PDE4. Collocation generation is 1-D only
 
@@ -288,7 +290,7 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | ~~S1~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~  | ~~Portability across hardware~~ ✅          |
 | ~~S2~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~  | ~~O(n) wasted device transfers~~ ✅         |
 | ~~D5~~ | ~~DX~~    | ~~Medium~~ | ~~Medium~~ | ~~Wrong validation on non-integer data~~ ✅ |
-| PDE3   | PDE       | High       | Medium     | Core utility for PDE constraints            |
+| ~~PDE3~~ | ~~PDE~~ | ~~High~~ | ~~Medium~~ | ~~Core utility for PDE constraints~~ ✅    |
 | PDE4   | PDE       | High       | Medium     | Needed for any 2D+ problem                  |
 | ~~P3~~ | ~~Perf~~  | ~~Medium~~ | ~~Medium~~ | ~~L-BFGS convergence gains~~ ✅             |
 | ~~D3~~ | ~~DX~~    | ~~Medium~~ | ~~Medium~~ | ~~Prevents misconfiguration~~ ✅            |
