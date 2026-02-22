@@ -1,6 +1,6 @@
 # TODO — Architecture & Scalability Audit
 
-Analysis of `anypinn` covering scaling, performance, developer experience, and PDE expansion readiness. Organised by priority within each category.
+Analysis of `anypinn` covering scaling, performance, developer experience, and ODE/PDE expansion readiness. Organised by priority within each category.
 
 ---
 
@@ -275,6 +275,19 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 
 `Problem` applies all constraints to all fields uniformly. Coupled PDEs (e.g. Navier-Stokes: velocity + pressure) need constraints that operate on subsets of fields — e.g. continuity constraint on pressure only, momentum on velocity only. Currently there's no way to scope a constraint to specific fields without manually filtering inside each constraint.
 
+### ODE1. No native second-order ODE constraint (requires first-order state augmentation)
+
+**Files:** `problems/ode.py`, `examples/damped_oscillator/damped_oscillator.py`
+
+Second-order ODEs are currently modeled by introducing auxiliary state variables and rewriting to a first-order system (e.g. `x'' -> [x', v']` with `v = x'`). This works, but it increases model complexity and learns derivative relationships indirectly.
+
+Add a native second-order ODE path:
+
+- `SecondOrderResidualsConstraint` using `lib/diff.py::partial(..., order=2)`
+- Second-order callable protocol (receives `x`, `y`, `dy/dx`, args and returns `d2y/dx2`)
+- Initial-derivative condition support (`y(t0)` and `dy/dx(t0)`)
+- Optional `SecondOrderODEInverseProblem` wrapper for parity with `ODEInverseProblem`
+
 ---
 
 ## Summary Matrix
@@ -308,3 +321,4 @@ For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be domi
 | PDE6   | PDE       | Medium     | Medium     | Quality of PDE solutions                    |
 | PDE7   | PDE       | Medium     | Small      | Multi-scale PDE accuracy                    |
 | PDE8   | PDE       | Medium     | Large      | Coupled-system expressiveness               |
+| ODE1   | ODE       | Medium     | Medium     | Native 2nd-order ODE expressiveness         |
