@@ -17,6 +17,7 @@ from anypinn.core import (
     Problem,
     TrainingBatch,
 )
+from anypinn.lib.diff import grad as diff_grad
 
 
 class ODECallable(Protocol):
@@ -106,8 +107,7 @@ class ResidualsConstraint(Constraint):
 
         dy_dt_pred = self.ode(x_coll, y, self.args)
 
-        ones = torch.ones_like(preds[0])
-        dy_dt = torch.stack(torch.autograd.grad(preds, x_copies, [ones] * n, create_graph=True))
+        dy_dt = torch.stack([diff_grad(preds[i], x_copies[i]) for i in range(n)])
 
         loss: Tensor = self.weight * criterion(dy_dt, dy_dt_pred)
 

@@ -5,11 +5,11 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TypeAlias, override
 
-import torch
 from torch import Tensor
 import torch.nn as nn
 
 from anypinn.core import Constraint, Field, LogFn, TrainingBatch
+from anypinn.lib.diff import partial as diff_partial
 
 BCValueFn: TypeAlias = Callable[[Tensor], Tensor]
 """A callable that maps boundary coordinates (n_pts, d) → target values (n_pts, out_dim)."""
@@ -117,9 +117,7 @@ class NeumannBCConstraint(Constraint):
     ) -> Tensor:
         x_bc = self.bc.sampler(self.bc.n_pts).detach().requires_grad_(True)
         u_pred = self.field(x_bc)
-        # Full spatial Jacobian, project onto the outward normal dimension
-        grad_u = torch.autograd.grad(u_pred.sum(), x_bc, create_graph=True)[0]  # (n_pts, d)
-        du_dn = grad_u[:, self.normal_dim : self.normal_dim + 1]  # (n_pts, 1)
+        du_dn = diff_partial(u_pred, x_bc, dim=self.normal_dim)
         h = self.bc.value(x_bc.detach())
         loss: Tensor = self.weight * criterion(du_dn, h)
         if log is not None:
