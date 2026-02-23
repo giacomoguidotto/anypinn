@@ -76,7 +76,7 @@ NOISE_STD = 0.02
 
 
 def oscillator(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
-    """Scaled damped oscillator ODE: dx/dt = v, dv/dt = -2*zeta*omega0*v - omega0^2*x."""
+    """Scaled damped oscillator ODE: $dx/dt = v$, $dv/dt = -2 zeta omega_0 v - omega_0^2 x$."""
     pos, vel = y
     z = args[ZETA_KEY]
     omega0 = args[OMEGA_KEY]

@@ -28,7 +28,7 @@ def grad(
     *,
     create_graph: bool = True,
 ) -> Tensor:
-    """Compute the full gradient ∇u with respect to coordinates *x*.
+    """Compute the full gradient $\\nabla u$ with respect to coordinates $x$.
 
     Args:
         u: Scalar field values, shape ``(n,)`` or ``(n, 1)``.
@@ -36,7 +36,8 @@ def grad(
         create_graph: Keep the result in the computation graph (default ``True``).
 
     Returns:
-        Tensor of shape ``(n, d)`` — ``[∂u/∂x_0, …, ∂u/∂x_{d-1}]`` per sample.
+        Tensor of shape ``(n, d)`` with rows
+        $[\\partial u/\\partial x_0, \\ldots, \\partial u/\\partial x_{d-1}]$.
     """
     (grad_u,) = torch.autograd.grad(
         u.reshape(-1).sum(),
@@ -54,7 +55,7 @@ def partial(
     order: int = 1,
     create_graph: bool = True,
 ) -> Tensor:
-    """Compute ∂\\ :sup:`order` u / ∂x\\ :sub:`dim`\\ :sup:`order`.
+    """Compute the order-k derivative $\\partial^k u / \\partial x_d^k$ along one dimension.
 
     Args:
         u: Scalar field values, shape ``(n,)`` or ``(n, 1)``.
@@ -85,7 +86,7 @@ def mixed_partial(
     *,
     create_graph: bool = True,
 ) -> Tensor:
-    """Compute ∂\\ :sup:`k` u / (∂x\\ :sub:`d₀` ∂x\\ :sub:`d₁` ⋯).
+    """Compute a mixed derivative $\\partial^k u / (\\partial x_{d_0} \\partial x_{d_1} \\cdots)$.
 
     Derivatives are applied left-to-right: first differentiate w.r.t.
     ``dims[0]``, then the result w.r.t. ``dims[1]``, and so on.
@@ -117,7 +118,7 @@ def laplacian(
     *,
     create_graph: bool = True,
 ) -> Tensor:
-    """Compute the Laplacian ∇²u = Σᵢ ∂²u/∂xᵢ².
+    """Compute the Laplacian $\\nabla^2 u = \\sum_i \\partial^2 u / \\partial x_i^2$.
 
     Computes the full first-order gradient once and then differentiates
     each component — ``d + 1`` autograd calls total for ``d`` dimensions.
@@ -148,7 +149,7 @@ def divergence(
     *,
     create_graph: bool = True,
 ) -> Tensor:
-    """Compute the divergence ∇·v = Σᵢ ∂vᵢ/∂xᵢ.
+    """Compute the divergence $\\nabla \\cdot v = \\sum_i \\partial v_i / \\partial x_i$.
 
     Args:
         v: Vector field values, shape ``(n, d)`` matching ``x.shape[1]``.
@@ -180,7 +181,8 @@ def hessian(
     *,
     create_graph: bool = True,
 ) -> Tensor:
-    """Compute the Hessian matrix H[u] where H\\ :sub:`ij` = ∂²u/∂xᵢ∂xⱼ.
+    """Compute the Hessian matrix $H[u]$ where
+    $H_{ij} = \\partial^2 u / (\\partial x_i\\partial x_j)$.
 
     Computes the first-order gradient once, then differentiates each
     component to build each row — ``d + 1`` autograd calls total.
