@@ -15,6 +15,15 @@ Activations: TypeAlias = Literal[
 ]
 """Supported activation functions."""
 
+CollocationStrategies: TypeAlias = Literal[
+    "uniform",
+    "random",
+    "latin_hypercube",
+    "log_uniform_1d",
+    "adaptive",
+]
+"""Supported collocation sampling strategies."""
+
 DataBatch: TypeAlias = tuple[Tensor, Tensor]
 """Type alias for data batch: (x, y)."""
 

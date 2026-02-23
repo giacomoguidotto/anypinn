@@ -2,12 +2,10 @@
 
 import pytest
 import torch
-from torch import Tensor
 from typing_extensions import override
 
 from anypinn.core.config import GenerationConfig, MLPConfig, PINNHyperparameters, ScalarConfig
 from anypinn.core.dataset import PINNDataModule, PINNDataset
-from anypinn.core.nn import Domain
 from anypinn.core.types import DataBatch
 
 _HP = PINNHyperparameters(
@@ -33,13 +31,6 @@ class _Dummy2DDataModule(PINNDataModule):
         x = torch.rand(40, 2)
         y = torch.rand(40, 1)
         return x, y
-
-    @override
-    def gen_coll(self, domain: Domain) -> Tensor:
-        pts = torch.rand(50, domain.ndim)
-        for i, (lo, hi) in enumerate(domain.bounds):
-            pts[:, i] = pts[:, i] * (hi - lo) + lo
-        return pts
 
 
 class TestPINNDataset:
@@ -156,14 +147,15 @@ class TestPINNDataModuleSetup:
         assert x_b.shape[1] == 2
         assert coll_b.shape[1] == 2
 
-    def test_setup_rejects_dimension_mismatch(self):
-        """setup() must raise ValueError when x_data.d != coll.d."""
+    def test_sampler_matches_domain_dimensions(self):
+        """Collocation sampler output must match the data dimensionality."""
+        dm = self._make_dm()
+        dm.setup()
+        assert dm.coll.shape[1] == 2
+        assert dm.coll.shape[0] == 50
 
-        class _MismatchedDM(_Dummy2DDataModule):
-            @override
-            def gen_coll(self, domain: Domain) -> Tensor:
-                return torch.rand(50, 1)  # d=1 while x_data has d=2
-
-        dm = _MismatchedDM(hp=_HP)
-        with pytest.raises(ValueError, match="Spatial dimension mismatch"):
-            dm.setup()
+    def test_context_before_setup_raises(self):
+        """Accessing context before setup() must raise RuntimeError, not AttributeError."""
+        dm = self._make_dm()
+        with pytest.raises(RuntimeError, match="setup\\(\\)"):
+            _ = dm.context

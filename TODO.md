@@ -233,16 +233,18 @@ y = y.unsqueeze(-1)
 
 **Resolved:** Added `lib/diff.py` with composable operators (`grad`, `partial`, `mixed_partial`, `laplacian`, `divergence`, `hessian`). Refactored `ResidualsConstraint` and `NeumannBCConstraint` to use the shared utilities.
 
-### PDE4. Collocation generation is 1-D only
+### ~~PDE4. Collocation generation is 1-D only~~ ✅
 
-**Files:** `core/dataset.py:167`, `catalog/*.py`
+**Files:** `core/dataset.py`, `core/samplers.py`, `catalog/*.py`
 
-`gen_coll(domain: Domain1D) -> Tensor` produces shape `(M, 1)`. Multi-dimensional PDEs need `(M, d)` collocation points over complex geometries. The collocation strategy should be decoupled into a `CollocationSampler` protocol with implementations:
+~~`gen_coll(domain: Domain1D) -> Tensor` produces shape `(M, 1)`. Multi-dimensional PDEs need `(M, d)` collocation points over complex geometries. The collocation strategy should be decoupled into a `CollocationSampler` protocol with implementations:~~
 
-- `UniformSampler` (grid)
-- `RandomSampler` (uniform random)
-- `LatinHypercubeSampler`
-- `AdaptiveSampler` (residual-based refinement)
+~~- `UniformSampler` (grid)~~
+~~- `RandomSampler` (uniform random)~~
+~~- `LatinHypercubeSampler`~~
+~~- `AdaptiveSampler` (residual-based refinement)~~
+
+**Resolved:** Replaced `gen_coll()` override pattern with a `CollocationSampler` protocol and config-driven strategy selection via `TrainingDataConfig.collocation_sampler` string literal. Built-in samplers: `UniformSampler`, `RandomSampler`, `LatinHypercubeSampler`, `LogUniform1DSampler` (preserves SIR log-space behavior), and `AdaptiveSampler` (residual-weighted with configurable exploration ratio). All catalog DataModules migrated.
 
 ### ~~PDE5. Shape assertions block multi-dimensional inputs~~ ✅
 
@@ -304,7 +306,7 @@ Add a native second-order ODE path:
 | ~~S2~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~  | ~~O(n) wasted device transfers~~ ✅         |
 | ~~D5~~ | ~~DX~~    | ~~Medium~~ | ~~Medium~~ | ~~Wrong validation on non-integer data~~ ✅ |
 | ~~PDE3~~ | ~~PDE~~ | ~~High~~ | ~~Medium~~ | ~~Core utility for PDE constraints~~ ✅    |
-| PDE4   | PDE       | High       | Medium     | Needed for any 2D+ problem                  |
+| ~~PDE4~~ | ~~PDE~~ | ~~High~~ | ~~Medium~~ | ~~Needed for any 2D+ problem~~ ✅          |
 | ~~P3~~ | ~~Perf~~  | ~~Medium~~ | ~~Medium~~ | ~~L-BFGS convergence gains~~ ✅             |
 | ~~D3~~ | ~~DX~~    | ~~Medium~~ | ~~Medium~~ | ~~Prevents misconfiguration~~ ✅            |
 | ~~S3~~ | ~~Scale~~ | ~~Low~~    | ~~Small~~  | ~~Minor allocation overhead~~ ✅            |

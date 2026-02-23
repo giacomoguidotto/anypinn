@@ -165,9 +165,14 @@ by letting the user choose.
 
 The argument above holds within a specific scope. AnyPINN is not the right choice for:
 
-- **PDE problems** (heat, wave, Navier-Stokes). The current architecture only supports 1D domains
-  (`Domain1D`), and `PINNDataset` shape assertions block multi-dimensional inputs. DeepXDE and PINA
-  are better choices for PDE problems today.
+- **Complex PDE problems** (heat, wave, Navier-Stokes). The PDE foundation is in place:
+  multi-dimensional `Domain`, boundary condition constraints (`DirichletBCConstraint`,
+  `NeumannBCConstraint`), collocation samplers (uniform grid, random, Latin hypercube, adaptive
+  residual-based), and a composable differential utilities library (`grad`, `laplacian`, `hessian`,
+  `divergence`). What remains maturing: configurable loss criteria for stiff multi-scale systems,
+  built-in spatial encodings (random Fourier features, positional encodings), and explicit
+  constraint scoping for coupled systems (e.g. Navier-Stokes velocity + pressure). DeepXDE and
+  PINA remain more battle-tested for complex 3D PDE problems.
 - **Large-scale 3D simulations on GPU clusters.** NVIDIA Modulus is purpose-built for this and
   has no peer in that space.
 - **Users already productive in TensorFlow.** Switching frameworks for a library is rarely
@@ -187,14 +192,6 @@ impact within each group. Scaling and performance items have all been resolved; 
 developer experience hardening and the PDE expansion track.
 
 ### 2.1 PDE Maturity Track
-
-#### PDE4 - Multi-dimensional collocation sampling
-
-Current collocation generation needs a pluggable strategy layer for practical PDE quality:
-
-- uniform/random baselines,
-- Latin hypercube coverage,
-- adaptive residual-driven refinement.
 
 #### PDE6 - Built-in spatial encodings
 
@@ -236,5 +233,8 @@ one.
 The library's justification is strongest for researchers working on parameter recovery in
 dynamical systems — epidemiological models, mechanical oscillators, predator-prey dynamics — who
 want to define physics in PyTorch terms and bring their own training infrastructure. The PDE
-expansion track would extend this justification to a substantially larger problem class, but it
-requires more work to be done.
+foundation (multi-dimensional domains, boundary condition constraints, pluggable collocation
+samplers including residual-adaptive with periodic refresh via `AdaptiveCollocationCallback`,
+composable differential operators) is complete. What remains on the PDE track — configurable loss
+criteria, spatial encodings, coupled-system constraint scoping — extends the library's reach to
+progressively harder problem classes without changing the core design.
