@@ -33,13 +33,13 @@ training loop.
 
 Every major competitor couples physics problem definition to its own training loop:
 
-| Library | Coupling mechanism |
-|---|---|
-| NeuroDiffEq | `solve_ivp`-style API owns training |
-| DeepXDE | `Model.train()` is not optional |
-| IDRLNet | Computational graph node system owns training |
+| Library        | Coupling mechanism                                |
+| -------------- | ------------------------------------------------- |
+| NeuroDiffEq    | `solve_ivp`-style API owns training               |
+| DeepXDE        | `Model.train()` is not optional                   |
+| IDRLNet        | Computational graph node system owns training     |
 | NVIDIA Modulus | Full platform: owns Trainer, distributed, logging |
-| PINA | Own `Trainer` wrapping Lightning |
+| PINA           | Own `Trainer` wrapping Lightning                  |
 
 The consequence is that when the training ecosystem evolves — new optimizers, new distributed
 strategies, new precision formats — users must wait for the library to support them or write
@@ -58,7 +58,7 @@ for batch in dataloader:
     optimizer.step()
 ```
 
-PyTorch Lightning is available as an *optional* layer (`anypinn.lightning`) for users who want
+PyTorch Lightning is available as an _optional_ layer (`anypinn.lightning`) for users who want
 batteries-included training. It is not required. This is the right default for a research library:
 researchers frequently need non-standard training procedures, and a library that owns the training
 loop forces workarounds.

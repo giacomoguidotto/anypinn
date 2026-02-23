@@ -9,8 +9,7 @@ differentiable — required when used inside loss functions that must
 back-propagate. Pass ``create_graph=False`` for detached results
 (e.g. visualisation or adaptive sampling).
 
-.. note::
-
+!!! note
     For even higher performance on large-batch Hessians or Jacobians,
     ``torch.func.jacrev`` / ``torch.func.hessian`` can be composed with
     ``torch.vmap``. The operators here intentionally use the simpler
