@@ -51,7 +51,7 @@ class ODEProperties:
 class ResidualsConstraint(Constraint):
     """
     Constraint enforcing the ODE residuals.
-    Minimizes ||dy/dt - f(t, y)||^2.
+    Minimizes $\\lVert \\partial y / \\partial t - f(t, y) \\rVert^2$.
 
     Args:
         props: ODE properties.
@@ -120,7 +120,7 @@ class ResidualsConstraint(Constraint):
 class ICConstraint(Constraint):
     """
     Constraint enforcing Initial Conditions (IC).
-    Minimizes ||y(t0) - Y0||^2.
+    Minimizes $\\lVert y(t_0) - Y_0 \\rVert^2$.
 
     Args:
         fields: Fields registry.
@@ -191,7 +191,7 @@ class ODEHyperparameters(PINNHyperparameters):
 class DataConstraint(Constraint):
     """
     Constraint enforcing fit to observed data.
-    Minimizes ||Predictions - Data||^2.
+    Minimizes $\\lVert \\hat{{y}} - y \\rVert^2$.
 
     Args:
         fields: Fields registry.

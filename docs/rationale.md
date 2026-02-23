@@ -186,233 +186,42 @@ The items below are drawn from the architecture audit. They are grouped by scope
 impact within each group. Scaling and performance items have all been resolved; what remains is
 developer experience hardening and the PDE expansion track.
 
-### 2.1 Developer Experience
+### 2.1 PDE Maturity Track
 
-These items address correctness and usability. None require architectural changes — they are
-disciplined application of existing patterns.
+#### PDE4 - Multi-dimensional collocation sampling
 
-#### D1 — Replace assertions with proper exceptions
+Current collocation generation needs a pluggable strategy layer for practical PDE quality:
 
-**Files:** `core/dataset.py`, `core/nn.py`
+- uniform/random baselines,
+- Latin hypercube coverage,
+- adaptive residual-driven refinement.
 
-All shape and value checks currently use `assert`, which Python strips with `-O`. A
-`ValueError` or `TypeError` with a descriptive message (expected shape vs. actual shape) is the
-correct mechanism. This is a small but high-impact change: a cryptic `AssertionError` with no
-context is one of the most common causes of user confusion in numerical libraries.
+#### PDE6 - Built-in spatial encodings
 
-#### D2 — Config validation in `__post_init__`
+`MLPConfig.encode` is extensible but ships no built-in PDE-focused encodings.
+Add first-class options for random Fourier features and positional encodings (with hash-grid as an
+optional advanced path).
 
-**File:** `core/config.py`
+#### PDE7 - Configurable loss criterion
 
-Hyperparameters like `lr`, `batch_size`, `data_ratio`, and `collocations` are never validated
-at construction time. A negative learning rate or zero batch size currently surfaces only as a
-cryptic runtime error deep in training. Adding `__post_init__` guards with clear messages (e.g.,
-`"lr must be positive, got -1e-3"`) catches misconfiguration at the earliest possible point.
+`ODEInverseProblem` still hard-codes `nn.MSELoss()`.
+Expose criterion selection to support multi-scale residuals (Huber, weighted MSE, relative losses).
 
-#### D3 — Registry key validation at construction
+#### PDE8 - Scoped constraints for coupled systems
 
-**Files:** `core/problem.py`, `problems/ode.py`
+Coupled PDE systems need constraints operating on field subsets (e.g. continuity vs momentum
+components). Add explicit constraint scoping instead of forcing per-constraint manual filtering.
 
-If the keys in `FieldsRegistry` don't match what the ODE callable expects, the error surfaces as
-a shape mismatch or `KeyError` deep inside an autograd graph — the worst possible location to
-debug. A builder or factory that validates registry keys against the ODE function signature at
-construction time would catch this immediately.
+### 2.2 ODE Ergonomics Track
 
-#### D4 — Explicit shape contracts instead of implicit squeeze
+#### ODE1 - Native second-order ODE path
 
-**File:** `core/problem.py`
+Second-order systems are currently modeled through first-order state augmentation.
+Add native second-order abstractions:
 
-`f(x).squeeze(-1)` silently drops dimensions. If a `Field` accidentally outputs shape
-`(N, 1, 1)`, `squeeze(-1)` produces `(N, 1)` — different from the `(N,)` expected downstream,
-with no error until a later operation. Explicit `reshape` calls with documented shape contracts
-are safer and self-documenting.
-
-#### D5 — Interpolation strategy for non-integer `ColumnRef` indices
-
-**File:** `core/validation.py`
-
-The current `ColumnRef` resolution uses `x.round().to(torch.int32)` to index into a tensor of
-ground-truth values. This only works correctly when `x` values are evenly-spaced integers. For
-continuous or irregularly-sampled `x`, it silently returns wrong values. The fix requires either
-a proper interpolation strategy (`torch.searchsorted` + linear interpolation) or an explicit
-`x`-to-index mapping passed at construction time.
-
-#### D6 — Cache CSV reads in `ColumnRef` resolution
-
-**File:** `core/validation.py`
-
-Each `ColumnRef` entry triggers a fresh `pd.read_csv()`. A problem with five validated
-parameters reads the same CSV five times. The data frame should be read once and shared across all
-`ColumnRef` instances that reference the same file.
-
-#### D7 — Robust shape handling in `load_data` for 1-D `y`
-
-**File:** `core/dataset.py`
-
-The guard `if y.shape[1] != 1` raises an `IndexError` when `y` has shape `(N,)` (a 1-D tensor),
-because `shape[1]` does not exist. This edge case is triggered by single-column CSV inputs that
-haven't been explicitly reshaped. The fix is a `y.ndim` check before indexing `shape[1]`.
-
-#### D8 — Minimal core-only example
-
-**Files:** `examples/`
-
-Every existing example uses the full Lightning stack with scaling, SMMA stopping, and custom
-progress bars. A 20-30 line example using only `anypinn.core` with a plain PyTorch training loop
-would substantially lower the onboarding barrier for users who want to understand the library from
-the ground up before adopting Lightning.
-
----
-
-### 2.2 PDE Expansion
-
-These items represent a coherent track of work that would extend AnyPINN from ODE-only to full
-PDE support. They have strict dependencies between them: PDE1, PDE2, and PDE5 are blockers for
-everything else in this group. The items are listed in recommended implementation order.
-
-!!! warning
-    PDE1 + PDE2 + PDE5 must be resolved together before any other PDE work is useful. They are
-    the three structural blockers.
-
-#### PDE1 — Multi-dimensional domain abstraction (Critical blocker)
-
-**File:** `core/nn.py`
-
-`Domain1D` hard-codes a 1D interval `[x0, x1]` with scalar step `dx`. This assumption propagates
-through `InferredContext`, `PINNDataModule.gen_coll()`, and `PINNDataset` shape assertions.
-
-The required change is a `Domain` base class hierarchy:
-
-```python
-class Domain(ABC):
-    @abstractmethod
-    def sample(self, n: int) -> Tensor: ...
-
-class Domain1D(Domain): ...
-class Domain2D(Domain): ...   # rectangle [x0,x1] × [y0,y1]
-class DomainND(Domain): ...   # n-dimensional hypercube
-```
-
-`InferredContext` should hold a `Domain`, and `gen_coll()` should accept and return
-multi-dimensional tensors of shape `(M, d)`.
-
-#### PDE2 — Boundary condition constraint types (Critical blocker)
-
-**File:** `problems/ode.py` (new `problems/pde.py`)
-
-The three existing constraint types (`ResidualsConstraint`, `ICConstraint`, `DataConstraint`) are
-ODE-specific. PDEs require boundary condition constraint types in a new `anypinn.problems.pde`
-module:
-
-- `DirichletConstraint`: enforces `u(x) = g(x)` on boundary points
-- `NeumannConstraint`: enforces `du/dn = h(x)` on boundary points
-- `RobinConstraint`: enforces `αu + β(du/dn) = g(x)`
-- Periodic BC support
-
-Each should be a `Constraint` subclass receiving a boundary region sampler and a target function.
-
-#### PDE5 — Relax 1D shape assertions (Critical blocker)
-
-**File:** `core/dataset.py`
-
-```python
-assert x_data.shape[1] == 1, "x shape differs than (n, 1)."
-assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
-```
-
-These assertions block all multi-dimensional inputs. They should be generalized to
-`shape[1] == d` where `d` is the spatial dimension inferred from the domain.
-
-#### PDE3 — Higher-order and mixed derivative utilities
-
-**File:** `problems/ode.py` (new `lib/diff.py`)
-
-Only first-order temporal derivatives are currently computed. PDE problems commonly require:
-
-- Second-order derivatives: `d²u/dx²` (heat equation, wave equation)
-- Mixed partials: `d²u/dxdy`
-- Laplacian: `∇²u`
-
-A composable differential operator utility (e.g., `grad(u, x)`, `laplacian(u, coords)`,
-`divergence(F, coords)`) would make PDE constraint implementations concise and reusable without
-re-implementing autograd boilerplate in each constraint class.
-
-#### PDE4 — Multi-dimensional collocation sampling strategies
-
-**Files:** `core/dataset.py`, `catalog/*.py`
-
-`gen_coll()` currently produces shape `(M, 1)` tensors. Multi-dimensional PDE problems need
-`(M, d)` collocation points, potentially over complex geometries.
-
-The collocation strategy should be decoupled into a `CollocationSampler` protocol with
-implementations:
-
-```python
-class CollocationSampler(Protocol):
-    def sample(self, n: int, domain: Domain) -> Tensor: ...
-
-class UniformGridSampler(CollocationSampler): ...
-class RandomUniformSampler(CollocationSampler): ...
-class LatinHypercubeSampler(CollocationSampler): ...
-class AdaptiveResidueSampler(CollocationSampler): ...   # residual-based refinement
-```
-
-Adaptive sampling — concentrating collocation points where the PDE residual is large — is a known
-technique for improving PINN accuracy on problems with sharp gradients and would be a
-differentiating feature.
-
-#### PDE6 — Spatial input encodings for `Field`
-
-**File:** `core/nn.py`
-
-`MLPConfig.encode` supports a custom encoding callback but ships no built-in spatial encodings.
-For PDE problems with high-frequency solutions (wave equations, turbulence), plain coordinate
-inputs cause spectral bias. Standard encodings that should be provided out of the box:
-
-- **Random Fourier features**: `[sin(Bx), cos(Bx)]` where `B` is sampled at initialization
-- **Positional encoding**: sinusoidal encoding as in the original transformer paper
-- **Hash grid encoding**: multi-resolution hash (as in Instant-NGP)
-
-#### PDE7 — Configurable loss criterion
-
-**File:** `problems/ode.py`
-
-`ODEInverseProblem` hard-codes `nn.MSELoss()`. For multi-scale PDEs where residuals span several
-orders of magnitude, MSE is dominated by the largest component. The criterion should be
-configurable:
-
-```python
-class ODEInverseProblem(Problem):
-    def __init__(self, ..., criterion: nn.Module = nn.MSELoss()): ...
-```
-
-Useful alternatives include Huber loss, relative L2 loss, and component-weighted MSE.
-
-#### PDE8 — Scoped constraints for coupled PDE systems
-
-**File:** `core/problem.py`
-
-`Problem` currently applies all constraints to all fields uniformly. Coupled PDE systems — for
-example, Navier-Stokes where velocity and pressure satisfy different equations — need constraints
-scoped to specific subsets of fields. The continuity equation applies only to pressure; the
-momentum equation applies only to velocity.
-
-One design: `Constraint` accepts an optional `fields_scope: list[str]` argument, and `Problem`
-filters the `FieldsRegistry` before passing it to each constraint. This preserves backward
-compatibility while enabling coupled systems.
-
----
-
-### 2.3 Recommended Implementation Order
-
-For a contributor picking up this work, the recommended order is:
-
-1. **D1, D2, D7** — Fast, high-impact DX fixes. Small effort, eliminates the most common failure modes.
-2. **D5, D6** — Correctness fixes for validation and data loading.
-3. **D3, D4, D8** — Construction-time validation and documentation.
-4. **PDE1 + PDE2 + PDE5** — Must be tackled together as a single coherent change.
-5. **PDE3, PDE4** — Build on top of the domain/BC abstraction.
-6. **PDE6, PDE7, PDE8** — Quality-of-life for PDE users.
+- second-order residual constraint,
+- callable protocol for `d2y/dx2`,
+- initial derivative condition support.
 
 ---
 
@@ -428,4 +237,4 @@ The library's justification is strongest for researchers working on parameter re
 dynamical systems — epidemiological models, mechanical oscillators, predator-prey dynamics — who
 want to define physics in PyTorch terms and bring their own training infrastructure. The PDE
 expansion track would extend this justification to a substantially larger problem class, but it
-requires the domain abstraction refactor (PDE1) as its foundation.
+requires more work to be done.

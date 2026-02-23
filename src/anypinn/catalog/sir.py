@@ -30,9 +30,9 @@ def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     The SIR ODE system.
     $$
     \\begin{align}
-    \\frac{dS}{dt} &= -beta * S * I / N \\\\
-    \\frac{dI}{dt} &= beta * S * I / N - delta * I \\\\
-    \\frac{dR}{dt} &= delta * I \\\\
+    \\frac{dS}{dt} &= -\\beta \\frac{SI}{N} \\\\
+    \\frac{dI}{dt} &= \\beta \\frac{SI}{N} - \\delta I \\\\
+    \\frac{dR}{dt} &= \\delta I \\\\
     \\end{align}
     $$
 
@@ -57,12 +57,9 @@ def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     The reduced SIR ODE system.
     $$
     \\begin{align}
-    \\frac{dS}{dt} &= -delta * R * I \\
-    \\frac{dI}{dt} &= delta * (R - 1) * I \\
+    \\frac{dI}{dt} &= \\delta (R_t - 1) I
     \\end{align}
     $$
-
-    dI/dt = delta * (R - 1) * I
 
     Args:
         x: Time variable.

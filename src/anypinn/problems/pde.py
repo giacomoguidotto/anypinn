@@ -80,11 +80,14 @@ class DirichletBCConstraint(Constraint):
 
 class NeumannBCConstraint(Constraint):
     """
-    Enforces the Neumann boundary condition: du/dn(x_bc) = h(x_bc).
+    Enforces the Neumann boundary condition:
+    $\\partial u / \\partial n (x_{bc}) = h(x_{bc})$.
 
     For a rectangular domain face whose outward normal is axis-aligned with
-    dimension ``normal_dim``, ``du/dn = ∂u/∂x_{normal_dim}``.
-    Minimizes ``weight * criterion(du/dn(x_bc), h(x_bc))``.
+    dimension ``normal_dim``, we have
+    $\\partial u / \\partial n = \\partial u / \\partial x_{\\mathrm{normal\\_dim}}$.
+    Minimizes
+    ``weight * criterion(du_dn(x_bc), h(x_bc))``.
 
     Args:
         bc: Boundary condition (sampler + target normal-derivative function).
