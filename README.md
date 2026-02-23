@@ -211,7 +211,7 @@ Pure PyTorch. Defines what a PINN problem _is_, with no opinions about training.
 A thin wrapper plugging a `Problem` into PyTorch Lightning:
 
 - **`PINNModule`** — `LightningModule` wrapping any `Problem`. Handles optimizer setup, context injection, and prediction.
-- **`PINNDataModule`** — Abstract data module managing loading, collocation point generation, and context creation.
+- **`PINNDataModule`** — Abstract data module managing loading, config-driven collocation sampling, and context creation. Collocation strategy is selected via `TrainingDataConfig.collocation_sampler` (`"random"`, `"uniform"`, `"latin_hypercube"`, `"log_uniform_1d"`, or `"adaptive"`).
 - **Callbacks** — SMMA-based early stopping, formatted progress bars, data scaling, prediction writers.
 
 ### `anypinn.problems` — ODE Building Blocks

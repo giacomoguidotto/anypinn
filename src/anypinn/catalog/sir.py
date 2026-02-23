@@ -10,7 +10,6 @@ from torchdiffeq import odeint
 from anypinn.core import (
     ArgsRegistry,
     DataCallback,
-    Domain,
     GenerationConfig,
     PINNDataModule,
     ValidationRegistry,
@@ -90,17 +89,6 @@ class SIRInvDataModule(PINNDataModule):
     ):
         super().__init__(hp, validation, callbacks)
         self.gen_props = gen_props
-
-    @override
-    def gen_coll(self, domain: Domain) -> Tensor:
-        """Generate collocation points."""
-        x0 = torch.tensor(domain.x0, dtype=torch.float32)
-        x1 = torch.tensor(domain.x1, dtype=torch.float32)
-
-        coll = torch.rand((self.hp.training_data.collocations, 1))
-        coll = coll * (torch.log1p(x1) - torch.log1p(x0)) + torch.log1p(x0)
-        coll = torch.expm1(coll)
-        return coll
 
     @override
     def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:

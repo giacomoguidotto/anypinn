@@ -47,16 +47,15 @@ class TestSIRODE:
         }
         result = SIR(x, y, args)
         dS, dI = result[0], result[1]
-        # dS + dI = -delta * I (since dR = delta * I and dS + dI + dR = 0)
         assert (dS + dI).item() == pytest.approx(-0.1 * 10.0, rel=1e-4)
 
 
 class TestSIRInvDataModule:
-    def test_gen_coll_shape(self):
+    def test_setup_produces_correct_coll_shape(self):
         from anypinn.catalog.sir import SIRInvDataModule
         from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
-        from anypinn.core.nn import Domain
-        from anypinn.problems.ode import ODEHyperparameters
+        from anypinn.core.nn import Argument
+        from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
         hp = ODEHyperparameters(
             lr=1e-3,
@@ -72,19 +71,25 @@ class TestSIRInvDataModule:
             params_config=ScalarConfig(init_value=0.5),
         )
 
-        dm = SIRInvDataModule(hp=hp)
-        domain = Domain(bounds=[(0.0, 50.0)], dx=[0.5])
-        coll = dm.gen_coll(domain)
+        def sir_ode(x: Tensor, y: Tensor, args: dict) -> Tensor:
+            return -y
 
-        assert coll.shape == (200, 1)
-        assert coll.min().item() >= 0.0
+        props = ODEProperties(
+            ode=sir_ode,
+            args={"beta": Argument(0.3), "delta": Argument(0.1), "N": Argument(1000.0)},
+            y0=torch.tensor([990.0, 10.0]),
+        )
+        dm = SIRInvDataModule(hp=hp, gen_props=props)
+        dm.setup()
+
+        assert dm.coll.shape == (200, 1)
+        assert dm.coll.min().item() >= 0.0
 
 
 class TestDampedOscillatorDataModule:
-    def test_gen_coll_shape(self):
+    def test_setup_produces_correct_coll_shape(self):
         from anypinn.catalog.damped_oscillator import DampedOscillatorDataModule
         from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
-        from anypinn.core.nn import Domain
         from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
         hp = ODEHyperparameters(
@@ -106,19 +111,17 @@ class TestDampedOscillatorDataModule:
 
         props = ODEProperties(ode=osc_ode, args={}, y0=torch.tensor([1.0, 0.0]))
         dm = DampedOscillatorDataModule(hp=hp, gen_props=props)
-        domain = Domain(bounds=[(0.0, 10.0)], dx=[0.2])
-        coll = dm.gen_coll(domain)
+        dm.setup()
 
-        assert coll.shape == (100, 1)
-        assert coll.min().item() >= 0.0
-        assert coll.max().item() <= 10.0
+        assert dm.coll.shape == (100, 1)
+        assert dm.coll.min().item() >= 0.0
+        assert dm.coll.max().item() <= 10.0
 
 
 class TestLotkaVolterraDataModule:
-    def test_gen_coll_shape(self):
+    def test_setup_produces_correct_coll_shape(self):
         from anypinn.catalog.lotka_volterra import LotkaVolterraDataModule
         from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
-        from anypinn.core.nn import Domain
         from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
         hp = ODEHyperparameters(
@@ -140,17 +143,15 @@ class TestLotkaVolterraDataModule:
 
         props = ODEProperties(ode=lv_ode, args={}, y0=torch.tensor([10.0, 5.0]))
         dm = LotkaVolterraDataModule(hp=hp, gen_props=props)
-        domain = Domain(bounds=[(0.0, 10.0)], dx=[0.2])
-        coll = dm.gen_coll(domain)
+        dm.setup()
 
-        assert coll.shape == (100, 1)
+        assert dm.coll.shape == (100, 1)
 
 
 class TestSEIRDataModule:
-    def test_gen_coll_shape(self):
+    def test_setup_produces_correct_coll_shape(self):
         from anypinn.catalog.seir import SEIRDataModule
         from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
-        from anypinn.core.nn import Domain
         from anypinn.problems.ode import ODEHyperparameters, ODEProperties
 
         hp = ODEHyperparameters(
@@ -172,7 +173,6 @@ class TestSEIRDataModule:
 
         props = ODEProperties(ode=seir_ode, args={}, y0=torch.tensor([990.0, 0.0, 10.0]))
         dm = SEIRDataModule(hp=hp, gen_props=props)
-        domain = Domain(bounds=[(0.0, 10.0)], dx=[0.2])
-        coll = dm.gen_coll(domain)
+        dm.setup()
 
-        assert coll.shape == (100, 1)
+        assert dm.coll.shape == (100, 1)

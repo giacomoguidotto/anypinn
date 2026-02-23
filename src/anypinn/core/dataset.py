@@ -14,7 +14,8 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset
 from anypinn.core.config import GenerationConfig, IngestionConfig, PINNHyperparameters
 from anypinn.core.context import InferredContext
 from anypinn.core.nn import Domain
-from anypinn.core.types import DataBatch, PredictionBatch, TrainingBatch
+from anypinn.core.samplers import CollocationSampler, ResidualScorer, build_sampler
+from anypinn.core.types import CollocationStrategies, DataBatch, PredictionBatch, TrainingBatch
 from anypinn.core.validation import ValidationRegistry, resolve_validation
 
 
@@ -40,7 +41,7 @@ class PINNDataset(Dataset[TrainingBatch]):
     replacement per epoch i.e. cycles through all data points and at the last
     batch, wraps around to the first indices to ensure batch size. The collocation
     points are sampled with replacement from the pool.
-    The dataset produces a batch of shape ((t_data[K,1], y_data[K,1]), t_coll[C,1]).
+    The dataset produces a batch of shape ((x_data[K,d], y_data[K,...]), x_coll[C,d]).
 
     Args:
         x_data: Data point x coordinates (time values).
@@ -127,9 +128,12 @@ class PINNDataModule(pl.LightningDataModule, ABC):
     LightningDataModule for PINNs.
     Manages data and collocation datasets and creates the combined PINNDataset.
 
+    Collocation points are generated via a ``CollocationSampler`` selected by the
+    ``collocation_sampler`` field in ``TrainingDataConfig`` (string literal).
+    Subclasses only need to implement ``gen_data()``; collocation generation is
+    handled by the sampler resolved from the hyperparameters.
+
     Attributes:
-        data_ds: Dataset containing observed data.
-        coll_ds: Dataset containing collocation points.
         pinn_ds: Combined PINNDataset for training.
         callbacks: Sequence of DataCallback callbacks applied after data loading.
     """
@@ -139,12 +143,23 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         hp: PINNHyperparameters,
         validation: ValidationRegistry | None = None,
         callbacks: Sequence[DataCallback] | None = None,
+        residual_scorer: ResidualScorer | None = None,
     ) -> None:
         super().__init__()
         self.hp = hp
         self.callbacks: list[DataCallback] = list(callbacks) if callbacks else []
+        self._residual_scorer = residual_scorer
 
         self._unresolved_validation = validation or {}
+        self._context: InferredContext | None = None
+
+    def _build_sampler(self, strategy: CollocationStrategies) -> CollocationSampler:
+        """Resolve a collocation sampler from a strategy name."""
+        return build_sampler(
+            strategy=strategy,
+            seed=self.hp.training_data.collocation_seed,
+            scorer=self._residual_scorer,
+        )
 
     def load_data(self, config: IngestionConfig) -> DataBatch:
         """Load raw data from IngestionConfig."""
@@ -171,10 +186,6 @@ class PINNDataModule(pl.LightningDataModule, ABC):
     def gen_data(self, config: GenerationConfig) -> DataBatch:
         """Generate synthetic data from GenerationConfig."""
 
-    @abstractmethod
-    def gen_coll(self, domain: Domain) -> Tensor:
-        """Generate collocation points."""
-
     @override
     def setup(self, stage: str | None = None) -> None:
         """
@@ -194,9 +205,10 @@ class PINNDataModule(pl.LightningDataModule, ABC):
             else self.gen_data(config)
         )
 
-        self.coll = self.gen_coll(
-            Domain.from_x(self.data[0]),
-        )
+        domain = Domain.from_x(self.data[0])
+        self._domain = domain
+        self._sampler = self._build_sampler(config.collocation_sampler)
+        self.coll = self._sampler.sample(config.collocations, domain)
 
         for callback in self.callbacks:
             self.data, self.coll = callback.transform_data(self.data, self.coll)

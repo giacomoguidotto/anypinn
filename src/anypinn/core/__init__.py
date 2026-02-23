@@ -27,7 +27,25 @@ from anypinn.core.nn import (
     get_activation,
 )
 from anypinn.core.problem import Constraint, Problem
-from anypinn.core.types import LOSS_KEY, Activations, DataBatch, LogFn, Predictions, TrainingBatch
+from anypinn.core.samplers import (
+    AdaptiveSampler,
+    CollocationSampler,
+    LatinHypercubeSampler,
+    LogUniform1DSampler,
+    RandomSampler,
+    ResidualScorer,
+    UniformSampler,
+    build_sampler,
+)
+from anypinn.core.types import (
+    LOSS_KEY,
+    Activations,
+    CollocationStrategies,
+    DataBatch,
+    LogFn,
+    Predictions,
+    TrainingBatch,
+)
 from anypinn.core.validation import (
     ColumnRef,
     ResolvedValidation,
@@ -40,8 +58,11 @@ __all__ = [
     "LOSS_KEY",
     "Activations",
     "AdamConfig",
+    "AdaptiveSampler",
     "ArgsRegistry",
     "Argument",
+    "CollocationSampler",
+    "CollocationStrategies",
     "ColumnRef",
     "Constraint",
     "CosineAnnealingConfig",
@@ -55,7 +76,9 @@ __all__ = [
     "InferredContext",
     "IngestionConfig",
     "LBFGSConfig",
+    "LatinHypercubeSampler",
     "LogFn",
+    "LogUniform1DSampler",
     "MLPConfig",
     "PINNDataModule",
     "PINNDataset",
@@ -64,14 +87,18 @@ __all__ = [
     "ParamsRegistry",
     "Predictions",
     "Problem",
+    "RandomSampler",
     "ReduceLROnPlateauConfig",
+    "ResidualScorer",
     "ResolvedValidation",
     "SMMAStoppingConfig",
     "ScalarConfig",
     "TrainingBatch",
     "TrainingDataConfig",
+    "UniformSampler",
     "ValidationRegistry",
     "ValidationSource",
+    "build_sampler",
     "get_activation",
     "resolve_validation",
 ]

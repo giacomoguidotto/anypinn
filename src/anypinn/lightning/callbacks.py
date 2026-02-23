@@ -11,6 +11,7 @@ import torch
 from torch import Tensor
 
 from anypinn.core import DataBatch, DataCallback, PINNDataModule, Predictions, SMMAStoppingConfig
+from anypinn.core.samplers import AdaptiveSampler
 
 SMMA_KEY = "loss/smma"
 
@@ -168,6 +169,47 @@ class PredictionsWriter(BasePredictionWriter):
 
         if self.batch_indices_path is not None:
             torch.save(batch_indices, self.batch_indices_path)
+
+
+class AdaptiveCollocationCallback(Callback):
+    """Refreshes the collocation pool every N epochs using AdaptiveSampler.
+
+    Requires the DataModule to be configured with ``collocation_sampler="adaptive"``
+    and a ``ResidualScorer`` passed to ``PINNDataModule(residual_scorer=...)``.
+
+    Because the scorer typically closes over the ``Problem``, it automatically uses
+    the model's current weights on every call — no additional injection step needed.
+
+    Args:
+        every_n_epochs: How often (in epochs) to resample. Default: 1.
+    """
+
+    def __init__(self, every_n_epochs: int = 1) -> None:
+        super().__init__()
+        if every_n_epochs < 1:
+            raise ValueError(f"every_n_epochs must be >= 1, got {every_n_epochs}.")
+        self._every_n = every_n_epochs
+
+    @override
+    def on_fit_start(self, trainer: Trainer, pl_module: LightningModule) -> None:
+        """Validate at fit start that the DataModule uses AdaptiveSampler."""
+        dm = trainer.datamodule  # type: ignore[attr-defined]
+        if not isinstance(getattr(dm, "_sampler", None), AdaptiveSampler):
+            raise TypeError(
+                "AdaptiveCollocationCallback requires the DataModule to use "
+                "collocation_sampler='adaptive'. Got: "
+                f"{type(getattr(dm, '_sampler', None)).__name__}."
+            )
+
+    @override
+    def on_train_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
+        """Resample collocation points using the current model weights."""
+        if (trainer.current_epoch + 1) % self._every_n != 0:
+            return
+        dm = trainer.datamodule  # type: ignore[attr-defined]
+        n = dm.hp.training_data.collocations
+        new_coll = dm._sampler.sample(n, dm._domain)
+        dm.pinn_ds.x_coll = new_coll
 
 
 class DataScaling(DataCallback):

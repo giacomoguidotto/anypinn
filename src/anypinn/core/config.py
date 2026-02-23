@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Literal
 
 from torch import Tensor
 
-from anypinn.core.types import Activations
+from anypinn.core.types import Activations, CollocationStrategies
 
 if TYPE_CHECKING:
     from anypinn.core.nn import ArgsRegistry
@@ -161,11 +161,20 @@ class SMMAStoppingConfig:
 class TrainingDataConfig:
     """
     Configuration for data loading and batching.
+
+    Attributes:
+        batch_size: Number of points per training batch.
+        data_ratio: Ratio of data to collocation points per batch.
+        collocations: Total number of collocation points to generate.
+        collocation_sampler: Sampling strategy for collocation points.
+        collocation_seed: Optional seed for reproducible collocation sampling.
     """
 
     batch_size: int
     data_ratio: int | float
     collocations: int
+    collocation_sampler: CollocationStrategies = "random"
+    collocation_seed: int | None = None
 
     def __post_init__(self) -> None:
         if self.batch_size <= 0:
