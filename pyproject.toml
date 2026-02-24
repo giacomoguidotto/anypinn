@@ -119,8 +119,8 @@ python-version = "3.13"
 root = ["./src"]
 
 [tool.ty.src]
-include = ["src", "tests", "examples"]
-exclude = ["src/anypinn/cli/scaffold"]
+include = ["src", "tests"]
+exclude = ["src/anypinn/cli/scaffold", "examples"]
 
 [tool.ruff]
 line-length = 99
