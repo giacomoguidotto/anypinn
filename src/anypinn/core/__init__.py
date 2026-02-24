@@ -24,6 +24,7 @@ from anypinn.core.nn import (
     FieldsRegistry,
     Parameter,
     ParamsRegistry,
+    build_criterion,
     get_activation,
 )
 from anypinn.core.problem import Constraint, Problem
@@ -41,6 +42,7 @@ from anypinn.core.types import (
     LOSS_KEY,
     Activations,
     CollocationStrategies,
+    Criteria,
     DataBatch,
     LogFn,
     Predictions,
@@ -67,6 +69,7 @@ __all__ = [
     "ColumnRef",
     "Constraint",
     "CosineAnnealingConfig",
+    "Criteria",
     "DataBatch",
     "DataCallback",
     "Domain",
@@ -101,6 +104,7 @@ __all__ = [
     "UniformSampler",
     "ValidationRegistry",
     "ValidationSource",
+    "build_criterion",
     "build_sampler",
     "get_activation",
     "resolve_validation",

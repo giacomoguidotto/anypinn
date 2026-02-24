@@ -193,11 +193,6 @@ developer experience hardening and the PDE expansion track.
 
 ### 2.1 PDE Maturity Track
 
-#### PDE7 - Configurable loss criterion
-
-`ODEInverseProblem` still hard-codes `nn.MSELoss()`.
-Expose criterion selection to support multi-scale residuals (Huber, weighted MSE, relative losses).
-
 #### PDE8 - Scoped constraints for coupled systems
 
 Coupled PDE systems need constraints operating on field subsets (e.g. continuity vs momentum

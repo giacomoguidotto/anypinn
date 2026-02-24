@@ -15,6 +15,9 @@ Activations: TypeAlias = Literal[
 ]
 """Supported activation functions."""
 
+Criteria: TypeAlias = Literal["mse", "huber", "l1"]
+"""Supported loss criteria."""
+
 CollocationStrategies: TypeAlias = Literal[
     "uniform",
     "random",
