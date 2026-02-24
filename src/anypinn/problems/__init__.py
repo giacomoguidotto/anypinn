@@ -15,6 +15,8 @@ from anypinn.problems.pde import (
     BoundaryCondition,
     DirichletBCConstraint,
     NeumannBCConstraint,
+    PDEResidualConstraint,
+    PDEResidualFn,
 )
 
 __all__ = [
@@ -28,6 +30,8 @@ __all__ = [
     "ODEHyperparameters",
     "ODEInverseProblem",
     "ODEProperties",
+    "PDEResidualConstraint",
+    "PDEResidualFn",
     "PredictDataFn",
     "ResidualsConstraint",
 ]

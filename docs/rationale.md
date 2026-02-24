@@ -167,12 +167,12 @@ The argument above holds within a specific scope. AnyPINN is not the right choic
 
 - **Complex PDE problems** (heat, wave, Navier-Stokes). The PDE foundation is in place:
   multi-dimensional `Domain`, boundary condition constraints (`DirichletBCConstraint`,
-  `NeumannBCConstraint`), collocation samplers (uniform grid, random, Latin hypercube, adaptive
+  `NeumannBCConstraint`), interior residual constraints with field-subset scoping
+  (`PDEResidualConstraint`), collocation samplers (uniform grid, random, Latin hypercube, adaptive
   residual-based), and a composable differential utilities library (`grad`, `laplacian`, `hessian`,
-  `divergence`). What remains maturing: configurable loss criteria for stiff multi-scale systems,
-  built-in spatial encodings (random Fourier features, positional encodings), and explicit
-  constraint scoping for coupled systems (e.g. Navier-Stokes velocity + pressure). DeepXDE and
-  PINA remain more battle-tested for complex 3D PDE problems.
+  `divergence`). What remains maturing: built-in spatial encodings beyond random Fourier features
+  and positional encodings. DeepXDE and PINA remain more battle-tested for complex 3D PDE
+  problems.
 - **Large-scale 3D simulations on GPU clusters.** NVIDIA Modulus is purpose-built for this and
   has no peer in that space.
 - **Users already productive in TensorFlow.** Switching frameworks for a library is rarely
@@ -193,10 +193,12 @@ developer experience hardening and the PDE expansion track.
 
 ### 2.1 PDE Maturity Track
 
-#### PDE8 - Scoped constraints for coupled systems
+#### ~~PDE8 - Scoped constraints for coupled systems~~ ✅
 
-Coupled PDE systems need constraints operating on field subsets (e.g. continuity vs momentum
-components). Add explicit constraint scoping instead of forcing per-constraint manual filtering.
+~~Coupled PDE systems need constraints operating on field subsets (e.g. continuity vs momentum
+components). Add explicit constraint scoping instead of forcing per-constraint manual filtering.~~
+
+**Resolved:** `PDEResidualConstraint` in `anypinn.problems.pde` accepts `fields` and `params` sub-registries at construction time and delegates residual evaluation to a user-supplied `PDEResidualFn(x, fields, params) → Tensor`. Each constraint operates on only the fields it needs; the rest of the Problem's fields are invisible to it.
 
 ### 2.2 ODE Ergonomics Track
 
