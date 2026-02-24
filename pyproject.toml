@@ -116,6 +116,7 @@ root = ["./src"]
 
 [tool.ty.src]
 include = ["src", "tests"]
+exclude = ["src/anypinn/cli/scaffold"]
 
 [tool.ruff]
 line-length = 99
