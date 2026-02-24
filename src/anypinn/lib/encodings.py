@@ -10,22 +10,22 @@ import torch.nn as nn
 class FourierEncoding(nn.Module):
     """Sinusoidal positional encoding for periodic or high-frequency signals.
 
-    For input :math:`\\mathbf{x} \\in \\mathbb{R}^{n \\times d}` and
-    ``num_frequencies`` :math:`K`, the encoding is:
+    For input $\\mathbf{x} \\in \\mathbb{R}^{n \\times d}$ and
+    `num_frequencies` $K$, the encoding is:
 
-    .. math::
+    $$
+    \\gamma(\\mathbf{x}) = [\\mathbf{x},\\,
+        \\sin(\\mathbf{x}),\\, \\cos(\\mathbf{x}),\\,
+        \\sin(2\\mathbf{x}),\\, \\cos(2\\mathbf{x}),\\,
+        \\ldots,\\,
+        \\sin(K\\mathbf{x}),\\, \\cos(K\\mathbf{x})]
+    $$
 
-        \\gamma(\\mathbf{x}) = [\\mathbf{x},\\,
-            \\sin(\\mathbf{x}),\\, \\cos(\\mathbf{x}),\\,
-            \\sin(2\\mathbf{x}),\\, \\cos(2\\mathbf{x}),\\,
-            \\ldots,\\,
-            \\sin(K\\mathbf{x}),\\, \\cos(K\\mathbf{x})]
-
-    producing shape :math:`(n,\\, d\\,(1 + 2K))` when ``include_input=True``,
-    or :math:`(n,\\, 2dK)` when ``include_input=False``.
+    producing shape $(n,\\, d\\,(1 + 2K))$ when `include_input=True`,
+    or $(n,\\, 2dK)$ when `include_input=False`.
 
     Args:
-        num_frequencies: Number of frequency bands :math:`K \\geq 1`.
+        num_frequencies: Number of frequency bands $K \\geq 1$.
         include_input:   Prepend original coordinates to the encoded output.
     """
 
@@ -52,23 +52,23 @@ class FourierEncoding(nn.Module):
 class RandomFourierFeatures(nn.Module):
     """Random Fourier Features (Rahimi & Recht, 2007) for RBF kernel approximation.
 
-    Draws a fixed random matrix :math:`\\mathbf{B} \\sim \\mathcal{N}(0, \\sigma^2)`
-    of shape :math:`(d_{\\text{in}},\\, m)` and maps
-    :math:`\\mathbf{x} \\in \\mathbb{R}^{n \\times d_{\\text{in}}}` to:
+    Draws a fixed random matrix $\\mathbf{B} \\sim \\mathcal{N}(0, \\sigma^2)$
+    of shape $(d_{\\text{in}},\\, m)$ and maps
+    $\\mathbf{x} \\in \\mathbb{R}^{n \\times d_{\\text{in}}}$ to:
 
-    .. math::
+    $$
+    \\phi(\\mathbf{x}) = \\frac{1}{\\sqrt{m}}
+        [\\cos(\\mathbf{x}\\mathbf{B}),\\; \\sin(\\mathbf{x}\\mathbf{B})]
+        \\in \\mathbb{R}^{n \\times 2m}
+    $$
 
-        \\phi(\\mathbf{x}) = \\frac{1}{\\sqrt{m}}
-            [\\cos(\\mathbf{x}\\mathbf{B}),\\; \\sin(\\mathbf{x}\\mathbf{B})]
-            \\in \\mathbb{R}^{n \\times 2m}
-
-    :math:`\\mathbf{B}` is registered as a buffer and moves with the module across devices.
+    $\\mathbf{B}$ is registered as a buffer and moves with the module across devices.
 
     Args:
-        in_dim:       Spatial dimension :math:`d_{\\text{in}}` of the input.
-        num_features: Number of random features :math:`m`
-                      (output dimension :math:`= 2m`).
-        scale:        Standard deviation :math:`\\sigma` of the frequency distribution.
+        in_dim:       Spatial dimension $d_{\\text{in}}$ of the input.
+        num_features: Number of random features $m$
+                      (output dimension $= 2m$).
+        scale:        Standard deviation $\\sigma$ of the frequency distribution.
                       Higher values capture higher-frequency variation. Default: 1.0.
         seed:         Optional seed for reproducible frequency sampling.
     """
