@@ -11,19 +11,17 @@ from anypinn.problems import ODEHyperparameters
 
 @dataclass
 class RunConfig:
-    max_epochs: int
-    gradient_clip_val: float
     experiment_name: str
 
 
 CONFIG = RunConfig(
-    max_epochs=5000,
-    gradient_clip_val=1.0,
     experiment_name="lotka-volterra",
 )
 
 hp = ODEHyperparameters(
     lr=1e-3,
+    max_epochs=5000,
+    gradient_clip_val=1.0,
     training_data=GenerationConfig(
         batch_size=100,
         data_ratio=2,

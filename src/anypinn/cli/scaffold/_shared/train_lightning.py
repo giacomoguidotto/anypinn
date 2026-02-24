@@ -128,8 +128,8 @@ def main() -> None:
     ]
 
     trainer = Trainer(
-        max_epochs=CONFIG.max_epochs,
-        gradient_clip_val=CONFIG.gradient_clip_val,
+        max_epochs=hp.max_epochs,
+        gradient_clip_val=hp.gradient_clip_val,
         logger=loggers if not args.predict else [],
         callbacks=callbacks,
         log_every_n_steps=0,

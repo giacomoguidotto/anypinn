@@ -225,6 +225,8 @@ class PINNHyperparameters:
     training_data: IngestionConfig | GenerationConfig
     fields_config: MLPConfig
     params_config: MLPConfig | ScalarConfig
+    max_epochs: int | None = None
+    gradient_clip_val: float | None = None
     criterion: Criteria = "mse"
     optimizer: AdamConfig | LBFGSConfig | None = None
     scheduler: ReduceLROnPlateauConfig | CosineAnnealingConfig | None = None

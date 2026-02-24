@@ -15,15 +15,11 @@ from anypinn.problems import ODEHyperparameters
 
 @dataclass
 class RunConfig:
-    max_epochs: int
-    gradient_clip_val: float
     experiment_name: str
     run_name: str
 
 
 CONFIG = RunConfig(
-    max_epochs=2000,
-    gradient_clip_val=0.1,
     experiment_name="__EXPERIMENT_NAME__",
     run_name="v0",
 )
@@ -34,6 +30,8 @@ CONFIG = RunConfig(
 
 hp = ODEHyperparameters(
     lr=1e-3,
+    max_epochs=2000,
+    gradient_clip_val=0.1,
     training_data=IngestionConfig(
         batch_size=100,
         data_ratio=2,
