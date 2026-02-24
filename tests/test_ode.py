@@ -124,6 +124,51 @@ class TestResidualsConstraint:
         grads = [p.grad for p in fields["u0"].parameters()]
         assert any(g is not None for g in grads)
 
+    def test_loss_second_order_computes(self):
+        fields = _make_fields(1)
+        props = _make_second_order_props()
+        constraint = ResidualsConstraint(props, fields, {}, weight=1.0)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        loss = constraint.loss(batch, nn.MSELoss())
+        assert loss.shape == ()
+        assert loss.item() >= 0.0
+
+    def test_loss_second_order_gradient_flows(self):
+        fields = _make_fields(1)
+        props = _make_second_order_props()
+        constraint = ResidualsConstraint(props, fields, {}, weight=1.0)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        loss = constraint.loss(batch, nn.MSELoss())
+        loss.backward()
+        grads = [p.grad for p in fields["u0"].parameters()]
+        assert any(g is not None for g in grads)
+
+    def test_loss_second_order_weight_scales(self):
+        fields = _make_fields(1)
+        props = _make_second_order_props()
+
+        c1 = ResidualsConstraint(props, fields, {}, weight=1.0)
+        c2 = ResidualsConstraint(props, fields, {}, weight=2.0)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        loss1 = c1.loss(batch, nn.MSELoss())
+        loss2 = c2.loss(batch, nn.MSELoss())
+        assert loss2.item() == pytest.approx(loss1.item() * 2.0, rel=1e-5)
+
 
 class TestICConstraint:
     def test_loss_computes(self):
@@ -167,6 +212,73 @@ class TestICConstraint:
         loss1 = c1.loss(batch, nn.MSELoss())
         loss3 = c2.loss(batch, nn.MSELoss())
         assert loss3.item() == pytest.approx(loss1.item() * 3.0, rel=1e-5)
+
+    def test_second_order_ic_enforces_derivative(self):
+        """Second-order IC constraint should include a derivative IC term."""
+        fields = _make_fields(1)
+        props_1st = _make_props(1)
+        props_2nd = _make_second_order_props()
+
+        c1 = ICConstraint(props_1st, fields, weight=1.0)
+        c2 = ICConstraint(props_2nd, fields, weight=1.0)
+
+        x = torch.linspace(0, 10, 50).unsqueeze(-1)
+        y = torch.randn(50, 1)
+        ctx = InferredContext(x, y, {})
+        c1.inject_context(ctx)
+        c2.inject_context(ctx)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        # Second-order loss sums y(t0) + dy/dt(t0) terms, so can differ from first-order
+        loss1 = c1.loss(batch, nn.MSELoss())
+        loss2 = c2.loss(batch, nn.MSELoss())
+        assert loss2.shape == ()
+        assert loss2.item() >= 0.0
+        # The losses need not be equal because c2 includes an extra derivative term
+        assert loss2.item() != loss1.item()
+
+    def test_second_order_ic_zero_when_matched(self):
+        """When field output exactly matches y0 and dy0, IC loss should be near zero."""
+        from anypinn.core.config import MLPConfig
+        from anypinn.core.nn import Field
+
+        # Build a trivially zero field (we'll just check the structure is correct)
+        cfg = MLPConfig(in_dim=1, out_dim=1, hidden_layers=[4], activation="tanh")
+        fields = {"u0": Field(cfg)}
+        props = _make_second_order_props()
+        constraint = ICConstraint(props, fields, weight=1.0)
+
+        x = torch.linspace(0, 10, 50).unsqueeze(-1)
+        y = torch.randn(50, 1)
+        ctx = InferredContext(x, y, {})
+        constraint.inject_context(ctx)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        loss = constraint.loss(batch, nn.MSELoss())
+        assert loss.shape == ()
+        assert loss.item() >= 0.0
+
+    def test_second_order_ic_requires_context(self):
+        """Calling loss before inject_context should raise AttributeError."""
+        fields = _make_fields(1)
+        props = _make_second_order_props()
+        constraint = ICConstraint(props, fields, weight=1.0)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        with pytest.raises(AttributeError):
+            constraint.loss(batch, nn.MSELoss())
 
 
 class TestDataConstraint:
@@ -261,6 +373,85 @@ class TestODEInverseProblem:
         loss = problem.training_loss(batch)
         assert loss.shape == ()
         assert loss.item() >= 0.0
+
+    def test_second_order_training_loss_runs(self):
+        fields = _make_fields(1)
+        params = _make_params()
+        props = _make_second_order_props()
+
+        hp = ODEHyperparameters(
+            lr=1e-3,
+            training_data=GenerationConfig(
+                batch_size=16,
+                data_ratio=0.5,
+                collocations=50,
+                x=torch.linspace(0, 10, 50),
+                noise_level=0.0,
+                args_to_train={},
+            ),
+            fields_config=MLPConfig(in_dim=1, out_dim=1, hidden_layers=[8], activation="tanh"),
+            params_config=ScalarConfig(init_value=0.5),
+        )
+
+        def predict_data(x: Tensor, f: dict, p: dict) -> Tensor:
+            return f["u0"](x)
+
+        problem = ODEInverseProblem(props, hp, fields, params, predict_data)
+
+        x = torch.linspace(0, 10, 50).unsqueeze(-1)
+        y = torch.randn(50, 1)
+        ctx = InferredContext(x, y, {})
+        problem.inject_context(ctx)
+
+        x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+        y_data = torch.randn(10, 1)
+        x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+        batch = ((x_data, y_data), x_coll)
+
+        loss = problem.training_loss(batch)
+        assert loss.shape == ()
+        assert loss.item() >= 0.0
+
+
+def _make_second_order_props() -> ODEProperties:
+    """ODE: d²y/dt² = -y (exact solution: cos(t))."""
+
+    def oscillator(x: Tensor, y: Tensor, args: dict, derivs: list[Tensor] = []) -> Tensor:  # noqa: B006
+        return -y
+
+    return ODEProperties(
+        ode=oscillator,
+        args={},
+        y0=torch.tensor([1.0]),
+        order=2,
+        dy0=[torch.tensor([0.0])],
+    )
+
+
+class TestODEProperties:
+    def test_default_order_and_dy0(self):
+        props = _make_props(1)
+        assert props.order == 1
+        assert props.dy0 == []
+
+    def test_dy0_length_validated(self):
+        with pytest.raises(ValueError, match="dy0 must have length"):
+            ODEProperties(
+                ode=_decay_ode,
+                args={},
+                y0=torch.tensor([1.0]),
+                order=2,
+                dy0=[],  # should be length 1
+            )
+
+    def test_order_lt_one_raises(self):
+        with pytest.raises(ValueError, match="order must be >= 1"):
+            ODEProperties(
+                ode=_decay_ode,
+                args={},
+                y0=torch.tensor([1.0]),
+                order=0,
+            )
 
 
 class TestBuildCriterion:

@@ -283,18 +283,13 @@ assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
 **Resolved:** Added `PDEResidualConstraint` to `anypinn.problems.pde`. Takes `fields: FieldsRegistry` and `params: ParamsRegistry` at construction time — the user passes only the subset needed. Delegates PDE evaluation to a `PDEResidualFn(x, fields, params) -> Tensor` callback, enabling per-equation field scoping with full access to `anypinn.lib.diff` operators for autograd-based derivatives.
 
-### ODE1. No native second-order ODE constraint (requires first-order state augmentation)
+### ~~ODE1. No native second-order ODE constraint (requires first-order state augmentation)~~ ✅
 
 **Files:** `problems/ode.py`, `examples/damped_oscillator/damped_oscillator.py`
 
-Second-order ODEs are currently modeled by introducing auxiliary state variables and rewriting to a first-order system (e.g. `x'' -> [x', v']` with `v = x'`). This works, but it increases model complexity and learns derivative relationships indirectly.
+~~Second-order ODEs are currently modeled by introducing auxiliary state variables and rewriting to a first-order system (e.g. `x'' -> [x', v']` with `v = x'`). This works, but it increases model complexity and learns derivative relationships indirectly.~~
 
-Add a native second-order ODE path:
-
-- `SecondOrderResidualsConstraint` using `lib/diff.py::partial(..., order=2)`
-- Second-order callable protocol (receives `x`, `y`, `dy/dx`, args and returns `d2y/dx2`)
-- Initial-derivative condition support (`y(t0)` and `dy/dx(t0)`)
-- Optional `SecondOrderODEInverseProblem` wrapper for parity with `ODEInverseProblem`
+**Resolved:** `ODEProperties` now accepts `order: int` (default 1) and `dy0: list[Tensor]` (length = `order-1`) for derivative initial conditions. `ODECallable` receives `derivs` as its last optional argument — `derivs[k]` is the `(k+1)`-th derivative stacked across fields. `ResidualsConstraint.loss` chains autograd at each level up to `order`, comparing the highest derivative against the ODE output. `ICConstraint.loss` enforces all derivative ICs via chained autograd at `t0`. Existing first-order callables and call sites work unchanged (order=1, dy0=[]).
 
 ---
 
@@ -329,4 +324,4 @@ Add a native second-order ODE path:
 | ~~PDE6~~ | ~~PDE~~ | ~~Medium~~ | ~~Medium~~ | ~~Quality of PDE solutions~~ ✅             |
 | ~~PDE7~~ | ~~PDE~~ | ~~Medium~~ | ~~Small~~  | ~~Multi-scale PDE accuracy~~ ✅             |
 | ~~PDE8~~ | ~~PDE~~ | ~~Medium~~ | ~~Large~~  | ~~Coupled-system expressiveness~~ ✅        |
-| ODE1   | ODE       | Medium     | Medium     | Native 2nd-order ODE expressiveness         |
+| ~~ODE1~~ | ~~ODE~~ | ~~Medium~~ | ~~Medium~~ | ~~Native 2nd-order ODE expressiveness~~ ✅  |

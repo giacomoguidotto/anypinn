@@ -169,10 +169,9 @@ The argument above holds within a specific scope. AnyPINN is not the right choic
   multi-dimensional `Domain`, boundary condition constraints (`DirichletBCConstraint`,
   `NeumannBCConstraint`), interior residual constraints with field-subset scoping
   (`PDEResidualConstraint`), collocation samplers (uniform grid, random, Latin hypercube, adaptive
-  residual-based), and a composable differential utilities library (`grad`, `laplacian`, `hessian`,
-  `divergence`). What remains maturing: built-in spatial encodings beyond random Fourier features
-  and positional encodings. DeepXDE and PINA remain more battle-tested for complex 3D PDE
-  problems.
+  residual-based), spatial encodings (`FourierEncoding`, `RandomFourierFeatures`), and composable
+  differential operators (`grad`, `laplacian`, `hessian`, `divergence`). DeepXDE and PINA remain
+  more battle-tested for complex 3D PDE problems.
 - **Large-scale 3D simulations on GPU clusters.** NVIDIA Modulus is purpose-built for this and
   has no peer in that space.
 - **Users already productive in TensorFlow.** Switching frameworks for a library is rarely
@@ -185,31 +184,62 @@ valuable and most clearly unmatched by existing alternatives.
 
 ---
 
-## 2. Future Work
+## 2. Scope and Capabilities
 
-The items below are drawn from the architecture audit. They are grouped by scope and ordered by
-impact within each group. Scaling and performance items have all been resolved; what remains is
-developer experience hardening and the PDE expansion track.
+This section describes what AnyPINN can do, grouped by layer.
 
-### 2.1 PDE Maturity Track
+### ODE inverse problems
 
-#### ~~PDE8 - Scoped constraints for coupled systems~~ ✅
+The primary use case. `ODEInverseProblem` composes three constraint types — residual, initial
+condition, and data matching — over arbitrary ODE systems:
 
-~~Coupled PDE systems need constraints operating on field subsets (e.g. continuity vs momentum
-components). Add explicit constraint scoping instead of forcing per-constraint manual filtering.~~
+- **Arbitrary-order residual constraints.** `ODEProperties.order` specifies the ODE order (default
+  1). `ResidualsConstraint` chains autograd at each derivative level up to `order`, comparing the
+  highest derivative against the ODE callable's output. First-order callables work unchanged.
+- **Native higher-order IC enforcement.** `ODEProperties.dy0` holds initial conditions for each
+  lower-order derivative. `ICConstraint` enforces all of them at `t0` via chained autograd.
+- **Configurable loss criterion.** `PINNHyperparameters.criterion` selects MSE, Huber, or L1 loss;
+  `ODEInverseProblem` uses this instead of a hardcoded `nn.MSELoss`.
+- **Learnable scalar and function-valued parameters.** `Parameter` exposes a `forward(x)` interface
+  regardless of whether it backs a scalar or an MLP. Fixed and learnable arguments are
+  indistinguishable from the ODE callable's perspective.
+- **`ValidationRegistry` for ground-truth tracking.** CSV columns can be bound to parameter names
+  at construction time; the library logs MSE against known ground truth every training step.
 
-**Resolved:** `PDEResidualConstraint` in `anypinn.problems.pde` accepts `fields` and `params` sub-registries at construction time and delegates residual evaluation to a user-supplied `PDEResidualFn(x, fields, params) → Tensor`. Each constraint operates on only the fields it needs; the rest of the Problem's fields are invisible to it.
+### PDE problems
 
-### 2.2 ODE Ergonomics Track
+- **Multi-dimensional `Domain`.** `InferredContext` infers N-dimensional domain bounds and step
+  sizes from training data. Collocation samplers produce `(M, d)` tensors for any `d`.
+- **Boundary condition constraints.** `DirichletBCConstraint` enforces `u = g` on the boundary;
+  `NeumannBCConstraint` enforces `du/dn = h` using the `grad` operator from `anypinn.lib.diff`.
+- **`PDEResidualConstraint` with field-subset scoping.** Each constraint receives only the fields
+  and parameters it needs; coupled systems (e.g. velocity + pressure) are expressed naturally by
+  passing different sub-registries to each constraint.
+- **Composable differential operators.** `anypinn.lib.diff` provides `grad`, `partial`,
+  `mixed_partial`, `laplacian`, `divergence`, and `hessian` — all built on `torch.autograd.grad`
+  and usable directly inside any constraint or ODE callable.
 
-#### ODE1 - Native second-order ODE path
+### Collocation
 
-Second-order systems are currently modeled through first-order state augmentation.
-Add native second-order abstractions:
+Five built-in samplers, selected via the `collocation_sampler` string literal in
+`TrainingDataConfig`: `"uniform"`, `"random"`, `"latin_hypercube"`, `"log_uniform"` (preserves
+log-space density for epidemic models), and `"adaptive"` (residual-weighted sampling with
+configurable exploration ratio via `AdaptiveCollocationCallback`).
 
-- second-order residual constraint,
-- callable protocol for `d2y/dx2`,
-- initial derivative condition support.
+### Input encodings
+
+`FourierEncoding` and `RandomFourierFeatures` in `anypinn.lib.encodings` are `nn.Module` subclasses
+that participate in `.parameters()`, `.state_dict()`, and device transfers. They are passed as
+the `encode` argument to `MLPConfig` and lift low-frequency MLPs to high-frequency solutions
+without changing the training loop.
+
+### Training
+
+Adam and L-BFGS optimizers; `ReduceLROnPlateau` and `CosineAnnealing` schedulers; SMMA-based
+early stopping with configurable lookback window. All selected via typed frozen dataclasses in
+`PINNHyperparameters`. The optional Lightning wrapper (`anypinn.lightning`) adds a
+`PINNModule` for users who want Lightning's training infrastructure; the core library never
+requires it.
 
 ---
 
@@ -224,8 +254,6 @@ one.
 The library's justification is strongest for researchers working on parameter recovery in
 dynamical systems — epidemiological models, mechanical oscillators, predator-prey dynamics — who
 want to define physics in PyTorch terms and bring their own training infrastructure. The PDE
-foundation (multi-dimensional domains, boundary condition constraints, pluggable collocation
-samplers including residual-adaptive with periodic refresh via `AdaptiveCollocationCallback`,
-composable differential operators) is complete. What remains on the PDE track — configurable loss
-criteria, spatial encodings, coupled-system constraint scoping — extends the library's reach to
-progressively harder problem classes without changing the core design.
+foundation and ODE ergonomics (arbitrary-order constraints, native derivative IC enforcement,
+configurable criteria, spatial encodings, coupled-system scoping, and adaptive collocation) are
+all in place, providing a complete platform for the stated scope.
