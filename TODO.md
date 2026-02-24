@@ -185,6 +185,16 @@ y = y.unsqueeze(-1)
 
 **Resolved:** Replaced with `if y.ndim == 1` — handles 1-D tensors safely and doesn't unsqueeze multi-column `(N, k)` output.
 
+### D9. Inconsistent `y` shape convention between single-series and multi-series
+
+**File:** `core/dataset.py:load_data`, `lightning/callbacks.py:DataScaling`
+
+Single-series data loaded from CSV has shape `(N, 1)` (2-D), while multi-series data (`k > 1` y_columns) must be `(N, k, 1)` (3-D) to satisfy the `y_data.shape[-1] == 1` invariant and be handled correctly by `DataScaling`. This split convention forces `DataScaling` to branch on `y.ndim == 3` and requires `predict_data` functions to use `torch.stack(..., dim=1)` for multi-series but plain returns for single-series.
+
+**Minimal fix applied:** `load_data` now unsqueezes `(N, k) → (N, k, 1)` when `k > 1`.
+
+**Potential unification:** Standardise on `(N, k, 1)` for all series counts (including single-series). This would let `DataScaling` drop the `ndim` branch, make all `predict_data` functions return `(N, k, 1)` uniformly, and simplify downstream indexing in `plot_and_save` helpers. Requires updating every single-series example and catalog DataModule.
+
 ### ~~D8. No "hello world" minimal example~~ ✅
 
 **Files:** `examples/`
