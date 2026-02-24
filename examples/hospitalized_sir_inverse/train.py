@@ -118,8 +118,8 @@ def main(config, predict: bool = False) -> None:
     ]
 
     trainer = Trainer(
-        max_epochs=config.max_epochs,
-        gradient_clip_val=config.gradient_clip_val,
+        max_epochs=hp.max_epochs,
+        gradient_clip_val=hp.gradient_clip_val,
         logger=loggers if not predict else [],
         callbacks=callbacks,
         log_every_n_steps=0,

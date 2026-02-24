@@ -44,7 +44,7 @@ def main() -> None:
         signal.signal(signal.SIGINT, on_interrupt)
 
         # TODO: implement your training loop here
-        # for epoch in range(CONFIG.max_epochs):
+        # for epoch in range(hp.max_epochs):
         #     for batch in your_dataloader:
         #         optimizer.zero_grad()
         #         loss = problem.training_loss(batch, log=None)
