@@ -98,6 +98,10 @@ utils = [
     "sympy",
     "mpmath",
 ]
+dev = [
+    "setuptools>=82.0.0",
+    "tensorboard>=2.20.0",
+]
 
 
 [build-system]
@@ -115,7 +119,7 @@ python-version = "3.13"
 root = ["./src"]
 
 [tool.ty.src]
-include = ["src", "tests"]
+include = ["src", "tests", "examples"]
 exclude = ["src/anypinn/cli/scaffold"]
 
 [tool.ruff]

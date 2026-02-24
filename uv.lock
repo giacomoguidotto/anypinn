@@ -194,6 +194,10 @@ core = [
     { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "seaborn" },
 ]
+dev = [
+    { name = "setuptools" },
+    { name = "tensorboard" },
+]
 dl = [
     { name = "lightning" },
     { name = "tensorboard" },
@@ -249,6 +253,10 @@ core = [
     { name = "pandas" },
     { name = "scipy" },
     { name = "seaborn" },
+]
+dev = [
+    { name = "setuptools", specifier = ">=82.0.0" },
+    { name = "tensorboard", specifier = ">=2.20.0" },
 ]
 dl = [
     { name = "lightning" },
