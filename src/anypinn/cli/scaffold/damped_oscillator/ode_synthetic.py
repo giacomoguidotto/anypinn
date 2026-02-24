@@ -1,25 +1,3 @@
-"""Damped oscillator template."""
-
-from anypinn.cli._types import DataSource
-from anypinn.cli.templates._base import train_py_core, train_py_lightning
-
-EXPERIMENT_NAME = "damped-oscillator"
-
-
-def _ode_py(data_source: DataSource) -> str:
-    if data_source == DataSource.CSV:
-        validation_block = """\
-validation: ValidationRegistry = {
-    # TODO: map zeta to a column in your CSV
-    # ZETA_KEY: ColumnRef(column="your_column"),
-}"""
-    else:
-        validation_block = """\
-validation: ValidationRegistry = {
-    ZETA_KEY: lambda x: torch.full_like(x, TRUE_ZETA),
-}"""
-
-    return f'''\
 """Damped oscillator — mathematical definition."""
 
 from __future__ import annotations
@@ -93,7 +71,9 @@ def oscillator(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
 # Validation
 # ============================================================================
 
-{validation_block}
+validation: ValidationRegistry = {
+    ZETA_KEY: lambda x: torch.full_like(x, TRUE_ZETA),
+}
 
 # ============================================================================
 # Data Module Factory
@@ -114,10 +94,10 @@ def create_data_module(hp: ODEHyperparameters):
     gen_props = ODEProperties(
         ode=oscillator_unscaled,
         y0=torch.tensor([X0, V0]),
-        args={{
+        args={
             ZETA_KEY: Argument(TRUE_ZETA),
             OMEGA_KEY: Argument(TRUE_OMEGA0),
-        }},
+        },
     )
 
     return DampedOscillatorDataModule(
@@ -138,21 +118,21 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
     props = ODEProperties(
         ode=oscillator,
         y0=torch.tensor([X0, V0]),
-        args={{
+        args={
             OMEGA_KEY: Argument(TRUE_OMEGA0),
-        }},
+        },
     )
 
     fields = FieldsRegistry(
-        {{
+        {
             X_KEY: Field(config=hp.fields_config),
             V_KEY: Field(config=hp.fields_config),
-        }}
+        }
     )
     params = ParamsRegistry(
-        {{
+        {
             ZETA_KEY: Parameter(config=hp.params_config),
-        }}
+        }
     )
 
     def predict_data(
@@ -168,105 +148,3 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
         params=params,
         predict_data=predict_data,
     )
-'''
-
-
-def _config_py(data_source: DataSource) -> str:
-    if data_source == DataSource.CSV:
-        training_data = """\
-    training_data=IngestionConfig(
-        batch_size=100,
-        data_ratio=2,
-        collocations=6000,
-        df_path=Path("./data/data.csv"),
-        y_columns=["x_obs"],  # TODO: update column names
-    ),"""
-    else:
-        training_data = """\
-    training_data=GenerationConfig(
-        batch_size=100,
-        data_ratio=2,
-        collocations=6000,
-        x=torch.linspace(start=0, end=5, steps=200),
-        args_to_train={},
-        noise_level=0,
-    ),"""
-
-    return f'''\
-"""Damped oscillator — training configuration."""
-
-from __future__ import annotations
-
-from dataclasses import dataclass
-from pathlib import Path
-
-import torch
-
-from anypinn.core import (
-    GenerationConfig,
-    IngestionConfig,
-    MLPConfig,
-    ScalarConfig,
-    ReduceLROnPlateauConfig,
-)
-from anypinn.problems import ODEHyperparameters
-
-
-# ============================================================================
-# Run Configuration
-# ============================================================================
-
-
-@dataclass
-class RunConfig:
-    max_epochs: int
-    gradient_clip_val: float
-    experiment_name: str
-    run_name: str
-
-
-CONFIG = RunConfig(
-    max_epochs=2000,
-    gradient_clip_val=0.1,
-    experiment_name="{EXPERIMENT_NAME}",
-    run_name="v0",
-)
-
-# ============================================================================
-# Hyperparameters
-# ============================================================================
-
-hp = ODEHyperparameters(
-    lr=1e-3,
-{training_data}
-    fields_config=MLPConfig(
-        in_dim=1,
-        out_dim=1,
-        hidden_layers=[64, 128, 128, 64],
-        activation="tanh",
-        output_activation=None,
-    ),
-    params_config=ScalarConfig(
-        init_value=0.3,
-    ),
-    scheduler=ReduceLROnPlateauConfig(
-        mode="min",
-        factor=0.5,
-        patience=55,
-        threshold=5e-3,
-        min_lr=1e-6,
-    ),
-    pde_weight=1e-4,
-    ic_weight=15,
-    data_weight=5,
-)
-'''
-
-
-def render(data_source: DataSource, lightning: bool) -> dict[str, str]:
-    train_fn = train_py_lightning if lightning else train_py_core
-    return {
-        "ode.py": _ode_py(data_source),
-        "config.py": _config_py(data_source),
-        "train.py": train_fn(EXPERIMENT_NAME),
-    }

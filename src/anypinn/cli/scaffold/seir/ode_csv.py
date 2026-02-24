@@ -1,25 +1,3 @@
-"""SEIR epidemic model template."""
-
-from anypinn.cli._types import DataSource
-from anypinn.cli.templates._base import train_py_core, train_py_lightning
-
-EXPERIMENT_NAME = "seir-inverse"
-
-
-def _ode_py(data_source: DataSource) -> str:
-    if data_source == DataSource.CSV:
-        validation_block = """\
-validation: ValidationRegistry = {
-    # TODO: map beta to a column in your CSV
-    # BETA_KEY: ColumnRef(column="your_column"),
-}"""
-    else:
-        validation_block = """\
-validation: ValidationRegistry = {
-    BETA_KEY: lambda x: torch.full_like(x, TRUE_BETA),
-}"""
-
-    return f'''\
 """SEIR epidemic model — mathematical definition."""
 
 from __future__ import annotations
@@ -99,7 +77,10 @@ def SEIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
 # Validation
 # ============================================================================
 
-{validation_block}
+validation: ValidationRegistry = {
+    # TODO: map beta to a column in your CSV
+    # BETA_KEY: ColumnRef(column="your_column"),
+}
 
 # ============================================================================
 # Data Module Factory
@@ -123,11 +104,11 @@ def create_data_module(hp: ODEHyperparameters):
     gen_props = ODEProperties(
         ode=SEIR_unscaled,
         y0=torch.tensor([S0, E0, I0]),
-        args={{
+        args={
             BETA_KEY: Argument(TRUE_BETA),
             SIGMA_KEY: Argument(TRUE_SIGMA),
             GAMMA_KEY: Argument(TRUE_GAMMA),
-        }},
+        },
     )
 
     return SEIRDataModule(
@@ -148,23 +129,23 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
     props = ODEProperties(
         ode=SEIR,
         y0=torch.tensor([S0, E0, I0]),
-        args={{
+        args={
             SIGMA_KEY: Argument(TRUE_SIGMA),
             GAMMA_KEY: Argument(TRUE_GAMMA),
-        }},
+        },
     )
 
     fields = FieldsRegistry(
-        {{
+        {
             S_KEY: Field(config=hp.fields_config),
             E_KEY: Field(config=hp.fields_config),
             I_KEY: Field(config=hp.fields_config),
-        }}
+        }
     )
     params = ParamsRegistry(
-        {{
+        {
             BETA_KEY: Parameter(config=hp.params_config),
-        }}
+        }
     )
 
     def predict_data(
@@ -180,108 +161,3 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
         params=params,
         predict_data=predict_data,
     )
-'''
-
-
-def _config_py(data_source: DataSource) -> str:
-    if data_source == DataSource.CSV:
-        training_data = """\
-    training_data=IngestionConfig(
-        batch_size=100,
-        data_ratio=2,
-        collocations=6000,
-        df_path=Path("./data/data.csv"),
-        y_columns=["I_obs"],  # TODO: update column names
-    ),"""
-    else:
-        training_data = """\
-    training_data=GenerationConfig(
-        batch_size=100,
-        data_ratio=2,
-        collocations=6000,
-        x=torch.linspace(start=0, end=160, steps=161),
-        args_to_train={},
-        noise_level=0,
-    ),"""
-
-    return f'''\
-"""SEIR epidemic model — training configuration."""
-
-from __future__ import annotations
-
-from dataclasses import dataclass
-from pathlib import Path
-
-import torch
-
-from anypinn.core import (
-    GenerationConfig,
-    IngestionConfig,
-    MLPConfig,
-    ReduceLROnPlateauConfig,
-)
-from anypinn.problems import ODEHyperparameters
-
-
-# ============================================================================
-# Run Configuration
-# ============================================================================
-
-
-@dataclass
-class RunConfig:
-    max_epochs: int
-    gradient_clip_val: float
-    experiment_name: str
-    run_name: str
-
-
-CONFIG = RunConfig(
-    max_epochs=2000,
-    gradient_clip_val=0.1,
-    experiment_name="{EXPERIMENT_NAME}",
-    run_name="v0",
-)
-
-# ============================================================================
-# Hyperparameters
-# ============================================================================
-
-hp = ODEHyperparameters(
-    lr=5e-4,
-{training_data}
-    fields_config=MLPConfig(
-        in_dim=1,
-        out_dim=1,
-        hidden_layers=[64, 128, 128, 64],
-        activation="tanh",
-        output_activation="softplus",
-    ),
-    params_config=MLPConfig(
-        in_dim=1,
-        out_dim=1,
-        hidden_layers=[64, 128, 128, 64],
-        activation="tanh",
-        output_activation="softplus",
-    ),
-    scheduler=ReduceLROnPlateauConfig(
-        mode="min",
-        factor=0.5,
-        patience=55,
-        threshold=5e-3,
-        min_lr=1e-6,
-    ),
-    pde_weight=1,
-    ic_weight=1,
-    data_weight=1,
-)
-'''
-
-
-def render(data_source: DataSource, lightning: bool) -> dict[str, str]:
-    train_fn = train_py_lightning if lightning else train_py_core
-    return {
-        "ode.py": _ode_py(data_source),
-        "config.py": _config_py(data_source),
-        "train.py": train_fn(EXPERIMENT_NAME),
-    }
