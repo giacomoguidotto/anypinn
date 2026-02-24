@@ -193,12 +193,6 @@ developer experience hardening and the PDE expansion track.
 
 ### 2.1 PDE Maturity Track
 
-#### PDE6 - Built-in spatial encodings
-
-`MLPConfig.encode` is extensible but ships no built-in PDE-focused encodings.
-Add first-class options for random Fourier features and positional encodings (with hash-grid as an
-optional advanced path).
-
 #### PDE7 - Configurable loss criterion
 
 `ODEInverseProblem` still hard-codes `nn.MSELoss()`.

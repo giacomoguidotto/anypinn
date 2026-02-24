@@ -105,7 +105,13 @@ class Field(nn.Module):
         config: MLPConfig,
     ):
         super().__init__()
-        self.encode = config.encode
+        encode = config.encode
+        if isinstance(encode, nn.Module):
+            # registers → participates in .to(), .state_dict()
+            self.encoder: nn.Module | None = encode
+        else:
+            self.encoder = None
+        self._encode_fn = encode  # callable reference (module or plain fn)
         dims = [config.in_dim] + config.hidden_layers + [config.out_dim]
         act = get_activation(config.activation)
 
@@ -139,8 +145,8 @@ class Field(nn.Module):
         Returns:
             The values of the field at input coordinates.
         """
-        if self.encode is not None:
-            x = self.encode(x)
+        if self._encode_fn is not None:
+            x = self._encode_fn(x)
         return cast(Tensor, self.net(x))
 
 
