@@ -275,11 +275,13 @@ assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
 **Resolved:** Added `Criteria` type alias (`"mse" | "huber" | "l1"`), `build_criterion()` factory in `anypinn.core.nn`, and `criterion: Criteria = "mse"` field to `PINNHyperparameters`. `ODEInverseProblem` now reads `hp.criterion` instead of hardcoding `nn.MSELoss()`.
 
-### PDE8. No multi-output / coupled-system support pattern
+### ~~PDE8. No multi-output / coupled-system support pattern~~ ✅
 
-**File:** `core/problem.py`
+~~**File:** `core/problem.py`~~
 
-`Problem` applies all constraints to all fields uniformly. Coupled PDEs (e.g. Navier-Stokes: velocity + pressure) need constraints that operate on subsets of fields — e.g. continuity constraint on pressure only, momentum on velocity only. Currently there's no way to scope a constraint to specific fields without manually filtering inside each constraint.
+~~`Problem` applies all constraints to all fields uniformly. Coupled PDEs (e.g. Navier-Stokes: velocity + pressure) need constraints that operate on subsets of fields — e.g. continuity constraint on pressure only, momentum on velocity only. Currently there's no way to scope a constraint to specific fields without manually filtering inside each constraint.~~
+
+**Resolved:** Added `PDEResidualConstraint` to `anypinn.problems.pde`. Takes `fields: FieldsRegistry` and `params: ParamsRegistry` at construction time — the user passes only the subset needed. Delegates PDE evaluation to a `PDEResidualFn(x, fields, params) -> Tensor` callback, enabling per-equation field scoping with full access to `anypinn.lib.diff` operators for autograd-based derivatives.
 
 ### ODE1. No native second-order ODE constraint (requires first-order state augmentation)
 
@@ -326,5 +328,5 @@ Add a native second-order ODE path:
 | ~~D8~~ | ~~DX~~    | ~~Medium~~ | ~~Small~~  | ~~Onboarding~~ ✅                           |
 | ~~PDE6~~ | ~~PDE~~ | ~~Medium~~ | ~~Medium~~ | ~~Quality of PDE solutions~~ ✅             |
 | ~~PDE7~~ | ~~PDE~~ | ~~Medium~~ | ~~Small~~  | ~~Multi-scale PDE accuracy~~ ✅             |
-| PDE8   | PDE       | Medium     | Large      | Coupled-system expressiveness               |
+| ~~PDE8~~ | ~~PDE~~ | ~~Medium~~ | ~~Large~~  | ~~Coupled-system expressiveness~~ ✅        |
 | ODE1   | ODE       | Medium     | Medium     | Native 2nd-order ODE expressiveness         |
