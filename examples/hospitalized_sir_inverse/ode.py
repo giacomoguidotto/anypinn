@@ -110,7 +110,7 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
         I_pred: Tensor = I(x_data)
         H_pred: Tensor = (delta(x_data) * C_I * sigma(x_data) * I_pred) / C_H
 
-        return torch.stack([I_pred, H_pred])
+        return torch.stack([I_pred, H_pred], dim=1)  # [n, 2, 1]
 
     return ODEInverseProblem(
         props=props,
