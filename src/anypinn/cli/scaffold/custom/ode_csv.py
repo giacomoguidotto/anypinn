@@ -2,23 +2,10 @@
 
 from __future__ import annotations
 
-from typing import cast
-
-import torch
 from torch import Tensor
 
-from anypinn.core import (
-    ArgsRegistry,
-    Argument,
-    ColumnRef,
-    Field,
-    FieldsRegistry,
-    Parameter,
-    ParamsRegistry,
-    ValidationRegistry,
-)
-from anypinn.lightning.callbacks import DataScaling
-from anypinn.problems import ODEHyperparameters, ODEInverseProblem, ODEProperties
+from anypinn.core import ArgsRegistry, ValidationRegistry
+from anypinn.problems import ODEHyperparameters, ODEInverseProblem
 
 # ============================================================================
 # Keys — define string keys for your state variables and parameters

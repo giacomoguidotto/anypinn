@@ -5,10 +5,9 @@ from pathlib import Path
 import signal
 import sys
 
-import torch
-
 from config import CONFIG, hp
 from ode import create_context, create_problem
+import torch
 
 
 def main() -> None:
@@ -35,7 +34,7 @@ def main() -> None:
     if args.predict:
         problem.load_state_dict(torch.load(model_path, weights_only=True))
     else:
-        optimizer = torch.optim.Adam(problem.parameters(), lr=hp.lr)
+        optimizer = torch.optim.Adam(problem.parameters(), lr=hp.lr)  # noqa: F841
 
         def on_interrupt(_signum, _frame):
             print("\nTraining interrupted. Saving model...")

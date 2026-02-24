@@ -36,7 +36,7 @@ N_KEY = "N"
 
 # Scaling constants
 C = 1e6  # population scale
-T = 90   # time scale (days)
+T = 90  # time scale (days)
 
 # Known parameters
 N_POP = 56e6
@@ -114,9 +114,7 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
         }
     )
 
-    def predict_data(
-        x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry
-    ) -> Tensor:
+    def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
         I_pred = fields[I_KEY](x_data)
         return cast(Tensor, I_pred)
 

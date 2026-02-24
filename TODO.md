@@ -293,6 +293,110 @@ assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
 ---
 
+## 5. Example Problems
+
+New example problems that exercise the capabilities added in the audit above. Ordered by increasing complexity and by which new feature they primarily demonstrate.
+
+### EX1. Van der Pol Oscillator — native second-order ODE inverse
+
+**File:** `examples/van_der_pol/`
+
+**Equation:** d²u/dt² − μ(1 − u²) du/dt + u = 0, u(0) = 2, u'(0) = 0
+
+**Demonstrates:** `ODEProperties(order=2, dy0=[...])` with `ICConstraint` enforcing both position and velocity at t=0; inverse problem recovering μ from noisy trajectory data. Contrast with the existing `damped_oscillator` which rewrites to a first-order system.
+
+---
+
+### EX2. Lorenz System — 3-field chaotic ODE
+
+**File:** `examples/lorenz/`
+
+**Equations:** dx/dt = σ(y − x), dy/dt = x(ρ − z) − y, dz/dt = xy − βz
+
+**Demonstrates:** 3-field `ResidualsConstraint`; inverse problem recovering σ, ρ, β; `LatinHypercubeSampler` for collocation; Huber criterion (`criterion="huber"`) to handle the large residual range typical of chaotic solutions. Good stress-test of the multi-field autograd batching (P1 fix).
+
+---
+
+### EX3. Poisson Equation — pure elliptic PDE, no time
+
+**File:** `examples/poisson_2d/`
+
+**Equation:** ∇²u = f(x, y) on [0,1]², u = 0 on ∂Ω
+
+**Demonstrates:** First PDE example with a 2D `DomainND` input; `DirichletBCConstraint` on all four edges; `PDEResidualConstraint` using `laplacian(u, x)` from `anypinn.lib.diff`; `FourierEncoding` on the 2D input to capture high-frequency structure; `UniformSampler` for interior + boundary points.
+
+---
+
+### EX4. Heat Equation — 1D parabolic PDE
+
+**File:** `examples/heat_1d/`
+
+**Equation:** ∂u/∂t = α ∂²u/∂x², (x,t) ∈ [0,1]×[0,T]; Dirichlet BCs u(0,t) = u(1,t) = 0; IC u(x,0) = sin(πx)
+
+**Demonstrates:** Space-time collocation on a 2D input (x, t); `PDEResidualConstraint` with `partial(u, x, dim=1, order=2)` (spatial) and `partial(u, x, dim=0, order=1)` (temporal); `DirichletBCConstraint` for both boundary and initial conditions; inverse problem recovering α from sparse interior measurements.
+
+---
+
+### EX5. Burgers Equation — 1D nonlinear PDE with shock formation
+
+**File:** `examples/burgers_1d/`
+
+**Equation:** ∂u/∂t + u ∂u/∂x = ν ∂²u/∂x², (x,t) ∈ [−1,1]×[0,T]; u(x,0) = −sin(πx); u(±1,t) = 0
+
+**Demonstrates:** Nonlinear convection term requiring `partial` for both first-order (convection) and second-order (diffusion) spatial derivatives; `AdaptiveSampler` to concentrate collocation points near the shock; `RandomFourierFeatures` encoding; inverse problem recovering ν.
+
+---
+
+### EX6. Wave Equation — 1D hyperbolic PDE, second-order in time
+
+**File:** `examples/wave_1d/`
+
+**Equation:** ∂²u/∂t² = c² ∂²u/∂x², u(0,t) = u(L,t) = 0, u(x,0) = f(x), ∂u/∂t|₀ = 0
+
+**Demonstrates:** Second-order temporal derivative via `partial(u, xt, dim=1, order=2)`; IC for both displacement and velocity using `DirichletBCConstraint` at t=0; inverse problem recovering wave speed c.
+
+---
+
+### EX7. FitzHugh-Nagumo — 2-field nonlinear neuron model
+
+**File:** `examples/fitzhugh_nagumo/`
+
+**Equations:** dv/dt = v − v³/3 − w + I_ext, dw/dt = ε(v + a − bw)
+
+**Demonstrates:** 2-field system with qualitatively different timescales between fast (v) and slow (w) dynamics; `SMMAStoppingConfig` to detect convergence in the slow manifold; L-BFGS optimizer (`LBFGSConfig`) for the stiff parameter regime; inverse problem recovering ε and a from voltage trace v only (partially observed).
+
+---
+
+### EX8. Reaction-Diffusion (Gray-Scott) — coupled 2-field PDE
+
+**File:** `examples/gray_scott_2d/`
+
+**Equations:** ∂u/∂t = D_u ∇²u − uv² + F(1−u), ∂v/∂t = D_v ∇²v + uv² − (F+k)v
+
+**Demonstrates:** Coupled 2-field PDE using two separate `PDEResidualConstraint` instances (PDE8 scoping); `laplacian` from `anypinn.lib.diff` for both fields; 2D spatial domain with `RandomSampler`; inverse problem recovering D_u, D_v, F, k from sparse pattern snapshots.
+
+---
+
+### EX9. Inverse Diffusivity — space-dependent parameter as a Field
+
+**File:** `examples/inverse_diffusivity/`
+
+**Equation:** ∂u/∂t = ∇·(D(x) ∇u), with D(x) unknown
+
+**Demonstrates:** D(x) modelled as a `Field` (not a scalar `Parameter`) — a neural network that maps spatial coordinates to a positive diffusivity; `PDEResidualConstraint` with `partial` operators; `FourierEncoding` on x for D(x) to capture spatial variation; illustrates that the framework supports function-valued unknowns, not just scalar ones.
+
+---
+
+### EX10. Allen-Cahn Equation — stiff reaction-diffusion interface
+
+**File:** `examples/allen_cahn/`
+
+**Equation:** ∂u/∂t = ε ∂²u/∂x² + u − u³, ε ≪ 1; periodic BCs
+
+**Demonstrates:** Small parameter ε causing sharp interface layers; `AdaptiveSampler` crucial for resolving the interface; `criterion="huber"` to handle large residual contrast; `RandomFourierFeatures` with high-frequency scale for the interface; forward problem (no inverse) showing the framework works without any `DataConstraint`.
+
+---
+
 ## Summary Matrix
 
 | ID     | Category  | Severity   | Effort     | Impact                                      |

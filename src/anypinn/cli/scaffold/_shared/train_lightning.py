@@ -6,21 +6,15 @@ import shutil
 import signal
 import sys
 
+from config import CONFIG, hp
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
+from ode import create_data_module, create_problem
 
 from anypinn.core import LOSS_KEY
 from anypinn.lightning import PINNModule, SMMAStopping
-from anypinn.lightning.callbacks import (
-    DataScaling,
-    FormattedProgressBar,
-    Metric,
-    PredictionsWriter,
-)
-
-from config import CONFIG, hp
-from ode import create_data_module, create_problem
+from anypinn.lightning.callbacks import FormattedProgressBar, Metric, PredictionsWriter
 
 
 def create_dir(dir: Path) -> Path:
