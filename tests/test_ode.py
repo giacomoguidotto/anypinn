@@ -5,9 +5,9 @@ import torch
 from torch import Tensor
 import torch.nn as nn
 
-from anypinn.core.config import MLPConfig, ScalarConfig
+from anypinn.core.config import GenerationConfig, MLPConfig, ScalarConfig
 from anypinn.core.context import InferredContext
-from anypinn.core.nn import Argument, Field, Parameter
+from anypinn.core.nn import Argument, Field, Parameter, build_criterion
 from anypinn.problems.ode import (
     DataConstraint,
     ICConstraint,
@@ -258,6 +258,96 @@ class TestODEInverseProblem:
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
+        loss = problem.training_loss(batch)
+        assert loss.shape == ()
+        assert loss.item() >= 0.0
+
+
+class TestBuildCriterion:
+    def test_mse_returns_mse_loss(self):
+        assert isinstance(build_criterion("mse"), nn.MSELoss)
+
+    def test_huber_returns_huber_loss(self):
+        assert isinstance(build_criterion("huber"), nn.HuberLoss)
+
+    def test_l1_returns_l1_loss(self):
+        assert isinstance(build_criterion("l1"), nn.L1Loss)
+
+
+def _make_hp(criterion: str = "mse") -> ODEHyperparameters:
+    return ODEHyperparameters(
+        lr=1e-3,
+        training_data=GenerationConfig(
+            batch_size=16,
+            data_ratio=0.5,
+            collocations=50,
+            x=torch.linspace(0, 10, 50),
+            noise_level=0.0,
+            args_to_train={},
+        ),
+        fields_config=MLPConfig(in_dim=1, out_dim=1, hidden_layers=[8], activation="tanh"),
+        params_config=ScalarConfig(init_value=0.5),
+        criterion=criterion,  # type: ignore[arg-type]
+    )
+
+
+def _make_batch() -> tuple:
+    x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
+    y_data = torch.randn(10, 1)
+    x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
+    return ((x_data, y_data), x_coll)
+
+
+class TestODEInverseProblemCriterion:
+    def test_default_criterion_is_mse(self):
+        hp = _make_hp()
+        assert hp.criterion == "mse"
+
+    def test_huber_criterion_used(self):
+        fields = _make_fields(1)
+        params = _make_params()
+        props = _make_props(1)
+
+        def predict_data(x: Tensor, f: dict, p: dict) -> Tensor:
+            return f["u0"](x)
+
+        hp_mse = _make_hp("mse")
+        hp_huber = _make_hp("huber")
+
+        problem_mse = ODEInverseProblem(props, hp_mse, fields, params, predict_data)
+        problem_huber = ODEInverseProblem(props, hp_huber, fields, params, predict_data)
+
+        x = torch.linspace(0, 10, 50).unsqueeze(-1)
+        y = torch.randn(50, 1)
+        ctx = InferredContext(x, y, {})
+        problem_mse.inject_context(ctx)
+        problem_huber.inject_context(ctx)
+
+        batch = _make_batch()
+        loss_mse = problem_mse.training_loss(batch)
+        loss_huber = problem_huber.training_loss(batch)
+
+        assert loss_huber.shape == ()
+        assert loss_huber.item() >= 0.0
+        assert loss_mse.item() != loss_huber.item()
+
+    def test_l1_criterion_used(self):
+        fields = _make_fields(1)
+        params = _make_params()
+        props = _make_props(1)
+
+        def predict_data(x: Tensor, f: dict, p: dict) -> Tensor:
+            return f["u0"](x)
+
+        hp = _make_hp("l1")
+        problem = ODEInverseProblem(props, hp, fields, params, predict_data)
+
+        x = torch.linspace(0, 10, 50).unsqueeze(-1)
+        y = torch.randn(50, 1)
+        ctx = InferredContext(x, y, {})
+        problem.inject_context(ctx)
+
+        batch = _make_batch()
         loss = problem.training_loss(batch)
         assert loss.shape == ()
         assert loss.item() >= 0.0

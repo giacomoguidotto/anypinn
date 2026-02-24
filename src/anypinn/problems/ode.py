@@ -16,6 +16,7 @@ from anypinn.core import (
     PINNHyperparameters,
     Problem,
     TrainingBatch,
+    build_criterion,
 )
 from anypinn.lib.diff import grad as diff_grad
 
@@ -266,7 +267,7 @@ class ODEInverseProblem(Problem):
             ),
         ]
 
-        criterion = nn.MSELoss()
+        criterion = build_criterion(hp.criterion)
 
         super().__init__(
             constraints=constraints,

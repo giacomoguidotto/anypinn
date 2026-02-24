@@ -267,11 +267,13 @@ assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
 **Resolved:** Added `FourierEncoding` and `RandomFourierFeatures` to `anypinn.lib.encodings`. Both are `nn.Module` subclasses so buffers (e.g. the RFF frequency matrix `B`) move correctly with `.to(device)`. `Field.__init__` now registers any `nn.Module` passed as `encode` as a proper submodule (`self.encoder`), making it participate in `.parameters()`, `.state_dict()`, and device transfers. Plain callable `encode` values continue to work unchanged.
 
-### PDE7. `ODEInverseProblem` hardcodes `MSELoss`
+### ~~PDE7. `ODEInverseProblem` hardcodes `MSELoss`~~ ✅
 
-**File:** `problems/ode.py:247`
+~~**File:** `problems/ode.py:247`~~
 
-For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be dominated by the largest residual component. The criterion should be configurable (Huber, weighted MSE, relative L2, etc.).
+~~For multi-scale PDEs (e.g. reaction-diffusion with stiff terms), MSE can be dominated by the largest residual component. The criterion should be configurable (Huber, weighted MSE, relative L2, etc.).~~
+
+**Resolved:** Added `Criteria` type alias (`"mse" | "huber" | "l1"`), `build_criterion()` factory in `anypinn.core.nn`, and `criterion: Criteria = "mse"` field to `PINNHyperparameters`. `ODEInverseProblem` now reads `hp.criterion` instead of hardcoding `nn.MSELoss()`.
 
 ### PDE8. No multi-output / coupled-system support pattern
 
@@ -323,6 +325,6 @@ Add a native second-order ODE path:
 | ~~D7~~ | ~~DX~~    | ~~Low~~    | ~~Small~~  | ~~Edge-case crash~~ ✅                      |
 | ~~D8~~ | ~~DX~~    | ~~Medium~~ | ~~Small~~  | ~~Onboarding~~ ✅                           |
 | ~~PDE6~~ | ~~PDE~~ | ~~Medium~~ | ~~Medium~~ | ~~Quality of PDE solutions~~ ✅             |
-| PDE7   | PDE       | Medium     | Small      | Multi-scale PDE accuracy                    |
+| ~~PDE7~~ | ~~PDE~~ | ~~Medium~~ | ~~Small~~  | ~~Multi-scale PDE accuracy~~ ✅             |
 | PDE8   | PDE       | Medium     | Large      | Coupled-system expressiveness               |
 | ODE1   | ODE       | Medium     | Medium     | Native 2nd-order ODE expressiveness         |

@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Literal
 
 from torch import Tensor
 
-from anypinn.core.types import Activations, CollocationStrategies
+from anypinn.core.types import Activations, CollocationStrategies, Criteria
 
 if TYPE_CHECKING:
     from anypinn.core.nn import ArgsRegistry
@@ -225,6 +225,7 @@ class PINNHyperparameters:
     training_data: IngestionConfig | GenerationConfig
     fields_config: MLPConfig
     params_config: MLPConfig | ScalarConfig
+    criterion: Criteria = "mse"
     optimizer: AdamConfig | LBFGSConfig | None = None
     scheduler: ReduceLROnPlateauConfig | CosineAnnealingConfig | None = None
     early_stopping: EarlyStoppingConfig | None = None

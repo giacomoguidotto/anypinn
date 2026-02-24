@@ -11,7 +11,7 @@ from torch import Tensor
 import torch.nn as nn
 
 from anypinn.core.config import MLPConfig, ScalarConfig
-from anypinn.core.types import Activations
+from anypinn.core.types import Activations, Criteria
 
 
 @dataclass
@@ -68,6 +68,23 @@ class Domain:
     @override
     def __repr__(self) -> str:
         return f"Domain(ndim={self.ndim}, bounds={self.bounds}, dx={self.dx})"
+
+
+def build_criterion(name: Criteria) -> nn.Module:
+    """
+    Return the loss-criterion module for the given name.
+
+    Args:
+        name: One of ``"mse"``, ``"huber"``, ``"l1"``.
+
+    Returns:
+        The corresponding PyTorch loss module.
+    """
+    return {
+        "mse": nn.MSELoss(),
+        "huber": nn.HuberLoss(),
+        "l1": nn.L1Loss(),
+    }[name]
 
 
 def get_activation(name: Activations) -> nn.Module:
