@@ -2,27 +2,27 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
+import importlib.resources as ilr
 from pathlib import Path
-from types import ModuleType
 
 from anypinn.cli._types import DataSource, Template
-from anypinn.cli.templates import _blank as blank
-from anypinn.cli.templates import _custom as custom
-from anypinn.cli.templates import _damped_oscillator as damped_oscillator
-from anypinn.cli.templates import _lotka_volterra as lotka_volterra
-from anypinn.cli.templates import _seir as seir
-from anypinn.cli.templates import _sir as sir
 
-RenderFn = Callable[[DataSource, bool], dict[str, str]]
+_TEMPLATE_DIRS: dict[Template, str] = {
+    Template.SIR: "sir",
+    Template.SEIR: "seir",
+    Template.DAMPED_OSCILLATOR: "damped_oscillator",
+    Template.LOTKA_VOLTERRA: "lotka_volterra",
+    Template.CUSTOM: "custom",
+    Template.BLANK: "blank",
+}
 
-_TEMPLATES: dict[Template, ModuleType] = {
-    Template.SIR: sir,
-    Template.SEIR: seir,
-    Template.DAMPED_OSCILLATOR: damped_oscillator,
-    Template.LOTKA_VOLTERRA: lotka_volterra,
-    Template.CUSTOM: custom,
-    Template.BLANK: blank,
+_EXPERIMENT_NAMES: dict[Template, str] = {
+    Template.SIR: "sir-inverse",
+    Template.SEIR: "seir-inverse",
+    Template.DAMPED_OSCILLATOR: "damped-oscillator",
+    Template.LOTKA_VOLTERRA: "lotka-volterra",
+    Template.CUSTOM: "custom-ode",
+    Template.BLANK: "my-project",
 }
 
 _BASE_DEPS: list[str] = [
@@ -41,6 +41,11 @@ _LIGHTNING_DEPS: list[str] = [
 _SYNTHETIC_DEPS: list[str] = [
     "torchdiffeq",
 ]
+
+
+def _read(pkg: str, filename: str, experiment_name: str) -> str:
+    content = ilr.files(pkg).joinpath(filename).read_text(encoding="utf-8")
+    return content.replace("__EXPERIMENT_NAME__", experiment_name)
 
 
 def _pyproject_toml(project_name: str, data_source: DataSource, lightning: bool) -> str:
@@ -73,9 +78,16 @@ def render_project(
     lightning: bool,
 ) -> list[str]:
     """Render a template to files on disk. Returns list of created file/dir names."""
-    mod = _TEMPLATES[template]
-    render_fn: RenderFn = mod.render
-    files = render_fn(data_source, lightning)
+    tdir = _TEMPLATE_DIRS[template]
+    exp = _EXPERIMENT_NAMES[template]
+    ds = "synthetic" if data_source == DataSource.SYNTHETIC else "csv"
+    tr = "lightning" if lightning else "core"
+
+    files = {
+        "ode.py": _read(f"anypinn.cli.scaffold.{tdir}", f"ode_{ds}.py", exp),
+        "config.py": _read(f"anypinn.cli.scaffold.{tdir}", f"config_{ds}.py", exp),
+        "train.py": _read("anypinn.cli.scaffold._shared", f"train_{tr}.py", exp),
+    }
 
     project_dir.mkdir(parents=True)
     (project_dir / "data").mkdir()
@@ -83,7 +95,7 @@ def render_project(
     pyproject = _pyproject_toml(project_dir.name, data_source, lightning)
     (project_dir / "pyproject.toml").write_text(pyproject)
 
-    for filename, content in files.items():
-        (project_dir / filename).write_text(content)
+    for name, content in files.items():
+        (project_dir / name).write_text(content)
 
     return ["pyproject.toml", *files.keys(), "data/"]
