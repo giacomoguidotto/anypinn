@@ -53,6 +53,7 @@ from anypinn.core.validation import (
     ValidationSource,
     resolve_validation,
 )
+from anypinn.lib.encodings import FourierEncoding, RandomFourierFeatures
 
 __all__ = [
     "LOSS_KEY",
@@ -72,6 +73,7 @@ __all__ = [
     "EarlyStoppingConfig",
     "Field",
     "FieldsRegistry",
+    "FourierEncoding",
     "GenerationConfig",
     "InferredContext",
     "IngestionConfig",
@@ -87,6 +89,7 @@ __all__ = [
     "ParamsRegistry",
     "Predictions",
     "Problem",
+    "RandomFourierFeatures",
     "RandomSampler",
     "ReduceLROnPlateauConfig",
     "ResidualScorer",

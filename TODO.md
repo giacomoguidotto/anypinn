@@ -259,11 +259,13 @@ assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
 **Resolved:** Assertions replaced with `ValueError` checks allowing `d >= 1` and enforcing `x_data.shape[1] == coll.shape[1]`. Test coverage added in `tests/test_dataset.py::TestPINNDataModuleSetup`.
 
-### PDE6. `Field` input encoding assumes 1-D
+### ~~PDE6. `Field` input encoding assumes 1-D~~ ✅
 
-**File:** `core/nn.py:82-83`
+~~**File:** `core/nn.py:82-83`~~
 
-`MLPConfig.in_dim` defaults to 1 in all examples and catalog problems. Fourier feature encoding (`encode` callback) is supported but there are no built-in spatial encodings (positional encoding, random Fourier features) useful for high-frequency PDE solutions.
+~~`MLPConfig.in_dim` defaults to 1 in all examples and catalog problems. Fourier feature encoding (`encode` callback) is supported but there are no built-in spatial encodings (positional encoding, random Fourier features) useful for high-frequency PDE solutions.~~
+
+**Resolved:** Added `FourierEncoding` and `RandomFourierFeatures` to `anypinn.lib.encodings`. Both are `nn.Module` subclasses so buffers (e.g. the RFF frequency matrix `B`) move correctly with `.to(device)`. `Field.__init__` now registers any `nn.Module` passed as `encode` as a proper submodule (`self.encoder`), making it participate in `.parameters()`, `.state_dict()`, and device transfers. Plain callable `encode` values continue to work unchanged.
 
 ### PDE7. `ODEInverseProblem` hardcodes `MSELoss`
 
@@ -320,7 +322,7 @@ Add a native second-order ODE path:
 | ~~D6~~ | ~~DX~~    | ~~Low~~    | ~~Small~~  | ~~Repeated I/O~~ ✅                         |
 | ~~D7~~ | ~~DX~~    | ~~Low~~    | ~~Small~~  | ~~Edge-case crash~~ ✅                      |
 | ~~D8~~ | ~~DX~~    | ~~Medium~~ | ~~Small~~  | ~~Onboarding~~ ✅                           |
-| PDE6   | PDE       | Medium     | Medium     | Quality of PDE solutions                    |
+| ~~PDE6~~ | ~~PDE~~ | ~~Medium~~ | ~~Medium~~ | ~~Quality of PDE solutions~~ ✅             |
 | PDE7   | PDE       | Medium     | Small      | Multi-scale PDE accuracy                    |
 | PDE8   | PDE       | Medium     | Large      | Coupled-system expressiveness               |
 | ODE1   | ODE       | Medium     | Medium     | Native 2nd-order ODE expressiveness         |
