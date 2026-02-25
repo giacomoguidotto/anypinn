@@ -154,7 +154,7 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
     def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
         x_pred = fields[X_KEY](x_data)
         y_pred = fields[Y_KEY](x_data)
-        return torch.stack([x_pred, y_pred])
+        return torch.stack([x_pred, y_pred], dim=1)
 
     return ODEInverseProblem(
         props=props,
