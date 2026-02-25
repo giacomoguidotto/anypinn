@@ -42,7 +42,7 @@ class TestPINNDataset:
         data_ratio: float | int = 0.5,
     ) -> PINNDataset:
         x_data = torch.linspace(0, 10, n_data).unsqueeze(-1)
-        y_data = torch.randn(n_data, 1)
+        y_data = torch.randn(n_data, 1, 1)
         x_coll = torch.rand(n_coll, 1) * 10
         return PINNDataset(x_data, y_data, x_coll, batch_size, data_ratio)
 
@@ -62,7 +62,7 @@ class TestPINNDataset:
         ds = self._make_dataset(n_data=20, batch_size=16, data_ratio=0.5)
         (x_data, y_data), x_coll = ds[0]
         assert x_data.shape == (8, 1)
-        assert y_data.shape == (8, 1)
+        assert y_data.shape == (8, 1, 1)
         assert x_coll.shape == (8, 1)  # C = batch_size - K = 16 - 8 = 8
 
     def test_data_wraparound(self):
