@@ -45,4 +45,4 @@ class DampedOscillatorDataModule(PINNDataModule):
 
         x_obs = x_true + self.noise_std * torch.randn_like(x_true)
 
-        return t.unsqueeze(-1), x_obs.unsqueeze(-1)
+        return t.unsqueeze(-1), x_obs.unsqueeze(-1).unsqueeze(1)

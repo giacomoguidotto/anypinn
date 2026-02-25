@@ -48,4 +48,4 @@ class SEIRDataModule(PINNDataModule):
         I_obs = I_true + self.noise_std * torch.randn_like(I_true)
         I_obs = I_obs.clamp_min(0.0)
 
-        return t.unsqueeze(-1), I_obs.unsqueeze(-1)
+        return t.unsqueeze(-1), I_obs.unsqueeze(-1).unsqueeze(1)

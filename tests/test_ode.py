@@ -48,7 +48,7 @@ class TestResidualsConstraint:
         constraint = ResidualsConstraint(props, fields, params, weight=1.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -65,7 +65,7 @@ class TestResidualsConstraint:
         c2 = ResidualsConstraint(props, fields, params, weight=2.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -80,7 +80,7 @@ class TestResidualsConstraint:
         constraint = ResidualsConstraint(props, fields, params, weight=1.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -95,7 +95,7 @@ class TestResidualsConstraint:
         constraint = ResidualsConstraint(props, fields, params)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -115,7 +115,7 @@ class TestResidualsConstraint:
         constraint = ResidualsConstraint(props, fields, params, weight=1.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -130,7 +130,7 @@ class TestResidualsConstraint:
         constraint = ResidualsConstraint(props, fields, {}, weight=1.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -144,7 +144,7 @@ class TestResidualsConstraint:
         constraint = ResidualsConstraint(props, fields, {}, weight=1.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -161,7 +161,7 @@ class TestResidualsConstraint:
         c2 = ResidualsConstraint(props, fields, {}, weight=2.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -183,7 +183,7 @@ class TestICConstraint:
         constraint.inject_context(ctx)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -205,7 +205,7 @@ class TestICConstraint:
         c2.inject_context(ctx)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -229,7 +229,7 @@ class TestICConstraint:
         c2.inject_context(ctx)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -258,7 +258,7 @@ class TestICConstraint:
         constraint.inject_context(ctx)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -273,7 +273,7 @@ class TestICConstraint:
         constraint = ICConstraint(props, fields, weight=1.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -287,12 +287,12 @@ class TestDataConstraint:
         params = _make_params()
 
         def predict_data(x: Tensor, fields: dict, params: dict) -> Tensor:
-            return fields["u0"](x)
+            return fields["u0"](x).unsqueeze(1)
 
         constraint = DataConstraint(fields, params, predict_data, weight=1.0)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -325,7 +325,7 @@ class TestODEInverseProblem:
         )
 
         def predict_data(x: Tensor, f: dict, p: dict) -> Tensor:
-            return f["u0"](x)
+            return f["u0"](x).unsqueeze(1)
 
         problem = ODEInverseProblem(props, hp, fields, params, predict_data)
 
@@ -356,7 +356,7 @@ class TestODEInverseProblem:
         )
 
         def predict_data(x: Tensor, f: dict, p: dict) -> Tensor:
-            return f["u0"](x)
+            return f["u0"](x).unsqueeze(1)
 
         problem = ODEInverseProblem(props, hp, fields, params, predict_data)
 
@@ -366,7 +366,7 @@ class TestODEInverseProblem:
         problem.inject_context(ctx)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -394,7 +394,7 @@ class TestODEInverseProblem:
         )
 
         def predict_data(x: Tensor, f: dict, p: dict) -> Tensor:
-            return f["u0"](x)
+            return f["u0"](x).unsqueeze(1)
 
         problem = ODEInverseProblem(props, hp, fields, params, predict_data)
 
@@ -404,7 +404,7 @@ class TestODEInverseProblem:
         problem.inject_context(ctx)
 
         x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-        y_data = torch.randn(10, 1)
+        y_data = torch.randn(10, 1, 1)
         x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
         batch = ((x_data, y_data), x_coll)
 
@@ -484,7 +484,7 @@ def _make_hp(criterion: str = "mse") -> ODEHyperparameters:
 
 def _make_batch() -> tuple:
     x_data = torch.linspace(0, 5, 10).unsqueeze(-1)
-    y_data = torch.randn(10, 1)
+    y_data = torch.randn(10, 1, 1)
     x_coll = torch.linspace(0, 5, 20).unsqueeze(-1)
     return ((x_data, y_data), x_coll)
 
@@ -500,7 +500,7 @@ class TestODEInverseProblemCriterion:
         props = _make_props(1)
 
         def predict_data(x: Tensor, f: dict, p: dict) -> Tensor:
-            return f["u0"](x)
+            return f["u0"](x).unsqueeze(1)
 
         hp_mse = _make_hp("mse")
         hp_huber = _make_hp("huber")
@@ -528,7 +528,7 @@ class TestODEInverseProblemCriterion:
         props = _make_props(1)
 
         def predict_data(x: Tensor, f: dict, p: dict) -> Tensor:
-            return f["u0"](x)
+            return f["u0"](x).unsqueeze(1)
 
         hp = _make_hp("l1")
         problem = ODEInverseProblem(props, hp, fields, params, predict_data)

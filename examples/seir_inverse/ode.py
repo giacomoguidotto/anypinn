@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -138,9 +137,8 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
     )
 
     def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
-        I = fields[I_KEY]
-        I_pred = I(x_data)
-        return cast(Tensor, I_pred)
+        I_pred = fields[I_KEY](x_data)
+        return I_pred.unsqueeze(1)
 
     return ODEInverseProblem(
         props=props,
@@ -163,6 +161,7 @@ def plot_and_save(
 ) -> None:
     batch, preds, trues = predictions
     t_data, I_data = batch
+    I_data = I_data.squeeze(-1)
 
     S_pred = preds[S_KEY]
     E_pred = preds[E_KEY]

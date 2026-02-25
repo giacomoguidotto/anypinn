@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import cast
-
 import torch
 from torch import Tensor
 
@@ -116,7 +114,7 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 
     def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
         I_pred = fields[I_KEY](x_data)
-        return cast(Tensor, I_pred)
+        return I_pred.unsqueeze(1)
 
     return ODEInverseProblem(
         props=props,

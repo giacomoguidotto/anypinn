@@ -106,7 +106,7 @@ class TestDataScaling:
     def test_single_scale_factor(self):
         ds = DataScaling(y_scale=0.01)
         x = torch.linspace(0, 100, 20).unsqueeze(-1)
-        y = torch.randn(20, 1)
+        y = torch.randn(20, 1, 1)
         coll = torch.rand(50, 1) * 100
 
         (x_out, _y_out), coll_out = ds.transform_data((x, y), coll)

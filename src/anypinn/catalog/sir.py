@@ -109,7 +109,7 @@ class SIRInvDataModule(PINNDataModule):
 
         I_obs = self._noise(I_true, config.noise_level)
 
-        return config.x.unsqueeze(-1), I_obs.unsqueeze(-1)
+        return config.x.unsqueeze(-1), I_obs.unsqueeze(-1).unsqueeze(1)
 
     def _noise(self, I_true: Tensor, noise_level: float) -> Tensor:
         if noise_level < 1.0:

@@ -26,7 +26,7 @@ from anypinn.problems import ODEHyperparameters, ODEInverseProblem, ODEPropertie
 # ── 1. Ground-truth data (analytic solution) ─────────────────────────────────
 K_TRUE = 0.7
 t = torch.linspace(0, 5, 60).unsqueeze(-1)  # (60, 1)
-y = torch.exp(-K_TRUE * t)  # (60, 1)
+y = torch.exp(-K_TRUE * t).unsqueeze(1)  # (60, 1, 1)
 t_coll = torch.rand(500, 1) * 5  # (500, 1) collocation points
 
 # ── 2. Dataset + DataLoader ───────────────────────────────────────────────────
@@ -69,7 +69,7 @@ problem = ODEInverseProblem(
     hp=hp,
     fields=fields,
     params=params,
-    predict_data=lambda x, f, _: f["y"](x),
+    predict_data=lambda x, f, _: f["y"](x).unsqueeze(1),
 )
 
 # ── 5. Inject context (domain bounds + optional validation) ───────────────────

@@ -238,7 +238,7 @@ class DataScaling(DataCallback):
         coll_min, coll_max = coll.min(), coll.max()
         coll = (coll - coll_min) / (coll_max - coll_min)
 
-        n_series = y.shape[1] if y.ndim == 3 else 1
+        n_series = y.shape[1]
 
         if isinstance(self._y_scale_input, (int, float)):
             scale_list = [float(self._y_scale_input)] * n_series
@@ -251,8 +251,8 @@ class DataScaling(DataCallback):
 
         self.y_scale = torch.tensor(scale_list, dtype=y.dtype, device=y.device)
 
-        # Reshape for broadcasting: [k] -> [1, k, 1] for [n, k, 1] or keep [1] for [n, 1]
-        scale_tensor = self.y_scale.view(1, -1, 1) if y.ndim == 3 else self.y_scale.view(1)
+        # Reshape scale for broadcasting against (n, k, 1)
+        scale_tensor = self.y_scale.view(1, -1, 1)
 
         return (x, y * scale_tensor), coll
 
