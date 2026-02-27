@@ -7,6 +7,9 @@ from anypinn.catalog.damped_oscillator import (
     ZETA_KEY,
     DampedOscillatorDataModule,
 )
+from anypinn.catalog.heat_1d import ALPHA_KEY as HEAT_ALPHA_KEY
+from anypinn.catalog.heat_1d import U_KEY as HEAT_U_KEY
+from anypinn.catalog.heat_1d import Heat1DDataModule
 from anypinn.catalog.lorenz import BETA_KEY as LORENZ_BETA_KEY
 from anypinn.catalog.lorenz import RHO_KEY as LORENZ_RHO_KEY
 from anypinn.catalog.lorenz import SIGMA_KEY as LORENZ_SIGMA_KEY
@@ -42,6 +45,8 @@ __all__ = [
     "DELTA_KEY",
     "E_KEY",
     "GAMMA_KEY",
+    "HEAT_ALPHA_KEY",
+    "HEAT_U_KEY",
     "LORENZ_BETA_KEY",
     "LORENZ_RHO_KEY",
     "LORENZ_SIGMA_KEY",
@@ -69,6 +74,7 @@ __all__ = [
     "ZETA_KEY",
     "Z_KEY",
     "DampedOscillatorDataModule",
+    "Heat1DDataModule",
     "LorenzDataModule",
     "LotkaVolterraDataModule",
     "Poisson2DDataModule",

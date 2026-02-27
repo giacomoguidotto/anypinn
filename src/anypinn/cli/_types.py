@@ -13,6 +13,7 @@ class Template(str, Enum):
     VAN_DER_POL = "van-der-pol"
     LORENZ = "lorenz"
     POISSON_2D = "poisson-2d"
+    HEAT_1D = "heat-1d"
     CUSTOM = "custom"
     BLANK = "blank"
 
@@ -26,6 +27,7 @@ class Template(str, Enum):
             Template.VAN_DER_POL: "Van der Pol Oscillator",
             Template.LORENZ: "Lorenz System",
             Template.POISSON_2D: "Poisson 2D",
+            Template.HEAT_1D: "Heat Equation 1D",
             Template.CUSTOM: "Custom ODE",
             Template.BLANK: "Blank project",
         }
@@ -41,6 +43,7 @@ class Template(str, Enum):
             Template.VAN_DER_POL: "Second-order nonlinear oscillator. Learns nonlinearity parameter μ.",  # noqa: E501
             Template.LORENZ: "Chaotic 3-field ODE. Learns sigma, rho, beta with Huber criterion.",
             Template.POISSON_2D: "2D elliptic PDE forward problem. Demonstrates PDEResidualConstraint + DirichletBC.",  # noqa: E501
+            Template.HEAT_1D: "1D parabolic PDE inverse problem. Recovers thermal diffusivity from sparse measurements.",  # noqa: E501
             Template.CUSTOM: "Minimal skeleton for a user-defined ODE. All factories are stubs.",
             Template.BLANK: "Empty project structure with no ODE—start from scratch.",
         }
