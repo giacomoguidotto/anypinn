@@ -26,6 +26,7 @@ from anypinn.catalog.sir import DELTA_KEY as SIR_DELTA_KEY
 from anypinn.catalog.sir import I_KEY as SIR_I_KEY
 from anypinn.catalog.sir import N_KEY, SIR, Rt_KEY, SIRInvDataModule, rSIR
 from anypinn.catalog.sir import S_KEY as SIR_S_KEY
+from anypinn.catalog.van_der_pol import MU_KEY, U_KEY, VanDerPolDataModule
 
 __all__ = [
     "ALPHA_KEY",
@@ -34,6 +35,7 @@ __all__ = [
     "E_KEY",
     "GAMMA_KEY",
     "LV_X_KEY",
+    "MU_KEY",
     "N_KEY",
     "OMEGA_KEY",
     "SEIR_BETA_KEY",
@@ -46,6 +48,7 @@ __all__ = [
     "SIR_DELTA_KEY",
     "SIR_I_KEY",
     "SIR_S_KEY",
+    "U_KEY",
     "V_KEY",
     "X_KEY",
     "Y_KEY",
@@ -55,5 +58,6 @@ __all__ = [
     "Rt_KEY",
     "SEIRDataModule",
     "SIRInvDataModule",
+    "VanDerPolDataModule",
     "rSIR",
 ]
