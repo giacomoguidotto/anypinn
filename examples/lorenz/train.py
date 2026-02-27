@@ -6,7 +6,7 @@ import shutil
 import signal
 import sys
 
-from config import CONFIG, hp
+from config import EXPERIMENT_NAME, hp
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
@@ -33,7 +33,7 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
     return value
 
 
-def main(config, predict: bool = False) -> None:
+def main(experiment_name: str, predict: bool = False) -> None:
     log_dir = Path("../_logs")
     tensorboard_dir = log_dir / "tensorboard"
     csv_dir = log_dir / "csv"
@@ -45,8 +45,8 @@ def main(config, predict: bool = False) -> None:
     create_dir(temp_dir)
     clean_dir(temp_dir)
     if not predict:
-        clean_dir(csv_dir / config.experiment_name)
-        clean_dir(tensorboard_dir / config.experiment_name)
+        clean_dir(csv_dir / experiment_name)
+        clean_dir(tensorboard_dir / experiment_name)
 
     model_path = results_dir / "model.ckpt"
     dm = create_data_module(hp)
@@ -69,9 +69,9 @@ def main(config, predict: bool = False) -> None:
         LearningRateMonitor(logging_interval="epoch"),
         FormattedProgressBar(refresh_rate=10, format=format_progress_bar),
         PredictionsWriter(
-            predictions_path=results_dir / f"{config.experiment_name}.pt",
+            predictions_path=results_dir / f"{experiment_name}.pt",
             on_prediction=lambda _, __, predictions_list, ___: plot_and_save(
-                predictions_list[0], results_dir, config.experiment_name
+                predictions_list[0], results_dir, experiment_name
             ),
         ),
     ]
@@ -80,8 +80,8 @@ def main(config, predict: bool = False) -> None:
         callbacks.append(SMMAStopping(config=hp.smma_stopping, loss_key=LOSS_KEY))
 
     loggers = [
-        TensorBoardLogger(save_dir=tensorboard_dir, name=config.experiment_name, version=""),
-        CSVLogger(save_dir=csv_dir, name=config.experiment_name, version=""),
+        TensorBoardLogger(save_dir=tensorboard_dir, name=experiment_name, version=""),
+        CSVLogger(save_dir=csv_dir, name=experiment_name, version=""),
     ]
 
     trainer = Trainer(
@@ -113,4 +113,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Lorenz System Inverse Example")
     parser.add_argument("--predict", action="store_true", help="Load saved model and predict.")
     args = parser.parse_args()
-    main(CONFIG, args.predict)
+    main(EXPERIMENT_NAME, args.predict)

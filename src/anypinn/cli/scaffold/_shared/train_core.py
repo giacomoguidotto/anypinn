@@ -5,7 +5,7 @@ from pathlib import Path
 import signal
 import sys
 
-from config import CONFIG, hp
+from config import EXPERIMENT_NAME, RUN_NAME, hp
 from ode import create_context, create_problem
 import torch
 
@@ -23,7 +23,7 @@ def main() -> None:
     # Setup
     # ========================================================================
 
-    models_dir = Path("./models") / CONFIG.experiment_name / CONFIG.run_name
+    models_dir = Path("./models") / EXPERIMENT_NAME / RUN_NAME
     models_dir.mkdir(exist_ok=True, parents=True)
     model_path = models_dir / "model.pt"
 

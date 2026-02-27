@@ -6,7 +6,7 @@ import shutil
 import signal
 import sys
 
-from config import CONFIG, hp
+from config import EXPERIMENT_NAME, RUN_NAME, hp
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
@@ -51,7 +51,7 @@ def main() -> None:
     tensorboard_dir = log_dir / "tensorboard"
     csv_dir = log_dir / "csv"
 
-    models_dir = Path("./models") / CONFIG.experiment_name / CONFIG.run_name
+    models_dir = Path("./models") / EXPERIMENT_NAME / RUN_NAME
     model_path = models_dir / "model.ckpt"
     predictions_dir = models_dir
 
@@ -63,8 +63,8 @@ def main() -> None:
 
     clean_dir(temp_dir)
     if not args.predict:
-        clean_dir(csv_dir / CONFIG.experiment_name / CONFIG.run_name)
-        clean_dir(tensorboard_dir / CONFIG.experiment_name / CONFIG.run_name)
+        clean_dir(csv_dir / EXPERIMENT_NAME / RUN_NAME)
+        clean_dir(tensorboard_dir / EXPERIMENT_NAME / RUN_NAME)
 
     # ========================================================================
     # Build components
@@ -117,13 +117,13 @@ def main() -> None:
     loggers = [
         TensorBoardLogger(
             save_dir=tensorboard_dir,
-            name=CONFIG.experiment_name,
-            version=CONFIG.run_name,
+            name=EXPERIMENT_NAME,
+            version=RUN_NAME,
         ),
         CSVLogger(
             save_dir=csv_dir,
-            name=CONFIG.experiment_name,
-            version=CONFIG.run_name,
+            name=EXPERIMENT_NAME,
+            version=RUN_NAME,
         ),
     ]
 
