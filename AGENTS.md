@@ -5,3 +5,7 @@ The purpose of this tile is to describe common mistakes and confusion points tha
 # Workflow rules
 
 - **Always run `just ci` after any code change.**
+- Every new example should include:
+  1. Ad-hoc classes in `src/anypinn/catalog/`
+  2. example directory under `examples/`
+  3. A CLI scaffold template under `src/anypinn/cli/scaffold/<name>/`
