@@ -6,7 +6,7 @@ import shutil
 import signal
 import sys
 
-from config import CONFIG, hp
+from config import EXPERIMENT_NAME, hp
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
@@ -38,7 +38,7 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
     return value
 
 
-def main(config, predict: bool = False) -> None:
+def main(experiment_name: str, predict: bool = False) -> None:
     log_dir = Path("../_logs")
     tensorboard_dir = log_dir / "tensorboard"
     csv_dir = log_dir / "csv"
@@ -52,8 +52,8 @@ def main(config, predict: bool = False) -> None:
 
     clean_dir(temp_dir)
     if not predict:
-        clean_dir(csv_dir / config.experiment_name)
-        clean_dir(tensorboard_dir / config.experiment_name)
+        clean_dir(csv_dir / experiment_name)
+        clean_dir(tensorboard_dir / experiment_name)
 
     model_path = results_dir / "model.ckpt"
 
@@ -89,9 +89,9 @@ def main(config, predict: bool = False) -> None:
             format=format_progress_bar,
         ),
         PredictionsWriter(
-            predictions_path=results_dir / f"{config.experiment_name}.pt",
+            predictions_path=results_dir / f"{experiment_name}.pt",
             on_prediction=lambda _, __, predictions_list, ___: plot_and_save(
-                predictions_list[0], results_dir, config.experiment_name, props, C_I, C_H
+                predictions_list[0], results_dir, experiment_name, props, C_I, C_H
             ),
         ),
     ]
@@ -107,12 +107,12 @@ def main(config, predict: bool = False) -> None:
     loggers = [
         TensorBoardLogger(
             save_dir=tensorboard_dir,
-            name=config.experiment_name,
+            name=experiment_name,
             version="",
         ),
         CSVLogger(
             save_dir=csv_dir,
-            name=config.experiment_name,
+            name=experiment_name,
             version="",
         ),
     ]
@@ -161,4 +161,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    main(CONFIG, args.predict)
+    main(EXPERIMENT_NAME, args.predict)

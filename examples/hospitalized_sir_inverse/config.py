@@ -1,20 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 
 from anypinn.core import IngestionConfig, MLPConfig, ReduceLROnPlateauConfig
 from anypinn.problems import ODEHyperparameters
 
-
-@dataclass
-class RunConfig:
-    experiment_name: str
-
-
-CONFIG = RunConfig(
-    experiment_name="hospitalized-sir-inverse",
-)
+EXPERIMENT_NAME = "hospitalized-sir-inverse"
 
 hp = ODEHyperparameters(
     lr=5e-4,

@@ -1,22 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from ode import T_TOTAL, fourier_encode
 import torch
 
 from anypinn.core import GenerationConfig, MLPConfig, ReduceLROnPlateauConfig, ScalarConfig
 from anypinn.problems import ODEHyperparameters
 
-
-@dataclass
-class RunConfig:
-    experiment_name: str
-
-
-CONFIG = RunConfig(
-    experiment_name="lotka-volterra",
-)
+EXPERIMENT_NAME = "lotka-volterra"
 
 hp = ODEHyperparameters(
     lr=1e-3,

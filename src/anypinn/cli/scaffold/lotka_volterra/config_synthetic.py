@@ -2,29 +2,14 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from ode import fourier_encode
 import torch
 
 from anypinn.core import GenerationConfig, MLPConfig, ReduceLROnPlateauConfig, ScalarConfig
 from anypinn.problems import ODEHyperparameters
 
-# ============================================================================
-# Run Configuration
-# ============================================================================
-
-
-@dataclass
-class RunConfig:
-    experiment_name: str
-    run_name: str
-
-
-CONFIG = RunConfig(
-    experiment_name="__EXPERIMENT_NAME__",
-    run_name="v0",
-)
+EXPERIMENT_NAME = "__EXPERIMENT_NAME__"
+RUN_NAME = "v0"
 
 # ============================================================================
 # Hyperparameters

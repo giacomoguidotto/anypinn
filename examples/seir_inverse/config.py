@@ -1,22 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from ode import T_DAYS
 import torch
 
 from anypinn.core import GenerationConfig, MLPConfig, ReduceLROnPlateauConfig
 from anypinn.problems import ODEHyperparameters
 
-
-@dataclass
-class RunConfig:
-    experiment_name: str
-
-
-CONFIG = RunConfig(
-    experiment_name="seir-inverse",
-)
+EXPERIMENT_NAME = "seir-inverse"
 
 hp = ODEHyperparameters(
     lr=5e-4,
