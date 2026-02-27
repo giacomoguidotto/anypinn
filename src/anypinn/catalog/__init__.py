@@ -1,4 +1,4 @@
-"""Catalog of ready-made ODE problem building blocks."""
+"""Catalog of ready-made ODE/PDE problem building blocks."""
 
 from anypinn.catalog.damped_oscillator import (
     OMEGA_KEY,
@@ -22,6 +22,8 @@ from anypinn.catalog.lotka_volterra import (
     LotkaVolterraDataModule,
 )
 from anypinn.catalog.lotka_volterra import X_KEY as LV_X_KEY
+from anypinn.catalog.poisson_2d import U_KEY as POISSON_U_KEY
+from anypinn.catalog.poisson_2d import Poisson2DDataModule
 from anypinn.catalog.seir import BETA_KEY as SEIR_BETA_KEY
 from anypinn.catalog.seir import E_KEY, SIGMA_KEY, SEIRDataModule
 from anypinn.catalog.seir import GAMMA_KEY as SEIR_GAMMA_KEY
@@ -49,6 +51,7 @@ __all__ = [
     "MU_KEY",
     "N_KEY",
     "OMEGA_KEY",
+    "POISSON_U_KEY",
     "SEIR_BETA_KEY",
     "SEIR_GAMMA_KEY",
     "SEIR_I_KEY",
@@ -68,6 +71,7 @@ __all__ = [
     "DampedOscillatorDataModule",
     "LorenzDataModule",
     "LotkaVolterraDataModule",
+    "Poisson2DDataModule",
     "Rt_KEY",
     "SEIRDataModule",
     "SIRInvDataModule",

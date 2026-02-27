@@ -1,0 +1,53 @@
+hp: !!python/object:anypinn.core.config.PINNHyperparameters
+  criterion: mse
+  early_stopping: null
+  fields_config: !!python/object:anypinn.core.config.MLPConfig
+    activation: tanh
+    encode: null
+    hidden_layers:
+    - 64
+    - 128
+    - 128
+    - 64
+    in_dim: 26
+    out_dim: 1
+    output_activation: null
+  gradient_clip_val: 0.5
+  lr: 0.001
+  max_epochs: 2000
+  optimizer: null
+  params_config: !!python/object:anypinn.core.config.ScalarConfig
+    init_value: 0.0
+  scheduler: !!python/object:anypinn.core.config.ReduceLROnPlateauConfig
+    factor: 0.5
+    min_lr: 1.0e-06
+    mode: min
+    patience: 100
+    threshold: 0.0001
+  smma_stopping: null
+  training_data: !!python/object:anypinn.core.config.GenerationConfig
+    args_to_train: {}
+    batch_size: 128
+    collocation_sampler: uniform
+    collocation_seed: null
+    collocations: 8000
+    data_ratio: 2
+    noise_level: 0
+    x: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYCwAAADUyMTkyODY4NDE2cQJYAwAAAGNwdXEDSx5OdHEEUS6AAl1xAFgLAAAANTIxOTI4
+        Njg0MTZxAWEuHgAAAAAAAAAAAAAAyz0NPcs9jT2w3NM9yz0NPj6NMD6w3FM+Iyx3Pss9jT6E5Z4+
+        Po2wPvc0wj6w3NM+aoTlPiMs9z7uaQQ/yz0NP6gRFj+E5R4/YbknPz6NMD8aYTk/9zRCP9QISz+x
+        3FM/jbBcP2qEZT9HWG4/Iyx3PwAAgD8=
+    - 0
+    - !!python/tuple
+      - 30
+    - !!python/tuple
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
