@@ -13,6 +13,7 @@ _TEMPLATE_DIRS: dict[Template, str] = {
     Template.DAMPED_OSCILLATOR: "damped_oscillator",
     Template.LOTKA_VOLTERRA: "lotka_volterra",
     Template.VAN_DER_POL: "van_der_pol",
+    Template.LORENZ: "lorenz",
     Template.CUSTOM: "custom",
     Template.BLANK: "blank",
 }
@@ -23,6 +24,7 @@ _EXPERIMENT_NAMES: dict[Template, str] = {
     Template.DAMPED_OSCILLATOR: "damped-oscillator",
     Template.LOTKA_VOLTERRA: "lotka-volterra",
     Template.VAN_DER_POL: "van-der-pol",
+    Template.LORENZ: "lorenz",
     Template.CUSTOM: "custom-ode",
     Template.BLANK: "my-project",
 }
