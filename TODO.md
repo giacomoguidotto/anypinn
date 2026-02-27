@@ -341,13 +341,15 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX4. Heat Equation — 1D parabolic PDE
+### ~~EX4. Heat Equation — 1D parabolic PDE~~ ✅
 
 **File:** `examples/heat_1d/`
 
 **Equation:** ∂u/∂t = α ∂²u/∂x², (x,t) ∈ [0,1]×[0,T]; Dirichlet BCs u(0,t) = u(1,t) = 0; IC u(x,0) = sin(πx)
 
-**Demonstrates:** Space-time collocation on a 2D input (x, t); `PDEResidualConstraint` with `partial(u, x, dim=1, order=2)` (spatial) and `partial(u, x, dim=0, order=1)` (temporal); `DirichletBCConstraint` for both boundary and initial conditions; inverse problem recovering α from sparse interior measurements.
+**Demonstrates:** Space-time collocation on a 2D input (x, t); `PDEResidualConstraint` with `partial(u, x, dim=0, order=2)` (spatial) and `partial(u, x, dim=1, order=1)` (temporal); `DirichletBCConstraint` for both boundary and initial conditions; inverse problem recovering α from sparse interior measurements via `DataConstraint`.
+
+**Resolved:** Added `Heat1DDataModule` to `anypinn.catalog`, example in `examples/heat_1d/`, and CLI scaffold template in `anypinn.cli.scaffold.heat_1d`.
 
 ---
 
