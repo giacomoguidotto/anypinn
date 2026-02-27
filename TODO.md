@@ -305,13 +305,15 @@ assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
 New example problems that exercise the capabilities added in the audit above. Ordered by increasing complexity and by which new feature they primarily demonstrate.
 
-### EX1. Van der Pol Oscillator — native second-order ODE inverse
+### ~~EX1. Van der Pol Oscillator — native second-order ODE inverse~~ ✅
 
 **File:** `examples/van_der_pol/`
 
 **Equation:** d²u/dt² − μ(1 − u²) du/dt + u = 0, u(0) = 2, u'(0) = 0
 
 **Demonstrates:** `ODEProperties(order=2, dy0=[...])` with `ICConstraint` enforcing both position and velocity at t=0; inverse problem recovering μ from noisy trajectory data. Contrast with the existing `damped_oscillator` which rewrites to a first-order system.
+
+**Resolved:** Added `VanDerPolDataModule` to `anypinn.catalog`, example in `examples/van_der_pol/`, and CLI scaffold template in `anypinn.cli.scaffold.van_der_pol`.
 
 ---
 
