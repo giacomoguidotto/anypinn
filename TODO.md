@@ -329,13 +329,15 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX3. Poisson Equation — pure elliptic PDE, no time
+### ~~EX3. Poisson Equation — pure elliptic PDE, no time~~ ✅
 
 **File:** `examples/poisson_2d/`
 
 **Equation:** ∇²u = f(x, y) on [0,1]², u = 0 on ∂Ω
 
 **Demonstrates:** First PDE example with a 2D `DomainND` input; `DirichletBCConstraint` on all four edges; `PDEResidualConstraint` using `laplacian(u, x)` from `anypinn.lib.diff`; `FourierEncoding` on the 2D input to capture high-frequency structure; `UniformSampler` for interior + boundary points.
+
+**Resolved:** Added `Poisson2DDataModule` to `anypinn.catalog`, example in `examples/poisson_2d/`, and CLI scaffold template in `anypinn.cli.scaffold.poisson_2d`.
 
 ---
 

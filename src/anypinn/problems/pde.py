@@ -73,9 +73,10 @@ class DirichletBCConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
-        x_bc = self.bc.sampler(self.bc.n_pts)
+        device = next(self.field.parameters()).device
+        x_bc = self.bc.sampler(self.bc.n_pts).to(device)
         u_pred = self.field(x_bc)
-        g = self.bc.value(x_bc)
+        g = self.bc.value(x_bc).to(device)
         loss: Tensor = self.weight * criterion(u_pred, g)
         if log is not None:
             log(self.log_key, loss)
@@ -122,10 +123,11 @@ class NeumannBCConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
-        x_bc = self.bc.sampler(self.bc.n_pts).detach().requires_grad_(True)
+        device = next(self.field.parameters()).device
+        x_bc = self.bc.sampler(self.bc.n_pts).to(device).detach().requires_grad_(True)
         u_pred = self.field(x_bc)
         du_dn = diff_partial(u_pred, x_bc, dim=self.normal_dim)
-        h = self.bc.value(x_bc.detach())
+        h = self.bc.value(x_bc.detach()).to(device)
         loss: Tensor = self.weight * criterion(du_dn, h)
         if log is not None:
             log(self.log_key, loss)
