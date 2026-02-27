@@ -1,10 +1,9 @@
-name: Draft PDF
+name: Paper
 on: [push]
 
 jobs:
-  paper:
+  check:
     runs-on: ubuntu-latest
-    name: Paper Draft
     steps:
       - name: Checkout
         uses: actions/checkout@v4
