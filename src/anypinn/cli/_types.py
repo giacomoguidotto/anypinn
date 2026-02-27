@@ -11,6 +11,7 @@ class Template(str, Enum):
     DAMPED_OSCILLATOR = "damped-oscillator"
     LOTKA_VOLTERRA = "lotka-volterra"
     VAN_DER_POL = "van-der-pol"
+    LORENZ = "lorenz"
     CUSTOM = "custom"
     BLANK = "blank"
 
@@ -22,6 +23,7 @@ class Template(str, Enum):
             Template.DAMPED_OSCILLATOR: "Damped Oscillator",
             Template.LOTKA_VOLTERRA: "Lotka-Volterra",
             Template.VAN_DER_POL: "Van der Pol Oscillator",
+            Template.LORENZ: "Lorenz System",
             Template.CUSTOM: "Custom ODE",
             Template.BLANK: "Blank project",
         }
@@ -35,6 +37,7 @@ class Template(str, Enum):
             Template.DAMPED_OSCILLATOR: "Harmonic oscillator with damping. Learns damping ratio ζ.",  # noqa: E501
             Template.LOTKA_VOLTERRA: "Predator-prey dynamics with Fourier encoding. Learns predation rate β.",  # noqa: E501
             Template.VAN_DER_POL: "Second-order nonlinear oscillator. Learns nonlinearity parameter μ.",  # noqa: E501
+            Template.LORENZ: "Chaotic 3-field ODE. Learns sigma, rho, beta with Huber criterion.",
             Template.CUSTOM: "Minimal skeleton for a user-defined ODE. All factories are stubs.",
             Template.BLANK: "Empty project structure with no ODE—start from scratch.",
         }

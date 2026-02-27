@@ -317,13 +317,15 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX2. Lorenz System — 3-field chaotic ODE
+### ~~EX2. Lorenz System — 3-field chaotic ODE~~ ✅
 
 **File:** `examples/lorenz/`
 
 **Equations:** dx/dt = σ(y − x), dy/dt = x(ρ − z) − y, dz/dt = xy − βz
 
 **Demonstrates:** 3-field `ResidualsConstraint`; inverse problem recovering σ, ρ, β; `LatinHypercubeSampler` for collocation; Huber criterion (`criterion="huber"`) to handle the large residual range typical of chaotic solutions. Good stress-test of the multi-field autograd batching (P1 fix).
+
+**Resolved:** Added `LorenzDataModule` to `anypinn.catalog`, example in `examples/lorenz/`, and CLI scaffold template in `anypinn.cli.scaffold.lorenz`.
 
 ---
 
