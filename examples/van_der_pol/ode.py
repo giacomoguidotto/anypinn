@@ -61,13 +61,14 @@ def vdp_scaled(
     args: ArgsRegistry,
     derivs: list[Tensor] | None = None,
 ) -> Tensor:
-    """Native second-order ODE for training. Receives derivs[0] = du/dt."""
+    """Native second-order ODE for training. Receives derivs[0] = du/d(tau)."""
     assert derivs is not None
     u = y[0]  # (m, 1)
-    du_dt = derivs[0][0]  # (m, 1)
+    du_dtau = derivs[0][0]  # (m, 1) — derivative w.r.t. scaled time tau in [0,1]
     mu = args[MU_KEY]
-    # d2u/dt2 = mu*(1 - u^2)*du/dt - u, scaled by T^2
-    return (mu(x) * (1 - u**2) * du_dt - u).unsqueeze(0) * T**2
+    # Physical ODE: d2u/dt2 = mu*(1-u^2)*du/dt - u
+    # With tau = t/T: d2u/dtau2 = T*mu*(1-u^2)*du/dtau - T^2*u
+    return (T * mu(x) * (1 - u**2) * du_dtau - T**2 * u).unsqueeze(0)
 
 
 # ============================================================================
