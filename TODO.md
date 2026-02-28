@@ -353,13 +353,15 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX5. Burgers Equation — 1D nonlinear PDE with shock formation
+### ~~EX5. Burgers Equation — 1D nonlinear PDE with shock formation~~ ✅
 
 **File:** `examples/burgers_1d/`
 
 **Equation:** ∂u/∂t + u ∂u/∂x = ν ∂²u/∂x², (x,t) ∈ [−1,1]×[0,T]; u(x,0) = −sin(πx); u(±1,t) = 0
 
 **Demonstrates:** Nonlinear convection term requiring `partial` for both first-order (convection) and second-order (diffusion) spatial derivatives; `AdaptiveSampler` to concentrate collocation points near the shock; `RandomFourierFeatures` encoding; inverse problem recovering ν.
+
+**Resolved:** Added `Burgers1DDataModule` to `anypinn.catalog`, example in `examples/burgers_1d/`, and CLI scaffold template in `anypinn.cli.scaffold.burgers_1d`. Uses scipy method-of-lines for numerical ground truth, `BurgersResidualScorer` for adaptive collocation, and `RandomFourierFeatures` encoding.
 
 ---
 

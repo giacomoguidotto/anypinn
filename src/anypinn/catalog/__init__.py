@@ -1,5 +1,8 @@
 """Catalog of ready-made ODE/PDE problem building blocks."""
 
+from anypinn.catalog.burgers_1d import NU_KEY as BURGERS_NU_KEY
+from anypinn.catalog.burgers_1d import U_KEY as BURGERS_U_KEY
+from anypinn.catalog.burgers_1d import Burgers1DDataModule
 from anypinn.catalog.damped_oscillator import (
     OMEGA_KEY,
     V_KEY,
@@ -42,6 +45,8 @@ from anypinn.catalog.van_der_pol import MU_KEY, U_KEY, VanDerPolDataModule
 __all__ = [
     "ALPHA_KEY",
     "BETA_KEY",
+    "BURGERS_NU_KEY",
+    "BURGERS_U_KEY",
     "DELTA_KEY",
     "E_KEY",
     "GAMMA_KEY",
@@ -73,6 +78,7 @@ __all__ = [
     "Y_KEY",
     "ZETA_KEY",
     "Z_KEY",
+    "Burgers1DDataModule",
     "DampedOscillatorDataModule",
     "Heat1DDataModule",
     "LorenzDataModule",
