@@ -20,7 +20,7 @@ class TestPromptTemplate:
 
     @patch("anypinn.cli._prompts.TerminalMenu")
     def test_returns_last_template(self, mock_menu_cls: MagicMock) -> None:
-        mock_menu_cls.return_value.show.return_value = 9  # BLANK
+        mock_menu_cls.return_value.show.return_value = 10  # BLANK
 
         result = prompt_template()
         assert result is Template.BLANK
