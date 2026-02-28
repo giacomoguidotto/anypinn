@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import torch
 
-from anypinn.core import GenerationConfig, MLPConfig, ReduceLROnPlateauConfig, ScalarConfig
+from anypinn.core import (
+    CosineAnnealingConfig,
+    GenerationConfig,
+    MLPConfig,
+    ScalarConfig,
+    SMMAStoppingConfig,
+)
 from anypinn.core.config import PINNHyperparameters
 
 EXPERIMENT_NAME = "burgers-1d"
@@ -13,7 +19,7 @@ EXPERIMENT_NAME = "burgers-1d"
 
 hp = PINNHyperparameters(
     lr=1e-3,
-    max_epochs=5000,
+    max_epochs=2000,
     gradient_clip_val=0.5,
     training_data=GenerationConfig(
         batch_size=128,
@@ -34,11 +40,13 @@ hp = PINNHyperparameters(
     params_config=ScalarConfig(
         init_value=0.1,  # initial guess for nu (true=0.01/pi)
     ),
-    scheduler=ReduceLROnPlateauConfig(
-        mode="min",
-        factor=0.5,
-        patience=200,
-        threshold=1e-4,
-        min_lr=1e-6,
+    scheduler=CosineAnnealingConfig(
+        T_max=1000,
+        eta_min=1e-6,
+    ),
+    smma_stopping=SMMAStoppingConfig(
+        window=20,
+        threshold=0.005,
+        lookback=100,
     ),
 )
