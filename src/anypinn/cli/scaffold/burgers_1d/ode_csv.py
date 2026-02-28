@@ -90,11 +90,12 @@ class BurgersResidualScorer:
         self.params = params
 
     def residual_score(self, x: Tensor) -> Tensor:
-        x = x.detach().requires_grad_(True)
+        device = next(iter(self.fields.values())).parameters().__next__().device
+        x = x.detach().to(device).requires_grad_(True)
         with torch.enable_grad():
             res = burgers_residual(x, self.fields, self.params)
         # res may be (n, d) due to scalar param broadcasting; reduce to (n,)
-        return res.detach().abs().mean(dim=-1)
+        return res.detach().cpu().abs().mean(dim=-1)
 
 
 # ============================================================================
