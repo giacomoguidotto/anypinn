@@ -18,13 +18,13 @@ hp: !!python/object:anypinn.core.config.PINNHyperparameters
   optimizer: null
   params_config: !!python/object:anypinn.core.config.ScalarConfig
     init_value: 0.5
-  scheduler: !!python/object:anypinn.core.config.ReduceLROnPlateauConfig
-    factor: 0.5
-    min_lr: 1.0e-06
-    mode: min
-    patience: 100
-    threshold: 0.0001
-  smma_stopping: null
+  scheduler: !!python/object:anypinn.core.config.CosineAnnealingConfig
+    T_max: 1500
+    eta_min: 1.0e-06
+  smma_stopping: !!python/object:anypinn.core.config.SMMAStoppingConfig
+    lookback: 200
+    threshold: 0.001
+    window: 50
   training_data: !!python/object:anypinn.core.config.GenerationConfig
     args_to_train: {}
     batch_size: 128
@@ -39,8 +39,8 @@ hp: !!python/object:anypinn.core.config.PINNHyperparameters
         gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
         AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
         aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
-        Z2UKcQFYCwAAADM0NzI4MzQxNjAwcQJYAwAAAGNwdXEDSzJOdHEEUS6AAl1xAFgLAAAAMzQ3Mjgz
-        NDE2MDBxAWEuMgAAAAAAAAAAAAAABS+nPAUvJz2Ixno9BS+nPcb60D2Ixvo9JEkSPgUvJz7mFDw+
+        Z2UKcQFYCwAAADQyMTUwOTEzMzEycQJYAwAAAGNwdXEDSzJOdHEEUS6AAl1xAFgLAAAANDIxNTA5
+        MTMzMTJxAWEuMgAAAAAAAAAAAAAABS+nPAUvJz2Ixno9BS+nPcb60D2Ixvo9JEkSPgUvJz7mFDw+
         xvpQPqfgZT6Ixno+NNaHPiRJkj4VvJw+BS+nPvWhsT7mFLw+1ofGPsb60D63bds+p+DlPpdT8D6I
         xvo+vJwCPzTWBz+tDw0/JUkSP52CFz8VvBw/jfUhPwUvJz9+aCw/9qExP27bNj/mFDw/Xk5BP9aH
         Rj9OwUs/x/pQPz80Vj+3bVs/L6dgP6fgZT8fGms/mFNwPxCNdT+Ixno/AACAPw==
