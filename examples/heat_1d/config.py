@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import torch
 
-from anypinn.core import GenerationConfig, MLPConfig, ReduceLROnPlateauConfig, ScalarConfig
+from anypinn.core import (
+    CosineAnnealingConfig,
+    GenerationConfig,
+    MLPConfig,
+    ScalarConfig,
+    SMMAStoppingConfig,
+)
 from anypinn.core.config import PINNHyperparameters
 
 EXPERIMENT_NAME = "heat-1d"
@@ -34,11 +40,13 @@ hp = PINNHyperparameters(
     params_config=ScalarConfig(
         init_value=0.5,  # initial guess for alpha (true=0.1)
     ),
-    scheduler=ReduceLROnPlateauConfig(
-        mode="min",
-        factor=0.5,
-        patience=100,
-        threshold=1e-4,
-        min_lr=1e-6,
+    scheduler=CosineAnnealingConfig(
+        T_max=1500,
+        eta_min=1e-6,
+    ),
+    smma_stopping=SMMAStoppingConfig(
+        window=20,
+        threshold=0.005,
+        lookback=100,
     ),
 )
