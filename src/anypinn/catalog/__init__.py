@@ -25,6 +25,9 @@ from anypinn.catalog.gray_scott_2d import GrayScott2DDataModule
 from anypinn.catalog.heat_1d import ALPHA_KEY as HEAT_ALPHA_KEY
 from anypinn.catalog.heat_1d import U_KEY as HEAT_U_KEY
 from anypinn.catalog.heat_1d import Heat1DDataModule
+from anypinn.catalog.inverse_diffusivity import D_KEY as DIFFUSIVITY_D_KEY
+from anypinn.catalog.inverse_diffusivity import U_KEY as DIFFUSIVITY_U_KEY
+from anypinn.catalog.inverse_diffusivity import InverseDiffusivityDataModule
 from anypinn.catalog.lorenz import BETA_KEY as LORENZ_BETA_KEY
 from anypinn.catalog.lorenz import RHO_KEY as LORENZ_RHO_KEY
 from anypinn.catalog.lorenz import SIGMA_KEY as LORENZ_SIGMA_KEY
@@ -63,6 +66,8 @@ __all__ = [
     "BURGERS_NU_KEY",
     "BURGERS_U_KEY",
     "DELTA_KEY",
+    "DIFFUSIVITY_D_KEY",
+    "DIFFUSIVITY_U_KEY",
     "E_KEY",
     "FHN_A_KEY",
     "FHN_EPSILON_KEY",
@@ -110,6 +115,7 @@ __all__ = [
     "FitzHughNagumoDataModule",
     "GrayScott2DDataModule",
     "Heat1DDataModule",
+    "InverseDiffusivityDataModule",
     "LorenzDataModule",
     "LotkaVolterraDataModule",
     "Poisson2DDataModule",

@@ -18,6 +18,7 @@ class Template(str, Enum):
     HEAT_1D = "heat-1d"
     BURGERS_1D = "burgers-1d"
     WAVE_1D = "wave-1d"
+    INVERSE_DIFFUSIVITY = "inverse-diffusivity"
     CUSTOM = "custom"
     BLANK = "blank"
 
@@ -36,6 +37,7 @@ class Template(str, Enum):
             Template.HEAT_1D: "Heat Equation 1D",
             Template.BURGERS_1D: "Burgers Equation 1D",
             Template.WAVE_1D: "Wave Equation 1D",
+            Template.INVERSE_DIFFUSIVITY: "Inverse Diffusivity",
             Template.CUSTOM: "Custom ODE",
             Template.BLANK: "Blank project",
         }
@@ -56,6 +58,7 @@ class Template(str, Enum):
             Template.HEAT_1D: "1D parabolic PDE inverse problem. Recovers thermal diffusivity from sparse measurements.",  # noqa: E501
             Template.BURGERS_1D: "1D nonlinear PDE with shock formation. Recovers viscosity with adaptive collocation.",  # noqa: E501
             Template.WAVE_1D: "1D hyperbolic PDE inverse problem. Recovers wave speed from sparse measurements.",  # noqa: E501
+            Template.INVERSE_DIFFUSIVITY: "Space-dependent diffusivity D(x) recovered as a neural network Field in \u2202u/\u2202t = \u2207\u00b7(D(x)\u2207u).",  # noqa: E501
             Template.CUSTOM: "Minimal skeleton for a user-defined ODE. All factories are stubs.",
             Template.BLANK: "Empty project structure with no ODE—start from scratch.",
         }
