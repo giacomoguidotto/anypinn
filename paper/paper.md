@@ -4,9 +4,17 @@ authors:
   - name: Giacomo Guidotto
     orcid: 0009-0006-2279-9126
     affiliation: 1
+  - name: Damiano Pasetto
+    orcid: 0000-0001-6892-9826
+    affiliaion: 1
+  - name: Caterina Millevoi
+    orcid: 0000-0002-9743-4547
+    affiliation: 2
 affiliations:
   - name: Ca' Foscari University of Venice, Venice, IT
     index: 1
+  - name: Università di Padova, Padova, IT
+    index: 2
 date: 27 February 2026
 bibliography: paper.bib
 ---

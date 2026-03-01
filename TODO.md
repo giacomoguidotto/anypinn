@@ -387,7 +387,7 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX8. Reaction-Diffusion (Gray-Scott) — coupled 2-field PDE
+### ~~EX8. Reaction-Diffusion (Gray-Scott) — coupled 2-field PDE~~ ✅
 
 **File:** `examples/gray_scott_2d/`
 
