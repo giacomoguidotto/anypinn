@@ -17,6 +17,7 @@ _TEMPLATE_DIRS: dict[Template, str] = {
     Template.POISSON_2D: "poisson_2d",
     Template.HEAT_1D: "heat_1d",
     Template.BURGERS_1D: "burgers_1d",
+    Template.WAVE_1D: "wave_1d",
     Template.CUSTOM: "custom",
     Template.BLANK: "blank",
 }
@@ -31,6 +32,7 @@ _EXPERIMENT_NAMES: dict[Template, str] = {
     Template.POISSON_2D: "poisson-2d",
     Template.HEAT_1D: "heat-1d",
     Template.BURGERS_1D: "burgers-1d",
+    Template.WAVE_1D: "wave-1d",
     Template.CUSTOM: "custom-ode",
     Template.BLANK: "my-project",
 }
