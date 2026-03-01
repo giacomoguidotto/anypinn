@@ -365,13 +365,15 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX6. Wave Equation — 1D hyperbolic PDE, second-order in time
+### ~~EX6. Wave Equation — 1D hyperbolic PDE, second-order in time~~ ✅
 
 **File:** `examples/wave_1d/`
 
 **Equation:** ∂²u/∂t² = c² ∂²u/∂x², u(0,t) = u(L,t) = 0, u(x,0) = f(x), ∂u/∂t|₀ = 0
 
 **Demonstrates:** Second-order temporal derivative via `partial(u, xt, dim=1, order=2)`; IC for both displacement and velocity using `DirichletBCConstraint` at t=0; inverse problem recovering wave speed c.
+
+**Resolved:** Added `Wave1DDataModule` to `anypinn.catalog`, example in `examples/wave_1d/`, and CLI scaffold template in `anypinn.cli.scaffold.wave_1d`. Uses analytic solution `u(x,t) = sin(πx)cos(cπt)`, `NeumannBCConstraint(normal_dim=1)` for velocity IC, and `FourierEncoding` on 2D input.
 
 ---
 

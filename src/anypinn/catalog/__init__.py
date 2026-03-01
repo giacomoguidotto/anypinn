@@ -41,6 +41,9 @@ from anypinn.catalog.sir import I_KEY as SIR_I_KEY
 from anypinn.catalog.sir import N_KEY, SIR, Rt_KEY, SIRInvDataModule, rSIR
 from anypinn.catalog.sir import S_KEY as SIR_S_KEY
 from anypinn.catalog.van_der_pol import MU_KEY, U_KEY, VanDerPolDataModule
+from anypinn.catalog.wave_1d import C_KEY as WAVE_C_KEY
+from anypinn.catalog.wave_1d import U_KEY as WAVE_U_KEY
+from anypinn.catalog.wave_1d import Wave1DDataModule
 
 __all__ = [
     "ALPHA_KEY",
@@ -74,6 +77,8 @@ __all__ = [
     "SIR_S_KEY",
     "U_KEY",
     "V_KEY",
+    "WAVE_C_KEY",
+    "WAVE_U_KEY",
     "X_KEY",
     "Y_KEY",
     "ZETA_KEY",
@@ -88,5 +93,6 @@ __all__ = [
     "SEIRDataModule",
     "SIRInvDataModule",
     "VanDerPolDataModule",
+    "Wave1DDataModule",
     "rSIR",
 ]
