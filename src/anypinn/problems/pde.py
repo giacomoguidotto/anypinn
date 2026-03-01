@@ -134,6 +134,74 @@ class NeumannBCConstraint(Constraint):
         return loss
 
 
+class PeriodicBCConstraint(Constraint):
+    """
+    Enforces periodic boundary conditions:
+    ``u(x_left, t) = u(x_right, t)`` and
+    ``∂u/∂x(x_left, t) = ∂u/∂x(x_right, t)``.
+
+    The two boundary samplers must produce **paired** points — identical
+    coordinates in every dimension except the periodic one — so that
+    the value- and derivative-matching losses are meaningful.
+
+    Minimizes
+    ``weight * [criterion(u_left, u_right) + criterion(du_left, du_right)]``.
+
+    Args:
+        bc_left: Left boundary sampler (sampler + dummy value function).
+        bc_right: Right boundary sampler (sampler + dummy value function).
+        field: The neural field to enforce the condition on.
+        match_dim: Spatial dimension index for the derivative matching.
+        log_key: Key used when logging the loss value.
+        weight: Loss term weight.
+    """
+
+    def __init__(
+        self,
+        bc_left: BoundaryCondition,
+        bc_right: BoundaryCondition,
+        field: Field,
+        match_dim: int = 0,
+        log_key: str = "loss/bc_periodic",
+        weight: float = 1.0,
+    ):
+        self.bc_left = bc_left
+        self.bc_right = bc_right
+        self.field = field
+        self.match_dim = match_dim
+        self.log_key = log_key
+        self.weight = weight
+
+    @override
+    def loss(
+        self,
+        batch: TrainingBatch,
+        criterion: nn.Module,
+        log: LogFn | None = None,
+    ) -> Tensor:
+        device = next(self.field.parameters()).device
+        n_pts = self.bc_left.n_pts
+
+        x_left = self.bc_left.sampler(n_pts).to(device).detach().requires_grad_(True)
+        x_right = self.bc_right.sampler(n_pts).to(device).detach().requires_grad_(True)
+
+        u_left = self.field(x_left)
+        u_right = self.field(x_right)
+
+        # Value matching: u(x_left, t) = u(x_right, t)
+        loss_val: Tensor = criterion(u_left, u_right)
+
+        # Derivative matching: du/dx(x_left, t) = du/dx(x_right, t)
+        du_left = diff_partial(u_left, x_left, dim=self.match_dim)
+        du_right = diff_partial(u_right, x_right, dim=self.match_dim)
+        loss_deriv: Tensor = criterion(du_left, du_right)
+
+        loss: Tensor = self.weight * (loss_val + loss_deriv)
+        if log is not None:
+            log(self.log_key, loss)
+        return loss
+
+
 class PDEResidualConstraint(Constraint):
     """
     Enforces a PDE interior residual: ``residual_fn(x, fields, params) ≈ 0``.
