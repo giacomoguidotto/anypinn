@@ -14,7 +14,7 @@ from anypinn.cli._renderer import render_project
 from anypinn.cli._types import DataSource, Template
 
 app = Typer(add_completion=False, context_settings={"help_option_names": ["-h", "--help"]})
-_console = Console()
+_console = Console(highlight=False)
 
 
 @app.callback()
