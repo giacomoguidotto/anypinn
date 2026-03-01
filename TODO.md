@@ -377,7 +377,7 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX7. FitzHugh-Nagumo — 2-field nonlinear neuron model
+### ~~EX7. FitzHugh-Nagumo — 2-field nonlinear neuron model~~ ✅
 
 **File:** `examples/fitzhugh_nagumo/`
 
@@ -419,33 +419,33 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ## Summary Matrix
 
-| ID     | Category  | Severity   | Effort     | Impact                                      |
-| ------ | --------- | ---------- | ---------- | ------------------------------------------- |
-| ~~P1~~ | ~~Perf~~  | ~~High~~   | ~~Medium~~ | ~~2-3x residual training speedup~~ ✅       |
-| ~~PDE1~~ | ~~PDE~~ | ~~Critical~~ | ~~Large~~ | ~~Blocks all PDE work~~ ✅                |
-| ~~PDE2~~ | ~~PDE~~ | ~~Critical~~ | ~~Large~~ | ~~Blocks all PDE work~~ ✅                |
-| ~~PDE5~~ | ~~PDE~~ | ~~Critical~~ | ~~Small~~ | ~~Blocks all PDE work~~ ✅                |
-| ~~D1~~ | ~~DX~~    | ~~High~~   | ~~Small~~  | ~~Silent production failures~~ ✅           |
-| ~~D2~~ | ~~DX~~    | ~~High~~   | ~~Small~~  | ~~Bad error messages~~ ✅                   |
-| ~~S1~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~  | ~~Portability across hardware~~ ✅          |
-| ~~S2~~ | ~~Scale~~ | ~~Medium~~ | ~~Small~~  | ~~O(n) wasted device transfers~~ ✅         |
-| ~~D5~~ | ~~DX~~    | ~~Medium~~ | ~~Medium~~ | ~~Wrong validation on non-integer data~~ ✅ |
-| ~~PDE3~~ | ~~PDE~~ | ~~High~~ | ~~Medium~~ | ~~Core utility for PDE constraints~~ ✅    |
-| ~~PDE4~~ | ~~PDE~~ | ~~High~~ | ~~Medium~~ | ~~Needed for any 2D+ problem~~ ✅          |
-| ~~P3~~ | ~~Perf~~  | ~~Medium~~ | ~~Medium~~ | ~~L-BFGS convergence gains~~ ✅             |
-| ~~D3~~ | ~~DX~~    | ~~Medium~~ | ~~Medium~~ | ~~Prevents misconfiguration~~ ✅            |
-| ~~S3~~ | ~~Scale~~ | ~~Low~~    | ~~Small~~  | ~~Minor allocation overhead~~ ✅            |
-| ~~S4~~ | ~~Scale~~ | ~~Low~~    | ~~Small~~  | ~~Minor allocation overhead~~ ✅            |
-| ~~S5~~ | ~~Scale~~ | ~~Low~~    | ~~Small~~  | ~~Easy GPU bandwidth win~~ ✅               |
-| ~~S6~~ | ~~Scale~~ | ~~Low~~    | ~~Small~~  | ~~Minor per-step overhead~~ ✅              |
-| ~~S7~~ | ~~Scale~~ | ~~Low~~    | ~~Small~~  | ~~Trivial~~ ✅                              |
-| ~~P2~~ | ~~Perf~~  | ~~Low~~    | ~~Small~~  | ~~Minor~~ ✅                                |
-| ~~P4~~ | ~~Perf~~  | ~~Low~~    | ~~Small~~  | ~~Only matters for huge lookback~~ ✅       |
-| ~~P5~~ | ~~Perf~~  | ~~Low~~    | ~~Small~~  | ~~Diagnostic overhead~~ ✅                  |
-| ~~D6~~ | ~~DX~~    | ~~Low~~    | ~~Small~~  | ~~Repeated I/O~~ ✅                         |
-| ~~D7~~ | ~~DX~~    | ~~Low~~    | ~~Small~~  | ~~Edge-case crash~~ ✅                      |
-| ~~D8~~ | ~~DX~~    | ~~Medium~~ | ~~Small~~  | ~~Onboarding~~ ✅                           |
-| ~~PDE6~~ | ~~PDE~~ | ~~Medium~~ | ~~Medium~~ | ~~Quality of PDE solutions~~ ✅             |
-| ~~PDE7~~ | ~~PDE~~ | ~~Medium~~ | ~~Small~~  | ~~Multi-scale PDE accuracy~~ ✅             |
-| ~~PDE8~~ | ~~PDE~~ | ~~Medium~~ | ~~Large~~  | ~~Coupled-system expressiveness~~ ✅        |
-| ~~ODE1~~ | ~~ODE~~ | ~~Medium~~ | ~~Medium~~ | ~~Native 2nd-order ODE expressiveness~~ ✅  |
+| ID       | Category  | Severity     | Effort     | Impact                                      |
+| -------- | --------- | ------------ | ---------- | ------------------------------------------- |
+| ~~P1~~   | ~~Perf~~  | ~~High~~     | ~~Medium~~ | ~~2-3x residual training speedup~~ ✅       |
+| ~~PDE1~~ | ~~PDE~~   | ~~Critical~~ | ~~Large~~  | ~~Blocks all PDE work~~ ✅                  |
+| ~~PDE2~~ | ~~PDE~~   | ~~Critical~~ | ~~Large~~  | ~~Blocks all PDE work~~ ✅                  |
+| ~~PDE5~~ | ~~PDE~~   | ~~Critical~~ | ~~Small~~  | ~~Blocks all PDE work~~ ✅                  |
+| ~~D1~~   | ~~DX~~    | ~~High~~     | ~~Small~~  | ~~Silent production failures~~ ✅           |
+| ~~D2~~   | ~~DX~~    | ~~High~~     | ~~Small~~  | ~~Bad error messages~~ ✅                   |
+| ~~S1~~   | ~~Scale~~ | ~~Medium~~   | ~~Small~~  | ~~Portability across hardware~~ ✅          |
+| ~~S2~~   | ~~Scale~~ | ~~Medium~~   | ~~Small~~  | ~~O(n) wasted device transfers~~ ✅         |
+| ~~D5~~   | ~~DX~~    | ~~Medium~~   | ~~Medium~~ | ~~Wrong validation on non-integer data~~ ✅ |
+| ~~PDE3~~ | ~~PDE~~   | ~~High~~     | ~~Medium~~ | ~~Core utility for PDE constraints~~ ✅     |
+| ~~PDE4~~ | ~~PDE~~   | ~~High~~     | ~~Medium~~ | ~~Needed for any 2D+ problem~~ ✅           |
+| ~~P3~~   | ~~Perf~~  | ~~Medium~~   | ~~Medium~~ | ~~L-BFGS convergence gains~~ ✅             |
+| ~~D3~~   | ~~DX~~    | ~~Medium~~   | ~~Medium~~ | ~~Prevents misconfiguration~~ ✅            |
+| ~~S3~~   | ~~Scale~~ | ~~Low~~      | ~~Small~~  | ~~Minor allocation overhead~~ ✅            |
+| ~~S4~~   | ~~Scale~~ | ~~Low~~      | ~~Small~~  | ~~Minor allocation overhead~~ ✅            |
+| ~~S5~~   | ~~Scale~~ | ~~Low~~      | ~~Small~~  | ~~Easy GPU bandwidth win~~ ✅               |
+| ~~S6~~   | ~~Scale~~ | ~~Low~~      | ~~Small~~  | ~~Minor per-step overhead~~ ✅              |
+| ~~S7~~   | ~~Scale~~ | ~~Low~~      | ~~Small~~  | ~~Trivial~~ ✅                              |
+| ~~P2~~   | ~~Perf~~  | ~~Low~~      | ~~Small~~  | ~~Minor~~ ✅                                |
+| ~~P4~~   | ~~Perf~~  | ~~Low~~      | ~~Small~~  | ~~Only matters for huge lookback~~ ✅       |
+| ~~P5~~   | ~~Perf~~  | ~~Low~~      | ~~Small~~  | ~~Diagnostic overhead~~ ✅                  |
+| ~~D6~~   | ~~DX~~    | ~~Low~~      | ~~Small~~  | ~~Repeated I/O~~ ✅                         |
+| ~~D7~~   | ~~DX~~    | ~~Low~~      | ~~Small~~  | ~~Edge-case crash~~ ✅                      |
+| ~~D8~~   | ~~DX~~    | ~~Medium~~   | ~~Small~~  | ~~Onboarding~~ ✅                           |
+| ~~PDE6~~ | ~~PDE~~   | ~~Medium~~   | ~~Medium~~ | ~~Quality of PDE solutions~~ ✅             |
+| ~~PDE7~~ | ~~PDE~~   | ~~Medium~~   | ~~Small~~  | ~~Multi-scale PDE accuracy~~ ✅             |
+| ~~PDE8~~ | ~~PDE~~   | ~~Medium~~   | ~~Large~~  | ~~Coupled-system expressiveness~~ ✅        |
+| ~~ODE1~~ | ~~ODE~~   | ~~Medium~~   | ~~Medium~~ | ~~Native 2nd-order ODE expressiveness~~ ✅  |

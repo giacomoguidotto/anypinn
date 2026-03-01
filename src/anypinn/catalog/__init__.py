@@ -10,6 +10,11 @@ from anypinn.catalog.damped_oscillator import (
     ZETA_KEY,
     DampedOscillatorDataModule,
 )
+from anypinn.catalog.fitzhugh_nagumo import A_KEY as FHN_A_KEY
+from anypinn.catalog.fitzhugh_nagumo import EPSILON_KEY as FHN_EPSILON_KEY
+from anypinn.catalog.fitzhugh_nagumo import V_KEY as FHN_V_KEY
+from anypinn.catalog.fitzhugh_nagumo import W_KEY as FHN_W_KEY
+from anypinn.catalog.fitzhugh_nagumo import FitzHughNagumoDataModule
 from anypinn.catalog.heat_1d import ALPHA_KEY as HEAT_ALPHA_KEY
 from anypinn.catalog.heat_1d import U_KEY as HEAT_U_KEY
 from anypinn.catalog.heat_1d import Heat1DDataModule
@@ -52,6 +57,10 @@ __all__ = [
     "BURGERS_U_KEY",
     "DELTA_KEY",
     "E_KEY",
+    "FHN_A_KEY",
+    "FHN_EPSILON_KEY",
+    "FHN_V_KEY",
+    "FHN_W_KEY",
     "GAMMA_KEY",
     "HEAT_ALPHA_KEY",
     "HEAT_U_KEY",
@@ -85,6 +94,7 @@ __all__ = [
     "Z_KEY",
     "Burgers1DDataModule",
     "DampedOscillatorDataModule",
+    "FitzHughNagumoDataModule",
     "Heat1DDataModule",
     "LorenzDataModule",
     "LotkaVolterraDataModule",
