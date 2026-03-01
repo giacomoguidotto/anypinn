@@ -15,6 +15,13 @@ from anypinn.catalog.fitzhugh_nagumo import EPSILON_KEY as FHN_EPSILON_KEY
 from anypinn.catalog.fitzhugh_nagumo import V_KEY as FHN_V_KEY
 from anypinn.catalog.fitzhugh_nagumo import W_KEY as FHN_W_KEY
 from anypinn.catalog.fitzhugh_nagumo import FitzHughNagumoDataModule
+from anypinn.catalog.gray_scott_2d import DU_KEY as GS_DU_KEY
+from anypinn.catalog.gray_scott_2d import DV_KEY as GS_DV_KEY
+from anypinn.catalog.gray_scott_2d import F_KEY as GS_F_KEY
+from anypinn.catalog.gray_scott_2d import K_KEY as GS_K_KEY
+from anypinn.catalog.gray_scott_2d import U_KEY as GS_U_KEY
+from anypinn.catalog.gray_scott_2d import V_KEY as GS_V_KEY
+from anypinn.catalog.gray_scott_2d import GrayScott2DDataModule
 from anypinn.catalog.heat_1d import ALPHA_KEY as HEAT_ALPHA_KEY
 from anypinn.catalog.heat_1d import U_KEY as HEAT_U_KEY
 from anypinn.catalog.heat_1d import Heat1DDataModule
@@ -62,6 +69,12 @@ __all__ = [
     "FHN_V_KEY",
     "FHN_W_KEY",
     "GAMMA_KEY",
+    "GS_DU_KEY",
+    "GS_DV_KEY",
+    "GS_F_KEY",
+    "GS_K_KEY",
+    "GS_U_KEY",
+    "GS_V_KEY",
     "HEAT_ALPHA_KEY",
     "HEAT_U_KEY",
     "LORENZ_BETA_KEY",
@@ -95,6 +108,7 @@ __all__ = [
     "Burgers1DDataModule",
     "DampedOscillatorDataModule",
     "FitzHughNagumoDataModule",
+    "GrayScott2DDataModule",
     "Heat1DDataModule",
     "LorenzDataModule",
     "LotkaVolterraDataModule",

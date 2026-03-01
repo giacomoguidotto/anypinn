@@ -13,6 +13,7 @@ class Template(str, Enum):
     VAN_DER_POL = "van-der-pol"
     LORENZ = "lorenz"
     FITZHUGH_NAGUMO = "fitzhugh-nagumo"
+    GRAY_SCOTT_2D = "gray-scott-2d"
     POISSON_2D = "poisson-2d"
     HEAT_1D = "heat-1d"
     BURGERS_1D = "burgers-1d"
@@ -30,6 +31,7 @@ class Template(str, Enum):
             Template.VAN_DER_POL: "Van der Pol Oscillator",
             Template.LORENZ: "Lorenz System",
             Template.FITZHUGH_NAGUMO: "FitzHugh-Nagumo",
+            Template.GRAY_SCOTT_2D: "Gray-Scott 2D",
             Template.POISSON_2D: "Poisson 2D",
             Template.HEAT_1D: "Heat Equation 1D",
             Template.BURGERS_1D: "Burgers Equation 1D",
@@ -49,6 +51,7 @@ class Template(str, Enum):
             Template.VAN_DER_POL: "Second-order nonlinear oscillator. Learns nonlinearity parameter μ.",  # noqa: E501
             Template.LORENZ: "Chaotic 3-field ODE. Learns sigma, rho, beta with Huber criterion.",
             Template.FITZHUGH_NAGUMO: "2-field nonlinear neuron model. Recovers timescale \u03b5 from partially observed voltage trace.",  # noqa: E501
+            Template.GRAY_SCOTT_2D: "Coupled 2-field reaction-diffusion PDE. Recovers diffusion rates and reaction parameters from pattern snapshots.",  # noqa: E501
             Template.POISSON_2D: "2D elliptic PDE forward problem. Demonstrates PDEResidualConstraint + DirichletBC.",  # noqa: E501
             Template.HEAT_1D: "1D parabolic PDE inverse problem. Recovers thermal diffusivity from sparse measurements.",  # noqa: E501
             Template.BURGERS_1D: "1D nonlinear PDE with shock formation. Recovers viscosity with adaptive collocation.",  # noqa: E501
