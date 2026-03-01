@@ -409,13 +409,15 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX10. Allen-Cahn Equation — stiff reaction-diffusion interface
+### ~~EX10. Allen-Cahn Equation — stiff reaction-diffusion interface~~ ✅
 
 **File:** `examples/allen_cahn/`
 
 **Equation:** ∂u/∂t = ε ∂²u/∂x² + u − u³, ε ≪ 1; periodic BCs
 
 **Demonstrates:** Small parameter ε causing sharp interface layers; `AdaptiveSampler` crucial for resolving the interface; `criterion="huber"` to handle large residual contrast; `RandomFourierFeatures` with high-frequency scale for the interface; forward problem (no inverse) showing the framework works without any `DataConstraint`.
+
+**Resolved:** Added `AllenCahnDataModule` to `anypinn.catalog`, example in `examples/allen_cahn/`, and CLI scaffold template in `anypinn.cli.scaffold.allen_cahn`. Uses scipy method-of-lines with periodic ghost cells for ground truth, new `PeriodicBCConstraint` for periodic BCs, `AdaptiveSampler` with `AllenCahnResidualScorer`, `criterion="huber"`, and `RandomFourierFeatures` with high-frequency scale. Forward problem with empty `ParamsRegistry` and no `DataConstraint`.
 
 ---
 

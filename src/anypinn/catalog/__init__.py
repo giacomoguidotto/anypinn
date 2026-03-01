@@ -1,5 +1,7 @@
 """Catalog of ready-made ODE/PDE problem building blocks."""
 
+from anypinn.catalog.allen_cahn import U_KEY as AC_U_KEY
+from anypinn.catalog.allen_cahn import AllenCahnDataModule
 from anypinn.catalog.burgers_1d import NU_KEY as BURGERS_NU_KEY
 from anypinn.catalog.burgers_1d import U_KEY as BURGERS_U_KEY
 from anypinn.catalog.burgers_1d import Burgers1DDataModule
@@ -61,6 +63,7 @@ from anypinn.catalog.wave_1d import U_KEY as WAVE_U_KEY
 from anypinn.catalog.wave_1d import Wave1DDataModule
 
 __all__ = [
+    "AC_U_KEY",
     "ALPHA_KEY",
     "BETA_KEY",
     "BURGERS_NU_KEY",
@@ -110,6 +113,7 @@ __all__ = [
     "Y_KEY",
     "ZETA_KEY",
     "Z_KEY",
+    "AllenCahnDataModule",
     "Burgers1DDataModule",
     "DampedOscillatorDataModule",
     "FitzHughNagumoDataModule",

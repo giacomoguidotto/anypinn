@@ -21,6 +21,7 @@ _TEMPLATE_DIRS: dict[Template, str] = {
     Template.BURGERS_1D: "burgers_1d",
     Template.WAVE_1D: "wave_1d",
     Template.INVERSE_DIFFUSIVITY: "inverse_diffusivity",
+    Template.ALLEN_CAHN: "allen_cahn",
     Template.CUSTOM: "custom",
     Template.BLANK: "blank",
 }
@@ -39,6 +40,7 @@ _EXPERIMENT_NAMES: dict[Template, str] = {
     Template.BURGERS_1D: "burgers-1d",
     Template.WAVE_1D: "wave-1d",
     Template.INVERSE_DIFFUSIVITY: "inverse-diffusivity",
+    Template.ALLEN_CAHN: "allen-cahn",
     Template.CUSTOM: "custom-ode",
     Template.BLANK: "my-project",
 }

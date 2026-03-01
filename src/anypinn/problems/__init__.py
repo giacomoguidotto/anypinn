@@ -17,6 +17,7 @@ from anypinn.problems.pde import (
     NeumannBCConstraint,
     PDEResidualConstraint,
     PDEResidualFn,
+    PeriodicBCConstraint,
 )
 
 __all__ = [
@@ -32,6 +33,7 @@ __all__ = [
     "ODEProperties",
     "PDEResidualConstraint",
     "PDEResidualFn",
+    "PeriodicBCConstraint",
     "PredictDataFn",
     "ResidualsConstraint",
 ]
