@@ -397,13 +397,15 @@ New example problems that exercise the capabilities added in the audit above. Or
 
 ---
 
-### EX9. Inverse Diffusivity — space-dependent parameter as a Field
+### ~~EX9. Inverse Diffusivity — space-dependent parameter as a Field~~ ✅
 
 **File:** `examples/inverse_diffusivity/`
 
 **Equation:** ∂u/∂t = ∇·(D(x) ∇u), with D(x) unknown
 
 **Demonstrates:** D(x) modelled as a `Field` (not a scalar `Parameter`) — a neural network that maps spatial coordinates to a positive diffusivity; `PDEResidualConstraint` with `partial` operators; `FourierEncoding` on x for D(x) to capture spatial variation; illustrates that the framework supports function-valued unknowns, not just scalar ones.
+
+**Resolved:** Added `InverseDiffusivityDataModule` to `anypinn.catalog`, example in `examples/inverse_diffusivity/`, and CLI scaffold template in `anypinn.cli.scaffold.inverse_diffusivity`. Uses scipy method-of-lines with variable D(x) for ground truth, two Fields (u and D with softplus output activation), and empty `ParamsRegistry`.
 
 ---
 
