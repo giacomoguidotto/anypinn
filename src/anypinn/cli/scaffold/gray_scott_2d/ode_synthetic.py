@@ -50,8 +50,8 @@ def gs_residual_u(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> 
     """PDE residual for u: du/dt_norm - T * (D_u lap_u - uv^2 + F(1-u)) = 0."""
     u = fields[U_KEY](x)
     v = fields[V_KEY](x)
-    du = params[DU_KEY](x)
-    f = params[F_KEY](x)
+    du = torch.nn.functional.softplus(params[DU_KEY](x))
+    f = torch.nn.functional.softplus(params[F_KEY](x))
     du_dt = partial(u, x, dim=2, order=1)
     lap_u = partial(u, x, dim=0, order=2) + partial(u, x, dim=1, order=2)
     return du_dt - (du * lap_u - u * v**2 + f * (1 - u)) * T_TOTAL
@@ -61,9 +61,9 @@ def gs_residual_v(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> 
     """PDE residual for v: dv/dt_norm - T * (D_v lap_v + uv^2 - (F+k)v) = 0."""
     u = fields[U_KEY](x)
     v = fields[V_KEY](x)
-    dv = params[DV_KEY](x)
-    f = params[F_KEY](x)
-    k = params[K_KEY](x)
+    dv = torch.nn.functional.softplus(params[DV_KEY](x))
+    f = torch.nn.functional.softplus(params[F_KEY](x))
+    k = torch.nn.functional.softplus(params[K_KEY](x))
     dv_dt = partial(v, x, dim=2, order=1)
     lap_v = partial(v, x, dim=0, order=2) + partial(v, x, dim=1, order=2)
     return dv_dt - (dv * lap_v + u * v**2 - (f + k) * v) * T_TOTAL
@@ -264,14 +264,14 @@ def create_problem(hp: PINNHyperparameters) -> Problem:
         params=params,
         residual_fn=gs_residual_u,
         log_key="loss/pde_u",
-        weight=1.0,
+        weight=1e-4,
     )
     pde_v = PDEResidualConstraint(
         fields=fields,
         params=params,
         residual_fn=gs_residual_v,
         log_key="loss/pde_v",
-        weight=1.0,
+        weight=1e-4,
     )
 
     data = DataConstraint(

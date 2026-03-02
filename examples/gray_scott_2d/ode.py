@@ -66,8 +66,8 @@ def gs_residual_u(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> 
     """PDE residual for u: du/dt_norm - T * (D_u lap_u - uv^2 + F(1-u)) = 0."""
     u = fields[U_KEY](x)
     v = fields[V_KEY](x)
-    du = params[DU_KEY](x)
-    f = params[F_KEY](x)
+    du = torch.nn.functional.softplus(params[DU_KEY](x))
+    f = torch.nn.functional.softplus(params[F_KEY](x))
     du_dt = partial(u, x, dim=2, order=1)
     lap_u = partial(u, x, dim=0, order=2) + partial(u, x, dim=1, order=2)
     return du_dt - (du * lap_u - u * v**2 + f * (1 - u)) * T_TOTAL
@@ -77,9 +77,9 @@ def gs_residual_v(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> 
     """PDE residual for v: dv/dt_norm - T * (D_v lap_v + uv^2 - (F+k)v) = 0."""
     u = fields[U_KEY](x)
     v = fields[V_KEY](x)
-    dv = params[DV_KEY](x)
-    f = params[F_KEY](x)
-    k = params[K_KEY](x)
+    dv = torch.nn.functional.softplus(params[DV_KEY](x))
+    f = torch.nn.functional.softplus(params[F_KEY](x))
+    k = torch.nn.functional.softplus(params[K_KEY](x))
     dv_dt = partial(v, x, dim=2, order=1)
     lap_v = partial(v, x, dim=0, order=2) + partial(v, x, dim=1, order=2)
     return dv_dt - (dv * lap_v + u * v**2 - (f + k) * v) * T_TOTAL
@@ -287,14 +287,14 @@ def create_problem(hp: PINNHyperparameters) -> Problem:
         params=params,
         residual_fn=gs_residual_u,
         log_key="loss/pde_u",
-        weight=1.0,
+        weight=1e-4,
     )
     pde_v = PDEResidualConstraint(
         fields=fields,
         params=params,
         residual_fn=gs_residual_v,
         log_key="loss/pde_v",
-        weight=1.0,
+        weight=1e-4,
     )
 
     data = DataConstraint(
@@ -336,18 +336,22 @@ def plot_and_save(
     u_true = uv_data[:, 0].squeeze(-1).numpy()
     v_true = uv_data[:, 1].squeeze(-1).numpy()
 
-    # Recover parameters
+    # Recover parameters (apply softplus to match PDE usage)
     params_str = ""
     du_rec = preds.get(DU_KEY)
     dv_rec = preds.get(DV_KEY)
     f_rec = preds.get(F_KEY)
     k_rec = preds.get(K_KEY)
     if du_rec is not None:
+        du_val = torch.nn.functional.softplus(torch.tensor(du_rec.mean())).item()
+        dv_val = torch.nn.functional.softplus(torch.tensor(dv_rec.mean())).item()
+        f_val = torch.nn.functional.softplus(torch.tensor(f_rec.mean())).item()
+        k_val = torch.nn.functional.softplus(torch.tensor(k_rec.mean())).item()
         params_str = (
-            f" | D_u={du_rec.mean().item():.4e} (true={TRUE_DU:.4e})"
-            f", D_v={dv_rec.mean().item():.4e} (true={TRUE_DV:.4e})"
-            f"\nF={f_rec.mean().item():.4e} (true={TRUE_F:.4e})"
-            f", k={k_rec.mean().item():.4e} (true={TRUE_K:.4e})"
+            f" | D_u={du_val:.4e} (true={TRUE_DU:.4e})"
+            f", D_v={dv_val:.4e} (true={TRUE_DV:.4e})"
+            f"\nF={f_val:.4e} (true={TRUE_F:.4e})"
+            f", k={k_val:.4e} (true={TRUE_K:.4e})"
         )
 
     # Plot final time snapshot

@@ -20,7 +20,7 @@ hp = PINNHyperparameters(
     gradient_clip_val=0.5,
     training_data=IngestionConfig(
         batch_size=256,
-        data_ratio=2,
+        data_ratio=64,
         collocations=10000,
         collocation_sampler="latin_hypercube",
         df_path=Path("./data/data.csv"),
@@ -29,7 +29,7 @@ hp = PINNHyperparameters(
     fields_config=MLPConfig(
         in_dim=39,  # FourierEncoding(K=6) on 3D: 3*(1+12) = 39
         out_dim=1,
-        hidden_layers=[64, 128, 128, 64],
+        hidden_layers=[128, 256, 256, 128],
         activation="tanh",
         output_activation=None,
     ),
