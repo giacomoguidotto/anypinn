@@ -99,6 +99,7 @@ hooks:
 watch:
   # Watch src/ directory to reload on changes to docstrings for mkdocstrings plugin.
   - src
+site_url: https://anypinn.guidotto.dev/
 site_name: anypinn
 copyright: Copyright &copy; 2025 Giacomo Guidotto
 # GitHub Specific Configuration.
