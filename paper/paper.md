@@ -21,13 +21,13 @@ bibliography: paper.bib
 
 # Summary
 
-AnyPINN is a PyTorch-native library for expressing Physics-Informed Neural Networks (PINNs) [@raissi2019physics] as composable `nn.Module` objects. It supports both ODE and PDE problems, forward and inverse alike, with particular depth in the inverse setting where unknown parameters must be recovered from partial observations. The library is organised into four layers (`core`, `problems`, `lightning`, `catalog`) with a strict one-way dependency direction, so users can engage with exactly the layer that matches their expertise, from running a pre-built example through the bootstrap CLI to defining custom physics and training loops in plain PyTorch [@pytorch]. All hyperparameters are plain Python dataclasses: serializable, diffable, and programmatically constructible, which makes systematic ablation studies a matter of iterating over configuration objects rather than editing files. Training is not owned by the library: `Problem.training_loss()` returns a scalar tensor compatible with any optimizer or training infrastructure, including plain PyTorch and PyTorch Lightning [@lightning].
+AnyPINN is a PyTorch-native library for Physics-Informed Neural Networks (PINNs) [@raissi2019physics] as composable `nn.Module` objects. It supports both ODE and PDE problems, forward and inverse alike, with particular depth in the inverse setting where parameters must be recovered from partial observations. The library is organised into four layers (`core`, `problems`, `lightning`, `catalog`) with a strict one-way dependency direction, so users can engage with exactly the layer that matches their expertise, from running a pre-built example through the bootstrap CLI to defining custom physics and training loops in plain PyTorch [@pytorch]. All hyperparameters are plain Python dataclasses: serializable, diffable, and programmatically constructible, which makes systematic ablation studies a matter of iterating over configuration objects rather than editing files. Training is not owned by the library: `Problem.training_loss()` returns a scalar tensor compatible with any optimizer or training infrastructure, including plain PyTorch and PyTorch Lightning [@lightning].
 
 # Statement of Need
 
-Physics-Informed Neural Networks encode differential equation residuals as loss terms, enabling mesh-free, automatic-differentiation-based solutions to both forward and inverse problems [@lagaris1998artificial; @raissi2019physics; @karniadakis2021physics; @cuomo2022scientific]. Forward problems seek the solution field given known equations and boundary or initial conditions; inverse problems additionally recover unknown parameters from partial observations such as transmission rates in epidemiology, damping coefficients in mechanics, interaction strengths in ecology.
+Physics-Informed Neural Networks encode differential equation residuals as loss terms, enabling mesh-free, automatic-differentiation-based solutions to both forward and inverse problems [@lagaris1998artificial; @raissi2019physics; @karniadakis2021physics; @cuomo2022scientific].
 
-Despite a growing ecosystem of PINN libraries [@lu2021deepxde; @chen2021neurodiffeq; @cuomo2022scientific], two pain points persist. First, every major library couples physics definition to its own training loop, preventing researchers from using the broader PyTorch ecosystem directly. Second, inverse problems remain second-class: unknown parameters are configuration flags rather than typed objects, and ground-truth tracking during training requires user-written callbacks.
+Despite a growing ecosystem of PINN libraries [@lu2021deepxde; @chen2021neurodiffe; @cuomo2022scientific], two pain points persist. First, every major library couples physics definition to its own training loop, preventing researchers from using the full PyTorch potential. Second, inverse problems remain second-class: unknown parameters are configuration flags rather than typed objects, and ground-truth tracking during training requires user-written callbacks.
 
 AnyPINN addresses both gaps. The core abstraction, `Problem`, is a standard `nn.Module` whose `training_loss()` returns a scalar tensor, compatible with any optimizer, scheduler, or distributed strategy without library-specific wrappers. For inverse problems specifically, `Parameter` is a first-class type with the same `forward(x)` interface whether it wraps a fixed scalar or a time-varying MLP; switching from fixed to learnable requires changing one configuration line. `ValidationRegistry` binds ground-truth references to parameter names and logs MSE automatically at every training step. `ArgsRegistry` unifies fixed and learnable arguments so that the differential equation callable cannot distinguish between the two, enabling transparent composability.
 
@@ -52,6 +52,8 @@ The PINN software ecosystem spans more than ten libraries across two major frame
 | **AnyPINN**                        | **PyTorch**        | **Yes**     | **Yes**                | **Yes**       | **Yes**          |
 
 Table: Comparison of AnyPINN with existing PINN libraries. "Inverse (first-class)" means the library provides typed parameter objects, unified fixed/learnable interfaces, and built-in ground-truth tracking, not merely the ability to mark a variable as trainable. \label{tab:comparison}
+
+Several libraries in this comparison are no longer actively maintained: SciANN is explicitly deprecated, TensorDiffEq has seen no activity since 2022, NVIDIA SimNet has been superseded by Modulus (now PhysicsNeMo), and both PyDEns and IDRLNet have had no meaningful development since 2023. This further narrows the set of viable options for researchers starting new PINN projects.
 
 Three structural patterns in the existing ecosystem motivate AnyPINN as a separate library rather than a contribution to an existing one.
 
@@ -128,6 +130,9 @@ AnyPINN ships six working examples spanning epidemiology (SIR with real Italian 
 data, SEIR, reduced-SIR with hospitalization dynamics), mechanics (damped oscillator:
 recovering damping ratio and natural frequency), and ecology (Lotka-Volterra predator-prey
 dynamics), plus a minimal exponential decay script (~80 lines, core only, no Lightning).
+The SIR example reproduces the PINN methodology of @millevoi2024physics,
+serving as a validation benchmark: AnyPINN recovers comparable transmission rate dynamics
+and state variable trajectories on the same Italian COVID-19 dataset.
 Each example demonstrates a different dynamical system, scientific domain, and data type,
 with generated result plots and CSV exports. Neural ODEs [@chen2018neural] offer a
 complementary approach that replaces the ODE right-hand side with a neural network
