@@ -1,15 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    ":semanticCommits",
-    "group:all",
-    "schedule:weekends"
-  ],
-  "labels": [
-    "dependencies"
-  ],
+  "extends": ["config:recommended", ":semanticCommits", "group:all", "schedule:weekends"],
+  "labels": ["deps"],
   "rangeStrategy": "bump",
+  "automerge": true,
+  "automergeStrategy": "squash",
+  "platformAutomerge": true,
   "lockFileMaintenance": {
     "enabled": true
   },
