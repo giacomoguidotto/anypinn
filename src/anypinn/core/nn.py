@@ -177,7 +177,8 @@ class Argument:
     """
 
     def __init__(self, value: float | Callable[[Tensor], Tensor]):
-        self._value = value
+        self._value: float | Callable[[Tensor], Tensor] = value
+        self._callable = callable(value) and not isinstance(value, (int, float))
         self._tensor_cache: dict[torch.device, Tensor] = {}
 
     def __call__(self, x: Tensor) -> Tensor:
@@ -190,8 +191,9 @@ class Argument:
         Returns:
             The value of the argument, broadcasted if necessary.
         """
-        if callable(self._value):
-            return self._value(x)
+        if self._callable:
+            fn = cast(Callable[[Tensor], Tensor], self._value)
+            return fn(x)
         device = x.device
         if device not in self._tensor_cache:
             self._tensor_cache[device] = torch.tensor(self._value, device=device)

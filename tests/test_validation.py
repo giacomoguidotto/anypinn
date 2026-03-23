@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 import torch
 
-from anypinn.core.validation import ColumnRef, resolve_validation
+from anypinn.core.validation import ColumnRef, ValidationRegistry, resolve_validation
 
 
 class TestResolveValidation:
@@ -27,21 +27,21 @@ class TestResolveValidation:
         assert torch.allclose(result["param"](x), torch.tensor([2.0, 4.0]))
 
     def test_column_ref_without_df_path_raises(self):
-        registry = {"beta": ColumnRef(column="Rt")}
+        registry: ValidationRegistry = {"beta": ColumnRef(column="Rt")}
         with pytest.raises(ValueError, match="no df_path"):
             resolve_validation(registry, df_path=None)
 
     def test_column_ref_missing_column_raises(self, tmp_path: Path):
         csv_path = tmp_path / "data.csv"
         csv_path.write_text("a,b\n1,2\n3,4\n")
-        registry = {"beta": ColumnRef(column="missing_col")}
+        registry: ValidationRegistry = {"beta": ColumnRef(column="missing_col")}
         with pytest.raises(ValueError, match="not found in data"):
             resolve_validation(registry, df_path=csv_path)
 
     def test_column_ref_resolved(self, tmp_path: Path):
         csv_path = tmp_path / "data.csv"
         csv_path.write_text("t,beta_true\n0,0.3\n1,0.4\n2,0.5\n")
-        registry = {"beta": ColumnRef(column="beta_true")}
+        registry: ValidationRegistry = {"beta": ColumnRef(column="beta_true")}
         result = resolve_validation(registry, df_path=csv_path)
 
         assert "beta" in result
@@ -54,7 +54,7 @@ class TestResolveValidation:
     def test_column_ref_with_transform(self, tmp_path: Path):
         csv_path = tmp_path / "data.csv"
         csv_path.write_text("t,val\n0,10.0\n1,20.0\n")
-        registry = {"p": ColumnRef(column="val", transform=lambda v: v / 10.0)}
+        registry: ValidationRegistry = {"p": ColumnRef(column="val", transform=lambda v: v / 10.0)}
         result = resolve_validation(registry, df_path=csv_path)
 
         x = torch.tensor([[0.0]])
@@ -64,7 +64,7 @@ class TestResolveValidation:
     def test_mixed_registry(self, tmp_path: Path):
         csv_path = tmp_path / "data.csv"
         csv_path.write_text("t,col\n0,1.0\n1,2.0\n")
-        registry = {
+        registry: ValidationRegistry = {
             "a": lambda x: x,
             "b": ColumnRef(column="col"),
             "c": None,

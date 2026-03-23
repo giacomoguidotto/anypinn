@@ -12,5 +12,11 @@
   "rangeStrategy": "bump",
   "lockFileMaintenance": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "matchDepTypes": ["requires-python"],
+      "enabled": false
+    }
+  ]
 }
