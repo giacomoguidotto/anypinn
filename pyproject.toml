@@ -212,6 +212,7 @@ fallback-version = "0.0.0"
 
 [tool.semantic_release]
 tag_format = "v{version}"
+major_on_zero = false
 
 [tool.semantic_release.branches.main]
 match = "(main|master)"
