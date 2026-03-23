@@ -255,7 +255,7 @@ core = [
     { name = "seaborn" },
 ]
 dev = [
-    { name = "setuptools", specifier = ">=82.0.0" },
+    { name = "setuptools", specifier = ">=82.0.1" },
     { name = "tensorboard", specifier = ">=2.20.0" },
 ]
 dl = [

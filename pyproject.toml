@@ -99,7 +99,7 @@ utils = [
     "mpmath",
 ]
 dev = [
-    "setuptools>=82.0.0",
+    "setuptools>=82.0.1",
     "tensorboard>=2.20.0",
 ]
 
