@@ -100,5 +100,5 @@ class RandomFourierFeatures(nn.Module):
         return 2 * self.num_features
 
     def forward(self, x: Tensor) -> Tensor:
-        proj = x @ self.B  # type: ignore[operator]  # (n, num_features)
+        proj = x @ self.B  # type: ignore[operator]  # ty: ignore[unsupported-operator]  # (n, num_features)
         return torch.cat([torch.cos(proj), torch.sin(proj)], dim=-1) / (self.num_features**0.5)

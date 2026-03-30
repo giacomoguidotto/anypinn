@@ -478,7 +478,7 @@ def _make_hp(criterion: str = "mse") -> ODEHyperparameters:
         ),
         fields_config=MLPConfig(in_dim=1, out_dim=1, hidden_layers=[8], activation="tanh"),
         params_config=ScalarConfig(init_value=0.5),
-        criterion=criterion,  # type: ignore[arg-type]
+        criterion=criterion,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
     )
 
 
