@@ -221,4 +221,4 @@ class TestBuildSampler:
 
     def test_unknown_strategy_raises(self):
         with pytest.raises(ValueError, match="Unknown collocation strategy"):
-            build_sampler("nonexistent")  # type: ignore[arg-type]
+            build_sampler("nonexistent")  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]

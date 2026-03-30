@@ -193,7 +193,7 @@ class AdaptiveCollocationCallback(Callback):
     @override
     def on_fit_start(self, trainer: Trainer, pl_module: LightningModule) -> None:
         """Validate at fit start that the DataModule uses AdaptiveSampler."""
-        dm = trainer.datamodule  # type: ignore[attr-defined]
+        dm = trainer.datamodule  # type: ignore[attr-defined]  # ty: ignore[unresolved-attribute]
         if not isinstance(getattr(dm, "_sampler", None), AdaptiveSampler):
             raise TypeError(
                 "AdaptiveCollocationCallback requires the DataModule to use "
@@ -206,7 +206,7 @@ class AdaptiveCollocationCallback(Callback):
         """Resample collocation points using the current model weights."""
         if (trainer.current_epoch + 1) % self._every_n != 0:
             return
-        dm = trainer.datamodule  # type: ignore[attr-defined]
+        dm = trainer.datamodule  # type: ignore[attr-defined]  # ty: ignore[unresolved-attribute]
         n = dm.hp.training_data.collocations
         new_coll = dm._sampler.sample(n, dm._domain)
         dm.pinn_ds.x_coll = new_coll
