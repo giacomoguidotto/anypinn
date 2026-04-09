@@ -35,6 +35,44 @@ just docs-serve     # Serve docs locally
 just ci             # lint + check + test (full CI suite)
 ```
 
+## 🚀 Running Examples
+
+The `examples/` directory ships ready-to-run problems you can use to exercise the
+library end-to-end while developing.
+
+### Lightning examples (most problems)
+
+Each example lives in its own directory with a `train.py` entry-point:
+
+```bash
+cd examples/lotka_volterra        # or any other example directory
+uv run python train.py            # train from scratch
+uv run python train.py --predict  # load the saved checkpoint and predict only
+```
+
+Training logs are written to `examples/_logs/` (TensorBoard + CSV) and model
+artefacts are saved under `examples/<name>/results/`.
+
+### Core-only example
+
+`exponential_decay` is a minimal, single-file example that uses only
+`anypinn.core` (no Lightning):
+
+```bash
+uv run python examples/exponential_decay/exponential_decay.py
+```
+
+### Scaffolding a new example
+
+The CLI can generate a fresh project from a built-in template:
+
+```bash
+uv run anypinn create my_project --template lotka-volterra --data synthetic
+```
+
+Run `uv run anypinn create --list-templates` to see all available templates
+(`sir`, `poisson-2d`, `heat-1d`, `gray-scott-2d`, `blank`, etc.).
+
 ## 🔁 Workflow
 
 1. Fork the repository and create a branch for your change:
