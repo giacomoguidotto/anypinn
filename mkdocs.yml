@@ -14,11 +14,11 @@ theme:
     scheme: slate
     primary: green
     accent: yellow
+  logo: assets/logo.png
   icon:
-    logo: material/math-integral-box
     # GitHub specific.
     repo: fontawesome/brands/github
-  favicon: static/math-integral-box.png
+  favicon: assets/logo.png
   features:
     - content.code.annotate
     - content.code.copy
