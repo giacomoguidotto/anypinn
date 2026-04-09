@@ -6,7 +6,9 @@ By participating in this project you agree to abide by the [Code of Conduct](COD
 
 ## 🛠️ Setup
 
-> **Prerequisites:** Python 3.11+, [uv](https://github.com/astral-sh/uv).
+> **Prerequisites:** Python 3.11+ with
+> [uv](https://github.com/astral-sh/uv) and
+> [just](https://github.com/casey/just).
 
 ```bash
 git clone https://github.com/your-org/anypinn
@@ -14,14 +16,12 @@ cd anypinn
 uv sync
 ```
 
-> **devenv users:** [devenv](https://devenv.sh) redirects `uv sync` installs to `.devenv/state/venv` instead of the standard `.venv`, so ty cannot auto-discover it. Create a gitignored `ty.toml` at the project root with:
-> ```toml
-> [environment]
-> python-version = "3.13"
-> python = "./.devenv/state/venv"
-> root = ["./src"]
-> ```
-> (`ty.toml` takes full precedence over `pyproject.toml`, so all three settings are required.)
+> **Optional: `mise`**
+> If you use [mise](https://mise.jdx.dev), run `mise install` first to provision the
+> pinned `python`, `uv`, and `just` versions declared in `.mise.toml`.
+>
+> The project still uses the standard `uv` virtual environment layout, so `ty` works
+> from the shared `pyproject.toml` configuration without any extra local overrides.
 
 All common tasks are driven by `just`:
 
@@ -38,24 +38,27 @@ just ci             # lint + check + test (full CI suite)
 ## 🔁 Workflow
 
 1. Fork the repository and create a branch for your change:
+
    ```bash
    git checkout -b feat/my-feature
    ```
 
 2. Make your changes, then verify everything passes:
+
    ```bash
    just ci
    ```
 
 3. Commit following [Conventional Commits](https://www.conventionalcommits.org/):
+
    ```bash
    git commit -m "feat: add Brusselator ODE template"
    ```
 
-   | Prefix | Effect |
-   |--------|--------|
-   | `fix:` | Patch release (0.0.X) |
-   | `feat:` | Minor release (0.X.0) |
+   | Prefix                        | Effect                |
+   | ----------------------------- | --------------------- |
+   | `fix:`                        | Patch release (0.0.X) |
+   | `feat:`                       | Minor release (0.X.0) |
    | `feat!:` / `BREAKING CHANGE:` | Major release (X.0.0) |
 
 4. Push and open a pull request.

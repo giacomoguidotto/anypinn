@@ -62,14 +62,14 @@ anypinn create my-project \
   --lightning
 ```
 
-| Flag                    | Values                                       | Description                                    |
-| ----------------------- | -------------------------------------------- | ---------------------------------------------- |
-| `--help, -h`            | —                                            | Show help and exit                             |
-| `--list-templates, -l`  | —                                            | Print all templates with descriptions and exit |
-| `--template, -t`        | built-in template name, `custom`, or `blank` | Starting template                              |
-| `--data, -d`            | `synthetic`, `csv`                           | Training data source                           |
-| `--lightning, -L`       | —                                            | Include PyTorch Lightning wrapper              |
-| `--no-lightning, -NL`   | —                                            | Exclude PyTorch Lightning wrapper              |
+| Flag                   | Values                                       | Description                                    |
+| ---------------------- | -------------------------------------------- | ---------------------------------------------- |
+| `--help, -h`           | —                                            | Show help and exit                             |
+| `--list-templates, -l` | —                                            | Print all templates with descriptions and exit |
+| `--template, -t`       | built-in template name, `custom`, or `blank` | Starting template                              |
+| `--data, -d`           | `synthetic`, `csv`                           | Training data source                           |
+| `--lightning, -L`      | —                                            | Include PyTorch Lightning wrapper              |
+| `--no-lightning, -NL`  | —                                            | Exclude PyTorch Lightning wrapper              |
 
 ## 👥 Who Is This For?
 
@@ -231,6 +231,7 @@ Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catal
 
 | Tool                                      | Purpose                |
 | ----------------------------------------- | ---------------------- |
+| [mise](https://mise.jdx.dev) (optional)   | Toolchain provisioning |
 | [uv](https://github.com/astral-sh/uv)     | Dependency management  |
 | [just](https://github.com/casey/just)     | Task automation        |
 | [Ruff](https://github.com/astral-sh/ruff) | Linting and formatting |
@@ -238,15 +239,6 @@ Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catal
 | [ty](https://docs.astral.sh/ty/)          | Type checking          |
 
 All common tasks (test, lint, format, type-check, docs) are available via `just`.
-
-> **devenv users:** [devenv](https://devenv.sh) redirects `uv sync` installs to `.devenv/state/venv` instead of the standard `.venv`, so ty cannot auto-discover it. Create a gitignored `ty.toml` at the project root with:
-> ```toml
-> [environment]
-> python-version = "3.13"
-> python = "./.devenv/state/venv"
-> root = ["./src"]
-> ```
-> (`ty.toml` takes full precedence over `pyproject.toml`, so all three settings are required.)
 
 ## 🤝 Contributing
 
