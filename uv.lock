@@ -207,6 +207,7 @@ dl = [
     { name = "torchmetrics" },
 ]
 docs = [
+    { name = "mkdocs" },
     { name = "mkdocs-api-autonav" },
     { name = "mkdocs-htmlproofer-plugin" },
     { name = "mkdocs-material" },
@@ -267,6 +268,7 @@ dl = [
     { name = "torchmetrics" },
 ]
 docs = [
+    { name = "mkdocs", specifier = ">=1.6,<2" },
     { name = "mkdocs-api-autonav" },
     { name = "mkdocs-htmlproofer-plugin" },
     { name = "mkdocs-material" },
