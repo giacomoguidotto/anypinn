@@ -1,20 +1,26 @@
-# AnyPINN
+<p align="center">
+  <img src="assets/logo.png" alt="AnyPINN" width="160" />
+</p>
 
-[![CI][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
-[![uv][uv-badge]](https://github.com/astral-sh/uv)
-[![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
-[![Type checked with ty][ty-badge]](https://docs.astral.sh/ty/)
+<h1 align="center">AnyPINN</h1>
 
-[github-actions-badge]: https://github.com/johnthagen/python-blueprint/actions/workflows/ci.yml/badge.svg
-[uv-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json
-[ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
-[ty-badge]: https://img.shields.io/badge/ty-typed-blue
+<p align="center">
+  <strong>Solve differential equations with Physics-Informed Neural Networks.</strong><br>
+  <sub>Modular. Training-agnostic. Inverse-problem-first.</sub>
+</p>
+
+<p align="center">
+  <a href="https://github.com/johnthagen/python-blueprint/actions"><img src="https://github.com/johnthagen/python-blueprint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv"></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
+  <a href="https://docs.astral.sh/ty/"><img src="https://img.shields.io/badge/ty-typed-blue" alt="Type checked with ty"></a>
+</p>
+
+<br>
 
 > **Work in Progress** — This project is under active development and APIs may change. If you run into any issues, please [open an issue on GitHub](https://github.com/giacomopiccinini/anypinn/issues).
 
-**A modular Python library for solving differential equations with Physics-Informed Neural Networks.**
-
-AnyPINN lets you go from zero to a running PINN experiment in seconds, or give you the full control to define custom physics, constraints, and training loops. You decide how deep to go.
+AnyPINN lets you go from zero to a running PINN experiment in seconds, or gives you full control to define custom physics, constraints, and training loops. You decide how deep to go.
 
 ## 🚀 Quick Start
 
