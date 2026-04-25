@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="AnyPINN" width="160" />
+  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/assets/logo.png" alt="AnyPINN" width="160" />
 </p>
 
 <h1 align="center">AnyPINN</h1>
@@ -10,7 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/johnthagen/python-blueprint/actions"><img src="https://github.com/johnthagen/python-blueprint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/giacomoguidotto/anypinn/actions"><img src="https://github.com/giacomoguidotto/anypinn/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://pypi.org/project/anypinn/"><img src="https://img.shields.io/pypi/v/anypinn" alt="PyPI"></a>
   <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv"></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
   <a href="https://docs.astral.sh/ty/"><img src="https://img.shields.io/badge/ty-typed-blue" alt="Type checked with ty"></a>
@@ -18,7 +19,7 @@
 
 <br>
 
-> **Work in Progress** — This project is under active development and APIs may change. If you run into any issues, please [open an issue on GitHub](https://github.com/giacomopiccinini/anypinn/issues).
+> **Work in Progress** — This project is under active development and APIs may change. If you run into any issues, please [open an issue on GitHub](https://github.com/giacomoguidotto/anypinn/issues).
 
 AnyPINN lets you go from zero to a running PINN experiment in seconds, or gives you full control to define custom physics, constraints, and training loops. You decide how deep to go.
 
