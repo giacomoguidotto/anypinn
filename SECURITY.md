@@ -13,7 +13,7 @@ Only the latest release of anypinn receives security fixes.
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-To report a vulnerability, email **giacomo.guidotto@gmail.com** with:
+To report a vulnerability, email **[anypinn@guidotto.dev](mailto:anypinn@guidotto.dev)** with:
 
 - A description of the vulnerability and its potential impact
 - Steps to reproduce or a proof-of-concept
