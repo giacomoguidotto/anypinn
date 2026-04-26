@@ -2,23 +2,27 @@
 
 ## Supported Versions
 
-Only the latest release of anypinn receives security fixes.
-
 | Version | Supported |
-| ------- | --------- |
-| latest  | ✓         |
-| older   | ✗         |
+|---------|-----------|
+| Latest  | Yes       |
 
-## Reporting a Vulnerability
+## Reporting Security Issues
+
+If you believe you have found a security vulnerability, we encourage you to let us know right away. We will investigate all legitimate reports and do our best to quickly fix the problem.
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-To report a vulnerability, email **[anypinn@guidotto.dev](mailto:anypinn@guidotto.dev)** with:
+Instead, report them via email to [anypinn@guidotto.dev](mailto:anypinn@guidotto.dev).
 
-- A description of the vulnerability and its potential impact
-- Steps to reproduce or a proof-of-concept
-- Any suggested mitigations (optional)
+Please include:
 
-You can expect an acknowledgement within **48 hours** and a status update within **7 days**.
+- A description of the vulnerability
+- Steps to reproduce the issue
+- Any relevant logs or screenshots
+- The potential impact of the vulnerability
 
-If a vulnerability is confirmed, a fix will be released as soon as possible and credited to the reporter (unless anonymity is preferred).
+## Response Timeline
+
+- **Acknowledgment**: within 48 hours
+- **Initial assessment**: within 1 week
+- **Resolution target**: depends on severity, typically within 30 days
