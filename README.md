@@ -22,11 +22,11 @@
 Most PINN libraries make you wire up every loss term, collocation grid, and training loop by hand before you see a single result. AnyPINN gives you a working experiment in one command and then lets you peel back every layer when you're ready.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/allen_cahn/results/allen-cahn.png" alt="Allen-Cahn equation" style="border-radius: 5%; max-width: 100%;" />
+  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/allen_cahn/results/allen-cahn.png" alt="Allen-Cahn equation"/>
   <br><br>
-  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/lorenz/results/lorenz.png" alt="Lorenz system" style="border-radius: 5%; max-width: 100%;" />
+  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/lorenz/results/lorenz.png" alt="Lorenz system"/>
   <br><br>
-  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/sir_inverse/results/sir-inverse.png" alt="SIR inverse problem" style="border-radius: 5%; max-width: 100%;" />
+  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/sir_inverse/results/sir-inverse.png" alt="SIR inverse problem"/>
 </p>
 
 ## 🚀 Quick Start
