@@ -19,9 +19,15 @@
 
 <br>
 
-> **Work in Progress** — This project is under active development and APIs may change. If you run into any issues, please [open an issue on GitHub](https://github.com/giacomoguidotto/anypinn/issues).
+Most PINN libraries make you wire up every loss term, collocation grid, and training loop by hand before you see a single result. AnyPINN gives you a working experiment in one command and then lets you peel back every layer when you're ready.
 
-AnyPINN lets you go from zero to a running PINN experiment in seconds, or gives you full control to define custom physics, constraints, and training loops. You decide how deep to go.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/allen_cahn/results/allen-cahn.png" alt="Allen-Cahn equation" style="border-radius: 5%; max-width: 100%;" />
+  <br><br>
+  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/lorenz/results/lorenz.png" alt="Lorenz system" style="border-radius: 5%; max-width: 100%;" />
+  <br><br>
+  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/examples/sir_inverse/results/sir-inverse.png" alt="SIR inverse problem" style="border-radius: 5%; max-width: 100%;" />
+</p>
 
 ## 🚀 Quick Start
 
