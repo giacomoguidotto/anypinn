@@ -43,7 +43,7 @@ or with [pipx](https://pipx.pypa.io/stable/installation/):
 pipx run anypinn create my-project
 ```
 
-Run `anypinn create --help` to see all available flags and templates.
+Run `anypinn create --help` to see all available flags and templates. For a full walkthrough - project structure, configuration, training, and next steps - see the [Getting Started](https://anypinn.guidotto.dev/getting-started/) guide.
 
 ## 👥 Who Is This For?
 
@@ -53,11 +53,11 @@ AnyPINN is built around **progressive complexity**. Start simple, go deeper only
 | --------------------- | -------------------------------------------------- | --------------------------------------------------------------------- |
 | **Experimenter**      | Run a known problem, tweak parameters, see results | Pick a built-in template, change config, press start                  |
 | **Researcher**        | Define new physics or custom constraints           | Subclass `Constraint` and `Problem`, use the provided training engine |
-| **Framework builder** | Custom training loops, novel architectures         | Use `anypinn.core` directly — zero Lightning required                 |
+| **Framework builder** | Custom training loops, novel architectures         | Use `anypinn.core` directly - zero Lightning required                 |
 
 ## 💡 Examples
 
-The `examples/` directory has ready-made, self-contained scripts covering epidemic models, oscillators, predator-prey dynamics, and more — from a minimal ~80-line core-only script to full Lightning stacks. They're a great source of inspiration when defining your own problem.
+The `examples/` directory has ready-made, self-contained scripts covering epidemic models, oscillators, predator-prey dynamics, and more - from a minimal ~80-line core-only script to full Lightning stacks. They're a great source of inspiration when defining your own problem.
 
 ## 🔬 Defining Your Own Problem
 
@@ -126,7 +126,7 @@ for batch in dataloader:
 
 ## 🏗️ Architecture
 
-AnyPINN is split into four layers with a strict dependency direction — outer layers depend on inner ones, never the reverse.
+AnyPINN is split into four layers with a strict dependency direction - outer layers depend on inner ones, never the reverse.
 
 ```mermaid
 graph TD
@@ -170,34 +170,34 @@ graph TD
     PROB -->|depends on| CORE
 ```
 
-### `anypinn.core` — The Math Layer
+### `anypinn.core` - The Math Layer
 
 Pure PyTorch. Defines what a PINN problem _is_, with no opinions about training.
 
-- **`Problem`** — Aggregates constraints, fields, and parameters. Provides `training_loss()` and `predict()`.
-- **`Constraint`** (ABC) — A single loss term. Subclass it to express any physics equation, boundary condition, or data-matching objective.
-- **`Field`** — MLP mapping input coordinates to state variables (e.g., `t → [S, I, R]`).
-- **`Parameter`** — Learnable scalar or function-valued parameter (e.g., `β` in SIR).
-- **`InferredContext`** — Runtime domain bounds and validation references, extracted from data and injected into constraints automatically.
+- **`Problem`** - Aggregates constraints, fields, and parameters. Provides `training_loss()` and `predict()`.
+- **`Constraint`** (ABC) - A single loss term. Subclass it to express any physics equation, boundary condition, or data-matching objective.
+- **`Field`** - MLP mapping input coordinates to state variables (e.g., `t → [S, I, R]`).
+- **`Parameter`** - Learnable scalar or function-valued parameter (e.g., `β` in SIR).
+- **`InferredContext`** - Runtime domain bounds and validation references, extracted from data and injected into constraints automatically.
 
-### `anypinn.lightning` — The Training Engine _(optional)_
+### `anypinn.lightning` - The Training Engine _(optional)_
 
 A thin wrapper plugging a `Problem` into PyTorch Lightning:
 
-- **`PINNModule`** — `LightningModule` wrapping any `Problem`. Handles optimizer setup, context injection, and prediction.
-- **`PINNDataModule`** — Abstract data module managing loading, config-driven collocation sampling, and context creation. Collocation strategy is selected via `TrainingDataConfig.collocation_sampler` (`"random"`, `"uniform"`, `"latin_hypercube"`, `"log_uniform_1d"`, or `"adaptive"`).
-- **Callbacks** — SMMA-based early stopping, formatted progress bars, data scaling, prediction writers.
+- **`PINNModule`** - `LightningModule` wrapping any `Problem`. Handles optimizer setup, context injection, and prediction.
+- **`PINNDataModule`** - Abstract data module managing loading, config-driven collocation sampling, and context creation. Collocation strategy is selected via `TrainingDataConfig.collocation_sampler` (`"random"`, `"uniform"`, `"latin_hypercube"`, `"log_uniform_1d"`, or `"adaptive"`).
+- **Callbacks** - SMMA-based early stopping, formatted progress bars, data scaling, prediction writers.
 
-### `anypinn.problems` — ODE Building Blocks
+### `anypinn.problems` - ODE Building Blocks
 
 Ready-made constraints for ODE inverse problems:
 
-- **`ResidualsConstraint`** — `‖dy/dt − f(t, y)‖²` via autograd
-- **`ICConstraint`** — `‖y(t₀) − y₀‖²`
-- **`DataConstraint`** — `‖prediction − observed data‖²`
-- **`ODEInverseProblem`** — Composes all three with configurable weights
+- **`ResidualsConstraint`** - `‖dy/dt − f(t, y)‖²` via autograd
+- **`ICConstraint`** - `‖y(t₀) − y₀‖²`
+- **`DataConstraint`** - `‖prediction − observed data‖²`
+- **`ODEInverseProblem`** - Composes all three with configurable weights
 
-### `anypinn.catalog` — Problem-Specific Building Blocks
+### `anypinn.catalog` - Problem-Specific Building Blocks
 
 Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catalog/` for the full list.
 
