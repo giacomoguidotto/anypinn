@@ -111,23 +111,23 @@ nav:
   - index.md
   - Getting Started: getting-started.md
   - Templates:
-    - templates/index.md
-    - SIR Epidemic Model: templates/sir.md
-    - SEIR Epidemic Model: templates/seir.md
-    - Damped Oscillator: templates/damped-oscillator.md
-    - Lotka-Volterra: templates/lotka-volterra.md
-    - Van der Pol Oscillator: templates/van-der-pol.md
-    - Lorenz System: templates/lorenz.md
-    - FitzHugh-Nagumo: templates/fitzhugh-nagumo.md
-    - Gray-Scott 2D: templates/gray-scott-2d.md
-    - Poisson 2D: templates/poisson-2d.md
-    - Heat Equation 1D: templates/heat-1d.md
-    - Burgers Equation 1D: templates/burgers-1d.md
-    - Wave Equation 1D: templates/wave-1d.md
-    - Inverse Diffusivity: templates/inverse-diffusivity.md
-    - Allen-Cahn: templates/allen-cahn.md
-    - Custom ODE: templates/custom.md
-    - Blank: templates/blank.md
+    - catalog/index.md
+    - SIR Epidemic Model: catalog/sir.md
+    - SEIR Epidemic Model: catalog/seir.md
+    - Damped Oscillator: catalog/damped-oscillator.md
+    - Lotka-Volterra: catalog/lotka-volterra.md
+    - Van der Pol Oscillator: catalog/van-der-pol.md
+    - Lorenz System: catalog/lorenz.md
+    - FitzHugh-Nagumo: catalog/fitzhugh-nagumo.md
+    - Gray-Scott 2D: catalog/gray-scott-2d.md
+    - Poisson 2D: catalog/poisson-2d.md
+    - Heat Equation 1D: catalog/heat-1d.md
+    - Burgers Equation 1D: catalog/burgers-1d.md
+    - Wave Equation 1D: catalog/wave-1d.md
+    - Inverse Diffusivity: catalog/inverse-diffusivity.md
+    - Allen-Cahn: catalog/allen-cahn.md
+    - Custom ODE: catalog/custom.md
+    - Blank: catalog/blank.md
   - Design Rationale & Future Work: rationale.md
   - Contributing: CONTRIBUTING.md
   - Code of Conduct: CODE_OF_CONDUCT.md
