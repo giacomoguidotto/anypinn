@@ -110,7 +110,7 @@ edit_uri: edit/main/docs/
 nav:
   - index.md
   - Getting Started: getting-started.md
-  - Templates:
+  - Catalog:
     - catalog/index.md
     - SIR Epidemic Model: catalog/sir.md
     - SEIR Epidemic Model: catalog/seir.md
