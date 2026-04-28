@@ -64,8 +64,8 @@ class TestCreateCommand:
             source = py_file.read_text()
             compile(source, str(py_file), "exec")
 
-    def test_existing_directory_fails(self, project_dir: Path) -> None:
-        """Creating a project in an existing directory should fail."""
+    def test_existing_empty_directory_succeeds(self, project_dir: Path) -> None:
+        """Creating a project in an existing empty directory should succeed."""
         project_dir.mkdir(parents=True)
 
         result = runner.invoke(
@@ -81,8 +81,103 @@ class TestCreateCommand:
             ],
         )
 
+        assert result.exit_code == 0
+        assert (project_dir / "pyproject.toml").exists()
+
+    def test_nonempty_directory_cancel_first_prompt(self, project_dir: Path) -> None:
+        """Cancelling the first confirmation exits without deleting."""
+        project_dir.mkdir(parents=True)
+        (project_dir / "existing.txt").write_text("keep me")
+
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+            input="n\n",
+        )
+
         assert result.exit_code == 1
-        assert "already exists" in result.output
+        assert (project_dir / "existing.txt").exists()
+
+    def test_nonempty_directory_cancel_second_prompt(self, project_dir: Path) -> None:
+        """Accepting first but cancelling second confirmation exits without deleting."""
+        project_dir.mkdir(parents=True)
+        (project_dir / "existing.txt").write_text("keep me")
+
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+            input="y\nn\n",
+        )
+
+        assert result.exit_code == 1
+        assert (project_dir / "existing.txt").exists()
+
+    def test_nonempty_directory_confirm_deletes_and_creates(self, project_dir: Path) -> None:
+        """Confirming both prompts deletes contents and creates project."""
+        project_dir.mkdir(parents=True)
+        (project_dir / "existing.txt").write_text("delete me")
+
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+            ],
+            input="y\ny\n",
+        )
+
+        assert result.exit_code == 0
+        assert not (project_dir / "existing.txt").exists()
+        assert (project_dir / "pyproject.toml").exists()
+
+    def test_create_dot_uses_current_directory(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """'anypinn create .' uses the current directory."""
+        monkeypatch.chdir(tmp_path)
+
+        result = runner.invoke(
+            app,
+            ["create", ".", "--template", "sir", "--data", "synthetic", "--lightning"],
+        )
+
+        assert result.exit_code == 0
+        assert (tmp_path / "pyproject.toml").exists()
+
+    def test_create_no_arg_uses_current_directory(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """'anypinn create' with no project name uses the current directory."""
+        monkeypatch.chdir(tmp_path)
+
+        result = runner.invoke(
+            app,
+            ["create", "--template", "sir", "--data", "synthetic", "--lightning"],
+        )
+
+        assert result.exit_code == 0
+        assert (tmp_path / "pyproject.toml").exists()
 
     def test_no_lightning_contamination(self, project_dir: Path) -> None:
         """Core-only train.py must not reference Lightning imports."""

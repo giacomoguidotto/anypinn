@@ -104,7 +104,7 @@ def render_project(
         "train.py": _read("anypinn.cli.scaffold._shared", f"train_{tr}.py", exp),
     }
 
-    project_dir.mkdir(parents=True)
+    project_dir.mkdir(parents=True, exist_ok=True)
     (project_dir / "data").mkdir()
 
     pyproject = _pyproject_toml(project_dir.name, data_source, lightning)

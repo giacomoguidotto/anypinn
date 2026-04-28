@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
 from typing import Annotated
 
 from rich.console import Console
 from typer import Argument, Exit, Option, Typer
 
 import anypinn
-from anypinn.cli._prompts import prompt_data_source, prompt_lightning, prompt_template
+from anypinn.cli._prompts import _confirm, prompt_data_source, prompt_lightning, prompt_template
 from anypinn.cli._renderer import render_project
 from anypinn.cli._types import DataSource, Template
 
@@ -68,7 +69,7 @@ def _list_templates_callback(value: bool) -> None:
 
 @app.command()
 def create(
-    project_name: Annotated[str, Argument(help="Name for the new project directory")],
+    project_name: Annotated[str, Argument(help="Name for the new project directory")] = ".",
     template_str: Annotated[
         str | None,
         Option(
@@ -98,12 +99,11 @@ def create(
     ] = False,
 ) -> None:
     """Create a new PINN project."""
-    project_dir = Path(project_name)
+    project_dir = Path(project_name).resolve()
+    display_name = project_dir.name
+    use_cwd = project_name == "."
 
-    if project_dir.exists():
-        _console.print(f"[bold red]Error:[/] Directory '{project_name}' already exists.")
-        raise Exit(code=1)
-
+    # Validate template early (non-interactive fast fail)
     template: Template | None = None
     if template_str is not None:
         try:
@@ -122,6 +122,28 @@ def create(
     _console.print()
     _console.print(f"[bold cyan]●[/]  anypinn v{anypinn.__version__}")
     _console.print("[dim]│[/]")
+
+    # Handle existing directory
+    if project_dir.exists():
+        contents = list(project_dir.iterdir())
+        if contents:
+            if not _confirm(
+                f"Directory '{display_name}' is not empty. Delete all contents?",
+                default=False,
+            ):
+                _console.print()
+                raise Exit(code=1)
+            if not _confirm(
+                "Are you sure? This cannot be undone",
+                default=False,
+            ):
+                _console.print()
+                raise Exit(code=1)
+            for item in contents:
+                if item.is_dir():
+                    shutil.rmtree(item)
+                else:
+                    item.unlink()
 
     # Interactive prompts for missing options
     if template is None:
@@ -147,7 +169,7 @@ def create(
         _console.print("[dim]│[/]")
 
     # Render
-    _console.print(f"[bold green]◇[/]  Creating {project_name}/...")
+    _console.print(f"[bold green]◇[/]  Creating {display_name}/...")
 
     created = render_project(project_dir, template, data_source, lightning)
 
@@ -157,5 +179,8 @@ def create(
         _console.print(f"[dim]│[/]  {name}{desc_str}")
 
     _console.print("[dim]│[/]")
-    _console.print(f"[bold cyan]●[/]  Done! cd {project_name} && uv sync && uv run train.py")
+    if use_cwd:
+        _console.print("[bold cyan]●[/]  Done! uv sync && uv run train.py")
+    else:
+        _console.print(f"[bold cyan]●[/]  Done! cd {display_name} && uv sync && uv run train.py")
     _console.print()
