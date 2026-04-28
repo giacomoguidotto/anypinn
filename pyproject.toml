@@ -37,6 +37,10 @@ dependencies = [
     "rich",
     "typer-slim[standard]",
     "simple-term-menu",
+    "torch",
+    "lightning",
+    "pandas",
+    "torchdiffeq",
 ]
 
 [project.urls]

@@ -47,20 +47,15 @@ _EXPERIMENT_NAMES: dict[Template, str] = {
 
 _BASE_DEPS: list[str] = [
     "anypinn",
-    "torch",
     "numpy",
     "scipy",
-    "pandas",
 ]
 
 _LIGHTNING_DEPS: list[str] = [
-    "lightning",
     "tensorboard",
 ]
 
-_SYNTHETIC_DEPS: list[str] = [
-    "torchdiffeq",
-]
+_SYNTHETIC_DEPS: list[str] = []
 
 
 def _read(pkg: str, filename: str, experiment_name: str) -> str:

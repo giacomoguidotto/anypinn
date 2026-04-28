@@ -188,7 +188,7 @@ class TestCreateCommand:
         assert "df_path" in config_content
 
     def test_pyproject_includes_lightning_deps(self, project_dir: Path) -> None:
-        """Lightning project pyproject.toml must list lightning dependency."""
+        """Lightning project pyproject.toml must list tensorboard dependency."""
         result = runner.invoke(
             app,
             [
@@ -205,11 +205,10 @@ class TestCreateCommand:
         assert result.exit_code == 0
 
         pyproject = (project_dir / "pyproject.toml").read_text()
-        assert '"lightning"' in pyproject
         assert '"tensorboard"' in pyproject
 
     def test_pyproject_excludes_lightning_deps(self, project_dir: Path) -> None:
-        """Core-only project pyproject.toml must not list lightning dependency."""
+        """Core-only project pyproject.toml must not list tensorboard dependency."""
         result = runner.invoke(
             app,
             [
@@ -227,8 +226,7 @@ class TestCreateCommand:
 
         pyproject = (project_dir / "pyproject.toml").read_text()
         assert '"anypinn"' in pyproject
-        assert '"torch"' in pyproject
-        assert '"lightning"' not in pyproject
+        assert '"tensorboard"' not in pyproject
 
     def test_synthetic_data_source_references_generation(self, project_dir: Path) -> None:
         """Synthetic data source should reference GenerationConfig in config.py."""
@@ -251,8 +249,8 @@ class TestCreateCommand:
         assert "GenerationConfig" in config_content
         assert "linspace" in config_content
 
-    def test_pyproject_includes_torchdiffeq_for_synthetic(self, project_dir: Path) -> None:
-        """Synthetic data projects must include torchdiffeq dependency."""
+    def test_pyproject_torchdiffeq_is_transitive(self, project_dir: Path) -> None:
+        """torchdiffeq is a transitive dep of anypinn, not listed in scaffold pyproject."""
         result = runner.invoke(
             app,
             [
@@ -262,26 +260,6 @@ class TestCreateCommand:
                 "sir",
                 "--data",
                 "synthetic",
-                "--lightning",
-            ],
-        )
-
-        assert result.exit_code == 0
-
-        pyproject = (project_dir / "pyproject.toml").read_text()
-        assert '"torchdiffeq"' in pyproject
-
-    def test_pyproject_excludes_torchdiffeq_for_csv(self, project_dir: Path) -> None:
-        """CSV data projects must not include torchdiffeq dependency."""
-        result = runner.invoke(
-            app,
-            [
-                "create",
-                str(project_dir),
-                "--template",
-                "sir",
-                "--data",
-                "csv",
                 "--lightning",
             ],
         )

@@ -178,8 +178,13 @@ wheels = [
 name = "anypinn"
 source = { editable = "." }
 dependencies = [
+    { name = "lightning" },
+    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "pandas", version = "3.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "rich" },
     { name = "simple-term-menu" },
+    { name = "torch" },
+    { name = "torchdiffeq" },
     { name = "typer-slim" },
 ]
 
@@ -242,8 +247,12 @@ utils = [
 
 [package.metadata]
 requires-dist = [
+    { name = "lightning" },
+    { name = "pandas" },
     { name = "rich" },
     { name = "simple-term-menu" },
+    { name = "torch" },
+    { name = "torchdiffeq" },
     { name = "typer-slim", extras = ["standard"] },
 ]
 

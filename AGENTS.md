@@ -5,6 +5,8 @@ The purpose of this tile is to describe common mistakes and confusion points tha
 # Workflow rules
 
 - **Always run `just ci` after any code change.**
+- **Always ask before committing a `fix:` or `feat:` commit** — these trigger automated releases (patch and minor respectively).
+- **NEVER commit `feat!:` or `BREAKING CHANGE:` without explicit user authorization** — these trigger a major version bump.
 - Every new example should include:
   1. Ad-hoc classes in `src/anypinn/catalog/`
   2. example directory under `examples/`
