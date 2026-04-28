@@ -43,46 +43,7 @@ or with [pipx](https://pipx.pypa.io/stable/installation/):
 pipx run anypinn create my-project
 ```
 
-```
-? Choose a starting point:
-  > SIR Epidemic Model
-    ...
-    Custom ODE
-    Blank project
-
-? Select training data source:
-  > Generate synthetic data
-    Load from CSV
-
-? Include Lightning training wrapper? (Y/n)
-
-Creating my-project/
-  ✓  pyproject.toml   project metadata & dependencies
-  ✓  ode.py           your ODE definition
-  ✓  config.py        hyperparameters with sensible defaults
-  ✓  train.py         ready-to-run training script
-  ✓  data/            data directory
-
-  Done! Run:  cd my-project && uv sync && uv run train.py
-```
-
-All prompts are also available as flags to skip the interactive flow:
-
-```bash
-anypinn create my-project \
-  --template sir \
-  --data synthetic \
-  --lightning
-```
-
-| Flag                   | Values                                       | Description                                    |
-| ---------------------- | -------------------------------------------- | ---------------------------------------------- |
-| `--help, -h`           | —                                            | Show help and exit                             |
-| `--list-templates, -l` | —                                            | Print all templates with descriptions and exit |
-| `--template, -t`       | built-in template name, `custom`, or `blank` | Starting template                              |
-| `--data, -d`           | `synthetic`, `csv`                           | Training data source                           |
-| `--lightning, -L`      | —                                            | Include PyTorch Lightning wrapper              |
-| `--no-lightning, -NL`  | —                                            | Exclude PyTorch Lightning wrapper              |
+Run `anypinn create --help` to see all available flags and templates.
 
 ## 👥 Who Is This For?
 
@@ -239,19 +200,6 @@ Ready-made constraints for ODE inverse problems:
 ### `anypinn.catalog` — Problem-Specific Building Blocks
 
 Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catalog/` for the full list.
-
-## 🛠️ Tooling
-
-| Tool                                      | Purpose                |
-| ----------------------------------------- | ---------------------- |
-| [mise](https://mise.jdx.dev) (optional)   | Toolchain provisioning |
-| [uv](https://github.com/astral-sh/uv)     | Dependency management  |
-| [just](https://github.com/casey/just)     | Task automation        |
-| [Ruff](https://github.com/astral-sh/ruff) | Linting and formatting |
-| [pytest](https://docs.pytest.org/)        | Testing                |
-| [ty](https://docs.astral.sh/ty/)          | Type checking          |
-
-All common tasks (test, lint, format, type-check, docs) are available via `just`.
 
 ## 🤝 Contributing
 
