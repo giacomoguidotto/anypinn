@@ -17,9 +17,27 @@ app = Typer(add_completion=False, context_settings={"help_option_names": ["-h", 
 _console = Console(highlight=False)
 
 
+def _version_callback(value: bool) -> None:
+    if value:
+        _console.print(f"anypinn {anypinn.__version__}")
+        raise Exit()
+
+
 @app.callback()
-def main() -> None:
-    """anypinn — scaffolding tool for Physics-Informed Neural Network projects."""
+def main(
+    version: Annotated[
+        bool,
+        Option(
+            "--version",
+            "-v",
+            help="Show version and exit.",
+            callback=_version_callback,
+            is_eager=True,
+            expose_value=False,
+        ),
+    ] = False,
+) -> None:
+    """anypinn - scaffolding tool for Physics-Informed Neural Network projects."""
 
 
 _FILE_DESCRIPTIONS: dict[str, str] = {
