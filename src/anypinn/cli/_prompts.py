@@ -44,8 +44,8 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     index: int = int(raw_index)
     selected = options[index]
 
-    # Overwrite the ◆ question + │ bar that stayed on screen
-    _clear_lines(2)
+    # Overwrite the │ bar (from caller) + ◆ question + │ bar
+    _clear_lines(3)
 
     _print_bar()
     _console.print(f"[bold green]◇[/]  {question}")
