@@ -179,10 +179,11 @@ def create(
 
     created = render_project(project_dir, template, data_source, lightning)
 
-    for name in created:
+    for i, name in enumerate(created):
         desc = _FILE_DESCRIPTIONS.get(name, "")
-        desc_str = f" [dim]— {desc}[/]" if desc else ""
-        _console.print(f"[dim]│[/]  {name}{desc_str}")
+        desc_str = f"\t\t[dim]{desc}[/]" if desc else ""
+        connector = "└" if i == len(created) - 1 else "├"
+        _console.print(f"[dim]│[/]  {connector} {name}{desc_str}")
 
     _console.print("[dim]│[/]")
 
@@ -208,7 +209,7 @@ def create(
 
     _console.print("[bold green]◇[/]  Dependencies synced")
     _console.print("[dim]│[/]")
-    _console.print("[bold cyan]●[/]  Running train.py")
+    _console.print("[bold cyan]●[/]  Running `uv run train.py`...")
     _console.print()
 
     os.chdir(project_dir)
