@@ -40,6 +40,9 @@ Thanks for wanting to contribute to AnyPINN! Please read our [Code of Conduct](C
 ## Conventions
 
 - Commits: [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`)
+  - `fix:` triggers a **patch** release (e.g. 0.1.0 → 0.1.1)
+  - `feat:` triggers a **minor** release (e.g. 0.1.1 → 0.2.0)
+  - `feat!:` or `BREAKING CHANGE:` triggers a **major** release (e.g. 0.2.0 → 1.0.0)
 - Branch names: `feat/`, `fix/`, `docs/`, etc.
 - Line length: 99
 - Absolute imports only — no relative imports
