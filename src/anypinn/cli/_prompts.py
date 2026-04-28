@@ -30,11 +30,11 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     _console.print(f"[bold cyan]◆[/]  {question}")
     _print_bar()
 
-    menu_labels = [f"\033[2m│\033[22m    {lbl}" for lbl in labels]
     menu = TerminalMenu(
-        menu_labels,
-        menu_cursor="",
-        menu_highlight_style=("fg_cyan", "bold"),
+        labels,
+        menu_cursor="│  ● ",
+        menu_cursor_style=("fg_cyan", "bold"),
+        menu_highlight_style=("fg_cyan",),
     )
     raw_index = menu.show()
 
