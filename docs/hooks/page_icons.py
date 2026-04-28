@@ -10,6 +10,7 @@ from __future__ import annotations
 PAGE_ICONS: dict[str, str] = {
     "index.md": "material/math-integral-box",
     "getting-started.md": "material/rocket-launch",
+    "templates/index.md": "material/file-document-multiple",
     "CONTRIBUTING.md": "material/source-pull",
     "CODE_OF_CONDUCT.md": "material/handshake",
     "rationale.md": "material/scale-balance",
