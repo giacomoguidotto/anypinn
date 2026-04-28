@@ -1,7 +1,7 @@
-# Templates
+# Catalog
 
-The `anypinn create` CLI ships 16 built-in templates. Each scaffolds a complete, runnable project
-with an ODE/PDE definition, hyperparameters, and a training script.
+The `anypinn create` CLI ships 16 built-in catalog entries. Each scaffolds a complete, runnable
+project with an ODE/PDE definition, hyperparameters, and a training script.
 
 Run `anypinn create --list-templates` to see the full list from the command line.
 
