@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
+import shutil
+import subprocess
 
 import click
 import pytest
@@ -47,6 +50,7 @@ class TestCreateCommand:
                 "--data",
                 data_source.value,
                 lightning_flag,
+                "--no-run",
             ],
         )
 
@@ -78,6 +82,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
 
@@ -99,6 +104,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
             input="n\n",
         )
@@ -121,6 +127,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
             input="y\nn\n",
         )
@@ -143,6 +150,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
             input="y\ny\n",
         )
@@ -159,7 +167,7 @@ class TestCreateCommand:
 
         result = runner.invoke(
             app,
-            ["create", ".", "--template", "sir", "--data", "synthetic", "--lightning"],
+            ["create", ".", "--template", "sir", "--data", "synthetic", "--lightning", "--no-run"],
         )
 
         assert result.exit_code == 0
@@ -173,7 +181,7 @@ class TestCreateCommand:
 
         result = runner.invoke(
             app,
-            ["create", "--template", "sir", "--data", "synthetic", "--lightning"],
+            ["create", "--template", "sir", "--data", "synthetic", "--lightning", "--no-run"],
         )
 
         assert result.exit_code == 0
@@ -191,6 +199,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--no-lightning",
+                "--no-run",
             ],
         )
 
@@ -212,6 +221,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
 
@@ -233,6 +243,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
 
@@ -255,6 +266,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
 
@@ -273,6 +285,7 @@ class TestCreateCommand:
                 "--data",
                 "csv",
                 "--lightning",
+                "--no-run",
             ],
         )
 
@@ -294,6 +307,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
 
@@ -314,6 +328,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--no-lightning",
+                "--no-run",
             ],
         )
 
@@ -335,6 +350,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
 
@@ -356,6 +372,7 @@ class TestCreateCommand:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
 
@@ -363,6 +380,61 @@ class TestCreateCommand:
 
         pyproject = (project_dir / "pyproject.toml").read_text()
         assert '"torchdiffeq"' not in pyproject
+
+    def test_auto_run_syncs_and_execs(
+        self, project_dir: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """With --run, scaffolding is followed by uv sync and exec."""
+        calls: list[str] = []
+
+        monkeypatch.setattr(shutil, "which", lambda name: "/usr/bin/uv" if name == "uv" else None)
+        monkeypatch.setattr(
+            subprocess,
+            "run",
+            lambda *a, **kw: (calls.append("sync"), subprocess.CompletedProcess(a, 0))[1],
+        )
+        monkeypatch.setattr(os, "execvp", lambda f, a: calls.append("exec"))
+        monkeypatch.setattr(os, "chdir", lambda p: None)
+
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+                "--run",
+            ],
+        )
+
+        assert result.exit_code == 0
+        assert calls == ["sync", "exec"]
+
+    def test_auto_run_falls_back_without_uv(
+        self, project_dir: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Without uv installed, --run falls back to printing instructions."""
+        monkeypatch.setattr(shutil, "which", lambda name: None)
+
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project_dir),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--lightning",
+                "--run",
+            ],
+        )
+
+        assert result.exit_code == 0
+        assert "Done!" in result.output
 
 
 class TestListTemplates:
@@ -404,6 +476,7 @@ class TestListTemplates:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
         assert result.exit_code != 0
@@ -422,6 +495,7 @@ class TestListTemplates:
                 "--data",
                 "synthetic",
                 "--lightning",
+                "--no-run",
             ],
         )
         assert result.exit_code == 2

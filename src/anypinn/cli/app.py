@@ -197,12 +197,8 @@ def create(
         _console.print()
         return
 
-    with _console.status(
-        " Syncing dependencies...", spinner="dots", spinner_style="bold cyan"
-    ):
-        proc = subprocess.run(
-            [uv_path, "sync"], capture_output=True, text=True, cwd=project_dir
-        )
+    with _console.status(" Syncing dependencies...", spinner="dots", spinner_style="bold cyan"):
+        proc = subprocess.run([uv_path, "sync"], capture_output=True, text=True, cwd=project_dir)
 
     if proc.returncode != 0:
         _console.print("[bold red]✗[/]  Failed to sync dependencies")
