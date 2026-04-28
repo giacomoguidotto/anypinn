@@ -200,6 +200,9 @@ def plot_and_save(
     ax.set_title(r"$\beta$ Parameter Prediction")
     ax.set_xlabel("Time (scaled)")
     ax.set_ylabel(r"$\beta$")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     plt.tight_layout()

@@ -188,6 +188,9 @@ def plot_and_save(
     ax.set_title(r"$R_t$ (Reproduction Number)")
     ax.set_xlabel("Time (days)")
     ax.set_ylabel(r"$R_t$")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     ax = axes[1, 1]
@@ -204,6 +207,9 @@ def plot_and_save(
     ax.set_title(r"$\sigma$ (Hospitalization Rate)")
     ax.set_xlabel("Time (days)")
     ax.set_ylabel(r"$\sigma$ (fraction)")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     plt.tight_layout()

@@ -198,6 +198,9 @@ def plot_and_save(
     ax.set_title(r"$\varepsilon$, $a$ Predictions")
     ax.set_xlabel("Time")
     ax.set_ylabel("Parameter value")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     plt.tight_layout()

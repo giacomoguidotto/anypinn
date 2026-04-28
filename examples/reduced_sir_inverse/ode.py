@@ -138,6 +138,9 @@ def plot_and_save(
     axes[1].set_title(r"$R_t$ Parameter Prediction")
     axes[1].set_xlabel("Time (days)")
     axes[1].set_ylabel(r"$R_t$")
+    top = axes[1].get_ylim()[1]
+    pad = top * 0.10
+    axes[1].set_ylim(-pad, top + pad)
     axes[1].legend()
 
     plt.tight_layout()

@@ -208,6 +208,9 @@ def plot_and_save(
     ax.set_title(r"$\sigma$ Prediction")
     ax.set_xlabel("Time")
     ax.set_ylabel(r"$\sigma$")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     # Subplot 3: rho and beta predictions
@@ -235,6 +238,9 @@ def plot_and_save(
     ax.set_title(r"$\rho$, $\beta$ Predictions")
     ax.set_xlabel("Time")
     ax.set_ylabel("Parameter value")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     plt.tight_layout()
