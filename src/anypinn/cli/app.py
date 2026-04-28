@@ -151,6 +151,9 @@ def create(
                 else:
                     item.unlink()
 
+    _console.print(f"[bold green]◇[/]  Generating '{display_name}/'")
+    _console.print("[dim]│[/]")
+
     # Interactive prompts for missing options
     if template is None:
         template = prompt_template()
@@ -175,15 +178,15 @@ def create(
         _console.print("[dim]│[/]")
 
     # Render
-    _console.print(f"[bold green]◇[/]  Generating project in '{display_name}'")
-
     created = render_project(project_dir, template, data_source, lightning)
 
+    max_name = max(len(n) for n in created)
     for i, name in enumerate(created):
         desc = _FILE_DESCRIPTIONS.get(name, "")
-        desc_str = f"\t\t[dim]{desc}[/]" if desc else ""
+        padded = name.ljust(max_name + 2)
+        desc_str = f"{padded}[dim]{desc}[/]" if desc else name
         connector = "└" if i == len(created) - 1 else "├"
-        _console.print(f"[dim]│[/]  {connector} {name}{desc_str}")
+        _console.print(f"[dim]│[/]  {connector} {desc_str}")
 
     _console.print("[dim]│[/]")
 
