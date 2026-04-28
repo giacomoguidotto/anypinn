@@ -43,7 +43,7 @@ or with [pipx](https://pipx.pypa.io/stable/installation/):
 pipx run anypinn create my-project
 ```
 
-Run `anypinn create --help` to see all available flags and templates. For a full walkthrough covering project structure, configuration, training, and next steps, see the [Getting Started](https://anypinn.guidotto.dev/getting-started/) guide.
+Run `anypinn create --help` to see all available flags and templates. For a full walkthrough covering project structure, configuration, training, and next steps, see the [Getting Started](docs/getting-started.md) guide.
 
 ## 👥 Who Is This For?
 

@@ -96,6 +96,7 @@ plugins:
         - "*#anypinn.*"
 hooks:
   - docs/hooks/page_icons.py
+  - docs/hooks/rewrite_links.py
 watch:
   # Watch src/ directory to reload on changes to docstrings for mkdocstrings plugin.
   - src
