@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import shutil
+import subprocess
 from typing import Annotated
 
 from rich.console import Console
@@ -86,6 +88,10 @@ def create(
         bool | None,
         Option("--lightning/--no-lightning", "-L/-NL", help="Include Lightning wrapper"),
     ] = None,
+    run: Annotated[
+        bool,
+        Option("--run/--no-run", help="Install dependencies and run training after scaffolding"),
+    ] = True,
     list_templates: Annotated[
         bool,
         Option(
@@ -179,8 +185,35 @@ def create(
         _console.print(f"[dim]│[/]  {name}{desc_str}")
 
     _console.print("[dim]│[/]")
-    if use_cwd:
-        _console.print("[bold cyan]●[/]  Done! uv sync && uv run train.py")
-    else:
-        _console.print(f"[bold cyan]●[/]  Done! cd {display_name} && uv sync && uv run train.py")
+
+    uv_path = shutil.which("uv") if run else None
+    if uv_path is None:
+        if use_cwd:
+            _console.print("[bold cyan]●[/]  Done! uv sync && uv run train.py")
+        else:
+            _console.print(
+                f"[bold cyan]●[/]  Done! cd {display_name} && uv sync && uv run train.py"
+            )
+        _console.print()
+        return
+
+    with _console.status(
+        " Syncing dependencies...", spinner="dots", spinner_style="bold cyan"
+    ):
+        proc = subprocess.run(
+            [uv_path, "sync"], capture_output=True, text=True, cwd=project_dir
+        )
+
+    if proc.returncode != 0:
+        _console.print("[bold red]✗[/]  Failed to sync dependencies")
+        if proc.stderr:
+            _console.print(proc.stderr.strip())
+        raise Exit(code=1)
+
+    _console.print("[bold green]◇[/]  Dependencies synced")
+    _console.print("[dim]│[/]")
+    _console.print("[bold cyan]●[/]  Running train.py")
     _console.print()
+
+    os.chdir(project_dir)
+    os.execvp(uv_path, [uv_path, "run", "train.py"])

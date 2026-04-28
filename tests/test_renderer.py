@@ -22,12 +22,12 @@ class TestRenderProject:
         assert "train.py" in created
         assert "data/" in created
 
-    def test_raises_on_existing_directory(self, tmp_path: Path) -> None:
+    def test_renders_into_existing_directory(self, tmp_path: Path) -> None:
         project = tmp_path / "existing"
         project.mkdir()
 
-        with pytest.raises(FileExistsError):
-            render_project(project, Template.BLANK, DataSource.SYNTHETIC, True)
+        created = render_project(project, Template.BLANK, DataSource.SYNTHETIC, True)
+        assert "pyproject.toml" in created
 
     @pytest.mark.parametrize("template", list(Template))
     def test_all_templates_produce_valid_python(self, tmp_path: Path, template: Template) -> None:
