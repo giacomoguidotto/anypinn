@@ -30,11 +30,11 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     _console.print(f"[bold cyan]◆[/]  {question}")
     _print_bar()
 
+    menu_labels = [f"│    {lbl}" for lbl in labels]
     menu = TerminalMenu(
-        labels,
-        menu_cursor="│  ● ",
-        menu_cursor_style=("fg_cyan", "bold"),
-        menu_highlight_style=("fg_cyan",),
+        menu_labels,
+        menu_cursor="",
+        menu_highlight_style=("fg_cyan", "bold"),
     )
     raw_index = menu.show()
 
@@ -52,7 +52,7 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
         if i == index:
             _console.print(f"[dim]│[/]  [bold green]●[/] {lbl}")
         else:
-            _console.print(f"[dim]│[/]    [dim s]{lbl}[/]")
+            _console.print(f"[dim]│[/]    [dim]{lbl}[/]")
     _print_bar()
 
     return selected

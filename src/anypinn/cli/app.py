@@ -175,7 +175,7 @@ def create(
         _console.print("[dim]│[/]")
 
     # Render
-    _console.print(f"[bold green]◇[/]  Creating {display_name}/...")
+    _console.print(f"[bold green]◇[/]  Generating project in '{display_name}'")
 
     created = render_project(project_dir, template, data_source, lightning)
 
