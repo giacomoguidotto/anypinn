@@ -151,7 +151,7 @@ def create(
                 else:
                     item.unlink()
 
-    _console.print(f"[bold green]◇[/]  Generating '{display_name}/'...")
+    _console.print(f"[bold green]◇[/]  Generating project in '{display_name}'...")
     _console.print("[dim]│[/]")
 
     # Interactive prompts for missing options

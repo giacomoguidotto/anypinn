@@ -47,6 +47,7 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     # Overwrite the ◆ question + │ bar that stayed on screen
     _clear_lines(2)
 
+    _print_bar()
     _console.print(f"[bold green]◇[/]  {question}")
     for i, lbl in enumerate(labels):
         if i == index:
