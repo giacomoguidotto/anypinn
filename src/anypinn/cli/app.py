@@ -151,7 +151,7 @@ def create(
                 else:
                     item.unlink()
 
-    _console.print(f"[bold green]◇[/]  Generating '{display_name}/'")
+    _console.print(f"[bold green]◇[/]  Generating '{display_name}/'...")
     _console.print("[dim]│[/]")
 
     # Interactive prompts for missing options
@@ -178,6 +178,8 @@ def create(
         _console.print("[dim]│[/]")
 
     # Render
+    _console.print(f"[bold green]◇[/]  Creating '{display_name}/'")
+
     created = render_project(project_dir, template, data_source, lightning)
 
     max_name = max(len(n) for n in created)
