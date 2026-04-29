@@ -71,6 +71,21 @@ class ODEProperties:
             dy0[k] is the IC for the (k+1)-th derivative, shape (n_fields,).
         expected_args: Optional set of arg keys the ODE function accesses.
             When provided, validated against the merged args+params at construction time.
+
+    Example:
+        >>> def sir_ode(t, y, args):
+        ...     S, I, R = y
+        ...     beta, gamma = args["beta"](t), args["gamma"](t)
+        ...     N = S + I + R
+        ...     dS = -beta * S * I / N
+        ...     dI = beta * S * I / N - gamma * I
+        ...     dR = gamma * I
+        ...     return torch.stack([dS, dI, dR])
+        >>> props = ODEProperties(
+        ...     ode=sir_ode,
+        ...     args={"beta": Argument(0.3), "gamma": Argument(0.1)},
+        ...     y0=torch.tensor([0.99, 0.01, 0.0]),
+        ... )
     """
 
     ode: ODECallable
@@ -315,8 +330,23 @@ class DataConstraint(Constraint):
 
 class ODEInverseProblem(Problem):
     """
-    Generic ODE Inverse Problem.
-    Composes Residuals + IC + Data constraints with MSELoss.
+    Convenience class composing Residuals + IC + Data constraints.
+
+    Wires together ``ResidualsConstraint``, ``ICConstraint``, and
+    ``DataConstraint`` with the loss criterion from hyperparameters.
+    For forward-only problems (no data fitting), compose the constraints
+    manually instead.
+
+    Example:
+        >>> problem = ODEInverseProblem(
+        ...     props=props,
+        ...     hp=ODEHyperparameters(...),
+        ...     fields={"S": field_s, "I": field_i, "R": field_r},
+        ...     params={"beta": Parameter(ScalarConfig(init_value=0.3))},
+        ...     predict_data=lambda t, f, p: torch.stack(
+        ...         [f["S"](t), f["I"](t), f["R"](t)], dim=1
+        ...     ).squeeze(-1),
+        ... )
     """
 
     def __init__(
