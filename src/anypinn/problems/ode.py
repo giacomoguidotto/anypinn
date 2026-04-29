@@ -1,3 +1,5 @@
+"""ODE constraint types, properties, and the ODEInverseProblem convenience class."""
+
 from collections.abc import Callable
 from dataclasses import dataclass
 from dataclasses import field as dc_field
@@ -252,6 +254,14 @@ PredictDataFn: TypeAlias = Callable[[Tensor, FieldsRegistry, ParamsRegistry], Te
 class ODEHyperparameters(PINNHyperparameters):
     """
     Hyperparameters for ODE inverse problems.
+
+    Extends ``PINNHyperparameters`` with per-constraint loss weights
+    used by ``ODEInverseProblem``.
+
+    Attributes:
+        pde_weight: Weight for the ODE residual loss term.
+        ic_weight: Weight for the initial-condition loss term.
+        data_weight: Weight for the data-fitting loss term.
     """
 
     pde_weight: float = 1.0
