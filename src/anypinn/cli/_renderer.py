@@ -58,6 +58,42 @@ _LIGHTNING_DEPS: list[str] = [
 
 _SYNTHETIC_DEPS: list[str] = []
 
+# Stub CSV column definitions per template (x_column + y_columns).
+# Used to generate placeholder data so the CSV variant runs out of the box.
+_CSV_COLUMNS: dict[Template, tuple[str, list[str], int]] = {
+    # (x_column, y_columns, n_rows)
+    Template.SIR: ("t", ["I_obs"], 91),
+    Template.SEIR: ("t", ["I_obs"], 161),
+    Template.DAMPED_OSCILLATOR: ("t", ["x_obs"], 200),
+    Template.LOTKA_VOLTERRA: ("t", ["x_obs", "y_obs"], 200),
+    Template.VAN_DER_POL: ("t", ["u_obs"], 200),
+    Template.LORENZ: ("t", ["x_obs", "y_obs", "z_obs"], 200),
+    Template.FITZHUGH_NAGUMO: ("t", ["v"], 200),
+    Template.GRAY_SCOTT_2D: ("t", ["u", "v"], 100),
+    Template.POISSON_2D: ("x", ["u"], 100),
+    Template.HEAT_1D: ("t", ["u"], 100),
+    Template.BURGERS_1D: ("t", ["u"], 100),
+    Template.WAVE_1D: ("t", ["u"], 100),
+    Template.INVERSE_DIFFUSIVITY: ("t", ["u"], 100),
+    Template.ALLEN_CAHN: ("t", ["u"], 100),
+    Template.CUSTOM: ("x", ["y_obs"], 50),
+    Template.BLANK: ("x", ["y_obs"], 50),
+}
+
+
+def _stub_csv(template: Template) -> str:
+    """Generate a stub CSV file with placeholder data."""
+    import random
+
+    x_col, y_cols, n = _CSV_COLUMNS.get(template, ("x", ["y"], 50))
+    header = ",".join([x_col, *y_cols])
+    lines = [header]
+    for i in range(n):
+        x_val = f"{i / (n - 1):.6f}" if n > 1 else "0.000000"
+        y_vals = ",".join(f"{random.uniform(0, 1):.6f}" for _ in y_cols)
+        lines.append(f"{x_val},{y_vals}")
+    return "\n".join(lines) + "\n"
+
 
 def _read(pkg: str, filename: str, experiment_name: str) -> str:
     content = ilr.files(pkg).joinpath(filename).read_text(encoding="utf-8")
@@ -120,7 +156,11 @@ def render_project(
     }
 
     project_dir.mkdir(parents=True, exist_ok=True)
-    (project_dir / "data").mkdir()
+    data_dir = project_dir / "data"
+    data_dir.mkdir()
+
+    if data_source == DataSource.CSV:
+        (data_dir / "data.csv").write_text(_stub_csv(template))
 
     pyproject = _pyproject_toml(project_dir.name, data_source, lightning)
     (project_dir / "pyproject.toml").write_text(pyproject)

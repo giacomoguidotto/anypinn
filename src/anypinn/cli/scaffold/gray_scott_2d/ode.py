@@ -33,8 +33,10 @@ from anypinn.core import (
     ParamsRegistry,
     PINNHyperparameters,
     Problem,
+    # --- VARIANT: direction/inverse ---
     ScalarConfig,
     ValidationRegistry,
+    # --- END VARIANT ---
     build_criterion,
 )
 from anypinn.lib.diff import partial

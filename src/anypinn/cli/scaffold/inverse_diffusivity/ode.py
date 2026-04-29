@@ -24,7 +24,9 @@ from anypinn.core import (
     ParamsRegistry,
     PINNHyperparameters,
     Problem,
+    # --- VARIANT: direction/inverse ---
     ValidationRegistry,
+    # --- END VARIANT ---
     build_criterion,
 )
 from anypinn.lib.diff import partial
