@@ -6,7 +6,7 @@ import signal
 import sys
 
 from config import EXPERIMENT_NAME, RUN_NAME, hp
-from ode import create_context, create_problem
+from ode import create_data_module, create_problem
 import torch
 
 
@@ -28,8 +28,9 @@ def main() -> None:
     model_path = models_dir / "model.pt"
 
     problem = create_problem(hp)
-    context = create_context()
-    problem.inject_context(context)
+    dm = create_data_module(hp)
+    dm.setup("fit")
+    problem.inject_context(dm.context)
 
     if args.predict:
         problem.load_state_dict(torch.load(model_path, weights_only=True))
