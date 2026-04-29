@@ -11,20 +11,20 @@ ODE and PDE problems share the same ``Constraint`` base class from
 **ODE constraints** (``anypinn.problems.ode``):
 
 - ``ResidualsConstraint``: minimizes the ODE residual
-  ||dy/dt - f(t, y, args)||. Supports arbitrary-order ODEs via the
+  ``||dy/dt - f(t, y, args)||``. Supports arbitrary-order ODEs via the
   ``order`` parameter on ``ODEProperties``.
-- ``ICConstraint``: enforces initial conditions y(t0) = Y0 (and derivative
-  ICs for higher-order ODEs).
-- ``DataConstraint``: enforces fit to observed data ||y_hat - y_obs||.
+- ``ICConstraint``: enforces initial conditions ``y(t0) = Y0`` (and
+  derivative ICs for higher-order ODEs).
+- ``DataConstraint``: enforces fit to observed data ``||y_hat - y_obs||``.
 
 **PDE constraints** (``anypinn.problems.pde``):
 
 - ``PDEResidualConstraint``: minimizes a user-defined PDE residual function
   over interior collocation points.
-- ``DirichletBCConstraint``: enforces u(x_bc) = g(x_bc).
-- ``NeumannBCConstraint``: enforces du/dn(x_bc) = h(x_bc).
-- ``PeriodicBCConstraint``: enforces u(x_left) = u(x_right) and matching
-  derivatives.
+- ``DirichletBCConstraint``: enforces ``u(x_bc) = g(x_bc)``.
+- ``NeumannBCConstraint``: enforces ``du/dn(x_bc) = h(x_bc)``.
+- ``PeriodicBCConstraint``: enforces ``u(x_left) = u(x_right)`` and
+  matching derivatives.
 
 ## Forward vs inverse direction
 

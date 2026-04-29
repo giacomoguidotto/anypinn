@@ -55,7 +55,7 @@ class BoundaryCondition:
 
 class DirichletBCConstraint(Constraint):
     """
-    Enforces the Dirichlet boundary condition: u(x_bc) = g(x_bc).
+    Enforces the Dirichlet boundary condition: ``u(x_bc) = g(x_bc)``.
     Minimizes ``weight * criterion(u(x_bc), g(x_bc))``.
 
     Args:
@@ -97,11 +97,11 @@ class DirichletBCConstraint(Constraint):
 class NeumannBCConstraint(Constraint):
     """
     Enforces the Neumann boundary condition:
-    $\\partial u / \\partial n (x_{bc}) = h(x_{bc})$.
+    ``du/dn(x_bc) = h(x_bc)``.
 
     For a rectangular domain face whose outward normal is axis-aligned with
     dimension ``normal_dim``, we have
-    $\\partial u / \\partial n = \\partial u / \\partial x_{\\mathrm{normal\\_dim}}$.
+    ``du/dn = du/dx[normal_dim]``.
     Minimizes
     ``weight * criterion(du_dn(x_bc), h(x_bc))``.
 
@@ -148,8 +148,7 @@ class NeumannBCConstraint(Constraint):
 class PeriodicBCConstraint(Constraint):
     """
     Enforces periodic boundary conditions:
-    ``u(x_left, t) = u(x_right, t)`` and
-    ``∂u/∂x(x_left, t) = ∂u/∂x(x_right, t)``.
+    ``u(x_left, t) = u(x_right, t)`` and matching spatial derivatives.
 
     The two boundary samplers must produce **paired** points — identical
     coordinates in every dimension except the periodic one — so that
