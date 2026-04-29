@@ -11,6 +11,7 @@ from anypinn.core.dataset import DataCallback
 from anypinn.core.samplers import ResidualScorer
 
 U_KEY = "u"
+EPSILON_KEY = "epsilon"
 
 TRUE_EPSILON = 0.01
 

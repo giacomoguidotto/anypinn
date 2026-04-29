@@ -10,6 +10,9 @@ from anypinn.core import GenerationConfig, PINNDataModule, PINNHyperparameters, 
 from anypinn.core.dataset import DataCallback
 
 U_KEY = "u"
+K_KEY = "k"
+
+TRUE_K = 1.0
 
 
 class Poisson2DDataModule(PINNDataModule):

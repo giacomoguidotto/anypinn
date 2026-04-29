@@ -1,4 +1,4 @@
-"""Burgers Equation 1D — nonlinear PDE inverse problem definition."""
+"""Burgers Equation 1D — nonlinear PDE problem definition."""
 
 from __future__ import annotations
 
@@ -9,25 +9,27 @@ from torch import Tensor
 
 from anypinn.catalog.burgers_1d import NU_KEY, TRUE_NU, U_KEY, Burgers1DDataModule
 from anypinn.core import (
+    # --- VARIANT: direction/inverse ---
+    DataConstraint,
+    # --- END VARIANT ---
     Field,
     FieldsRegistry,
     MLPConfig,
+    # --- VARIANT: direction/inverse ---
     Parameter,
+    # --- END VARIANT ---
     ParamsRegistry,
     PINNHyperparameters,
     Problem,
     RandomFourierFeatures,
+    # --- VARIANT: direction/inverse ---
     ScalarConfig,
     ValidationRegistry,
+    # --- END VARIANT ---
     build_criterion,
 )
 from anypinn.lib.diff import partial
-from anypinn.problems import (
-    BoundaryCondition,
-    DataConstraint,
-    DirichletBCConstraint,
-    PDEResidualConstraint,
-)
+from anypinn.problems import BoundaryCondition, DirichletBCConstraint, PDEResidualConstraint
 
 # ============================================================================
 # Constants
@@ -40,8 +42,19 @@ GRID_SIZE = 50
 # ============================================================================
 
 
-def burgers_residual(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> Tensor:
-    """PDE residual: du/dt + u*du/dx - nu*d2u/dx2 = 0."""
+# --- VARIANT: direction/forward ---
+def burgers_residual_forward(x: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
+    """PDE residual: du/dt + u*du/dx - nu*d2u/dx2 = 0 (nu known)."""
+    u = fields[U_KEY](x)
+    du_dt = partial(u, x, dim=1, order=1)
+    du_dx = partial(u, x, dim=0, order=1)
+    d2u_dx2 = partial(u, x, dim=0, order=2)
+    return du_dt + u * du_dx - TRUE_NU * d2u_dx2
+
+
+# --- VARIANT: direction/inverse ---
+def burgers_residual_inverse(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> Tensor:
+    """PDE residual: du/dt + u*du/dx - nu*d2u/dx2 = 0 (nu learned)."""
     u = fields[U_KEY](x)
     nu = params[NU_KEY](x)
     du_dt = partial(u, x, dim=1, order=1)
@@ -49,6 +62,8 @@ def burgers_residual(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) 
     d2u_dx2 = partial(u, x, dim=0, order=2)
     return du_dt + u * du_dx - nu * d2u_dx2
 
+
+# --- END VARIANT ---
 
 # ============================================================================
 # Boundary / IC Samplers
@@ -75,6 +90,7 @@ def _ic_value(x: Tensor) -> Tensor:
     return -torch.sin(math.pi * x[:, 0:1])
 
 
+# --- VARIANT: direction/inverse ---
 # ============================================================================
 # Residual Scorer for Adaptive Collocation
 # ============================================================================
@@ -91,7 +107,7 @@ class BurgersResidualScorer:
         device = next(iter(self.fields.values())).parameters().__next__().device
         x = x.detach().to(device).requires_grad_(True)
         with torch.enable_grad():
-            res = burgers_residual(x, self.fields, self.params)
+            res = burgers_residual_inverse(x, self.fields, self.params)
         # res may be (n, d) due to scalar param broadcasting; reduce to (n,)
         return res.detach().cpu().abs().mean(dim=-1)
 
@@ -105,11 +121,17 @@ def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry
     return fields[U_KEY](x_data).unsqueeze(1)
 
 
+# --- END VARIANT ---
+
 # ============================================================================
 # Data Module Factory
 # ============================================================================
 
-validation: ValidationRegistry = {NU_KEY: lambda x: torch.full_like(x, TRUE_NU)}
+# --- VARIANT: direction/inverse ---
+_validation: ValidationRegistry = {NU_KEY: lambda x: torch.full_like(x, TRUE_NU)}
+# --- VARIANT: direction/forward ---
+_validation = None
+# --- END VARIANT ---
 
 
 def create_data_module(hp: PINNHyperparameters) -> Burgers1DDataModule:
@@ -118,7 +140,7 @@ def create_data_module(hp: PINNHyperparameters) -> Burgers1DDataModule:
         hp=hp,
         true_nu=TRUE_NU,
         grid_size=GRID_SIZE,
-        validation=validation,
+        validation=_validation,
     )
 
 
@@ -127,7 +149,62 @@ def create_data_module(hp: PINNHyperparameters) -> Burgers1DDataModule:
 # ============================================================================
 
 
-def create_problem(hp: PINNHyperparameters) -> Problem:
+# --- VARIANT: direction/forward ---
+def create_problem_forward(hp: PINNHyperparameters) -> Problem:
+    rff = RandomFourierFeatures(in_dim=2, num_features=128, scale=1.0, seed=42)
+    field_u = Field(
+        config=MLPConfig(
+            in_dim=rff.out_dim,
+            out_dim=1,
+            hidden_layers=hp.fields_config.hidden_layers,
+            activation=hp.fields_config.activation,
+            output_activation=hp.fields_config.output_activation,
+            encode=rff,
+        )
+    )
+
+    fields = FieldsRegistry({U_KEY: field_u})
+    params = ParamsRegistry({})
+
+    bcs = [
+        DirichletBCConstraint(
+            BoundaryCondition(sampler=_left_boundary, value=_zero, n_pts=100),
+            field_u,
+            log_key="loss/bc_left",
+            weight=10.0,
+        ),
+        DirichletBCConstraint(
+            BoundaryCondition(sampler=_right_boundary, value=_zero, n_pts=100),
+            field_u,
+            log_key="loss/bc_right",
+            weight=10.0,
+        ),
+        DirichletBCConstraint(
+            BoundaryCondition(sampler=_initial_condition, value=_ic_value, n_pts=100),
+            field_u,
+            log_key="loss/ic",
+            weight=10.0,
+        ),
+    ]
+
+    pde = PDEResidualConstraint(
+        fields=fields,
+        params=params,
+        residual_fn=burgers_residual_forward,
+        log_key="loss/pde_residual",
+        weight=1.0,
+    )
+
+    return Problem(
+        constraints=[pde, *bcs],
+        criterion=build_criterion(hp.criterion),
+        fields=fields,
+        params=params,
+    )
+
+
+# --- VARIANT: direction/inverse ---
+def create_problem_inverse(hp: PINNHyperparameters) -> Problem:
     rff = RandomFourierFeatures(in_dim=2, num_features=128, scale=1.0, seed=42)
     field_u = Field(
         config=MLPConfig(
@@ -170,7 +247,7 @@ def create_problem(hp: PINNHyperparameters) -> Problem:
     pde = PDEResidualConstraint(
         fields=fields,
         params=params,
-        residual_fn=burgers_residual,
+        residual_fn=burgers_residual_inverse,
         log_key="loss/pde_residual",
         weight=1.0,
     )
@@ -188,3 +265,6 @@ def create_problem(hp: PINNHyperparameters) -> Problem:
         fields=fields,
         params=params,
     )
+
+
+# --- END VARIANT ---

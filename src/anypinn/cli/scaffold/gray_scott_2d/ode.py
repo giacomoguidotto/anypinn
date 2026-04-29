@@ -1,4 +1,4 @@
-"""Gray-Scott 2D Reaction-Diffusion — inverse PDE problem definition."""
+"""Gray-Scott 2D Reaction-Diffusion — PDE problem definition."""
 
 from __future__ import annotations
 
@@ -20,11 +20,16 @@ from anypinn.catalog.gray_scott_2d import (
     GrayScott2DDataModule,
 )
 from anypinn.core import (
+    # --- VARIANT: direction/inverse ---
+    DataConstraint,
+    # --- END VARIANT ---
     Field,
     FieldsRegistry,
     FourierEncoding,
     MLPConfig,
+    # --- VARIANT: direction/inverse ---
     Parameter,
+    # --- END VARIANT ---
     ParamsRegistry,
     PINNHyperparameters,
     Problem,
@@ -35,7 +40,6 @@ from anypinn.core import (
 from anypinn.lib.diff import partial
 from anypinn.problems import (
     BoundaryCondition,
-    DataConstraint,
     DirichletBCConstraint,
     NeumannBCConstraint,
     PDEResidualConstraint,
@@ -46,8 +50,28 @@ from anypinn.problems import (
 # ============================================================================
 
 
-def gs_residual_u(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> Tensor:
-    """PDE residual for u: du/dt_norm - T * (D_u lap_u - uv^2 + F(1-u)) = 0."""
+# --- VARIANT: direction/forward ---
+def gs_residual_u_forward(x: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
+    """PDE residual for u: du/dt_norm - T * (D_u lap_u - uv^2 + F(1-u)) = 0 (known)."""
+    u = fields[U_KEY](x)
+    v = fields[V_KEY](x)
+    du_dt = partial(u, x, dim=2, order=1)
+    lap_u = partial(u, x, dim=0, order=2) + partial(u, x, dim=1, order=2)
+    return du_dt - (TRUE_DU * lap_u - u * v**2 + TRUE_F * (1 - u)) * T_TOTAL
+
+
+def gs_residual_v_forward(x: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
+    """PDE residual for v: dv/dt_norm - T * (D_v lap_v + uv^2 - (F+k)v) = 0 (known)."""
+    u = fields[U_KEY](x)
+    v = fields[V_KEY](x)
+    dv_dt = partial(v, x, dim=2, order=1)
+    lap_v = partial(v, x, dim=0, order=2) + partial(v, x, dim=1, order=2)
+    return dv_dt - (TRUE_DV * lap_v + u * v**2 - (TRUE_F + TRUE_K) * v) * T_TOTAL
+
+
+# --- VARIANT: direction/inverse ---
+def gs_residual_u_inverse(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> Tensor:
+    """PDE residual for u: du/dt_norm - T * (D_u lap_u - uv^2 + F(1-u)) = 0 (learned)."""
     u = fields[U_KEY](x)
     v = fields[V_KEY](x)
     du = torch.nn.functional.softplus(params[DU_KEY](x))
@@ -57,8 +81,8 @@ def gs_residual_u(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> 
     return du_dt - (du * lap_u - u * v**2 + f * (1 - u)) * T_TOTAL
 
 
-def gs_residual_v(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> Tensor:
-    """PDE residual for v: dv/dt_norm - T * (D_v lap_v + uv^2 - (F+k)v) = 0."""
+def gs_residual_v_inverse(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> Tensor:
+    """PDE residual for v: dv/dt_norm - T * (D_v lap_v + uv^2 - (F+k)v) = 0 (learned)."""
     u = fields[U_KEY](x)
     v = fields[V_KEY](x)
     dv = torch.nn.functional.softplus(params[DV_KEY](x))
@@ -68,6 +92,8 @@ def gs_residual_v(x: Tensor, fields: FieldsRegistry, params: ParamsRegistry) -> 
     lap_v = partial(v, x, dim=0, order=2) + partial(v, x, dim=1, order=2)
     return dv_dt - (dv * lap_v + u * v**2 - (f + k) * v) * T_TOTAL
 
+
+# --- END VARIANT ---
 
 # ============================================================================
 # Boundary / IC Samplers
@@ -112,6 +138,7 @@ def _ic_v(x: Tensor) -> Tensor:
     return vals
 
 
+# --- VARIANT: direction/inverse ---
 # ============================================================================
 # Predict Data Function
 # ============================================================================
@@ -123,24 +150,21 @@ def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry
     return torch.stack([u_pred, v_pred], dim=1)
 
 
+# --- END VARIANT ---
+
 # ============================================================================
 # Data Module Factory
 # ============================================================================
 
-# --- VARIANT: source/synthetic ---
-validation_synthetic: ValidationRegistry = {
+# --- VARIANT: direction/inverse ---
+_validation: ValidationRegistry = {
     DU_KEY: lambda x: torch.full_like(x, TRUE_DU),
     DV_KEY: lambda x: torch.full_like(x, TRUE_DV),
     F_KEY: lambda x: torch.full_like(x, TRUE_F),
     K_KEY: lambda x: torch.full_like(x, TRUE_K),
 }
-# --- VARIANT: source/csv ---
-validation_csv: ValidationRegistry = {
-    DU_KEY: lambda x: torch.full_like(x, TRUE_DU),
-    DV_KEY: lambda x: torch.full_like(x, TRUE_DV),
-    F_KEY: lambda x: torch.full_like(x, TRUE_F),
-    K_KEY: lambda x: torch.full_like(x, TRUE_K),
-}
+# --- VARIANT: direction/forward ---
+_validation = None
 # --- END VARIANT ---
 
 
@@ -152,7 +176,7 @@ def create_data_module_synthetic(hp: PINNHyperparameters) -> GrayScott2DDataModu
         true_dv=TRUE_DV,
         true_f=TRUE_F,
         true_k=TRUE_K,
-        validation=validation_synthetic,
+        validation=_validation,
     )
 
 
@@ -164,7 +188,7 @@ def create_data_module_csv(hp: PINNHyperparameters) -> GrayScott2DDataModule:
         true_dv=TRUE_DV,
         true_f=TRUE_F,
         true_k=TRUE_K,
-        validation=validation_csv,
+        validation=_validation,
     )
 
 
@@ -175,7 +199,129 @@ def create_data_module_csv(hp: PINNHyperparameters) -> GrayScott2DDataModule:
 # ============================================================================
 
 
-def create_problem(hp: PINNHyperparameters) -> Problem:
+# --- VARIANT: direction/forward ---
+def create_problem_forward(hp: PINNHyperparameters) -> Problem:
+    encode = FourierEncoding(num_frequencies=6)
+    field_u = Field(
+        config=MLPConfig(
+            in_dim=encode.out_dim(3),
+            out_dim=1,
+            hidden_layers=hp.fields_config.hidden_layers,
+            activation=hp.fields_config.activation,
+            output_activation=hp.fields_config.output_activation,
+            encode=encode,
+        )
+    )
+    field_v = Field(
+        config=MLPConfig(
+            in_dim=encode.out_dim(3),
+            out_dim=1,
+            hidden_layers=hp.fields_config.hidden_layers,
+            activation=hp.fields_config.activation,
+            output_activation=hp.fields_config.output_activation,
+            encode=encode,
+        )
+    )
+
+    fields = FieldsRegistry({U_KEY: field_u, V_KEY: field_v})
+    params = ParamsRegistry({})
+
+    bcs = [
+        NeumannBCConstraint(
+            BoundaryCondition(sampler=_left_edge, value=_zero, n_pts=100),
+            field_u,
+            normal_dim=0,
+            log_key="loss/bc_left_u",
+            weight=10.0,
+        ),
+        NeumannBCConstraint(
+            BoundaryCondition(sampler=_left_edge, value=_zero, n_pts=100),
+            field_v,
+            normal_dim=0,
+            log_key="loss/bc_left_v",
+            weight=10.0,
+        ),
+        NeumannBCConstraint(
+            BoundaryCondition(sampler=_right_edge, value=_zero, n_pts=100),
+            field_u,
+            normal_dim=0,
+            log_key="loss/bc_right_u",
+            weight=10.0,
+        ),
+        NeumannBCConstraint(
+            BoundaryCondition(sampler=_right_edge, value=_zero, n_pts=100),
+            field_v,
+            normal_dim=0,
+            log_key="loss/bc_right_v",
+            weight=10.0,
+        ),
+        NeumannBCConstraint(
+            BoundaryCondition(sampler=_bottom_edge, value=_zero, n_pts=100),
+            field_u,
+            normal_dim=1,
+            log_key="loss/bc_bottom_u",
+            weight=10.0,
+        ),
+        NeumannBCConstraint(
+            BoundaryCondition(sampler=_bottom_edge, value=_zero, n_pts=100),
+            field_v,
+            normal_dim=1,
+            log_key="loss/bc_bottom_v",
+            weight=10.0,
+        ),
+        NeumannBCConstraint(
+            BoundaryCondition(sampler=_top_edge, value=_zero, n_pts=100),
+            field_u,
+            normal_dim=1,
+            log_key="loss/bc_top_u",
+            weight=10.0,
+        ),
+        NeumannBCConstraint(
+            BoundaryCondition(sampler=_top_edge, value=_zero, n_pts=100),
+            field_v,
+            normal_dim=1,
+            log_key="loss/bc_top_v",
+            weight=10.0,
+        ),
+        DirichletBCConstraint(
+            BoundaryCondition(sampler=_initial_condition, value=_ic_u, n_pts=200),
+            field_u,
+            log_key="loss/ic_u",
+            weight=10.0,
+        ),
+        DirichletBCConstraint(
+            BoundaryCondition(sampler=_initial_condition, value=_ic_v, n_pts=200),
+            field_v,
+            log_key="loss/ic_v",
+            weight=10.0,
+        ),
+    ]
+
+    pde_u = PDEResidualConstraint(
+        fields=fields,
+        params=params,
+        residual_fn=gs_residual_u_forward,
+        log_key="loss/pde_u",
+        weight=1e-4,
+    )
+    pde_v = PDEResidualConstraint(
+        fields=fields,
+        params=params,
+        residual_fn=gs_residual_v_forward,
+        log_key="loss/pde_v",
+        weight=1e-4,
+    )
+
+    return Problem(
+        constraints=[pde_u, pde_v, *bcs],
+        criterion=build_criterion(hp.criterion),
+        fields=fields,
+        params=params,
+    )
+
+
+# --- VARIANT: direction/inverse ---
+def create_problem_inverse(hp: PINNHyperparameters) -> Problem:
     encode = FourierEncoding(num_frequencies=6)
     field_u = Field(
         config=MLPConfig(
@@ -286,14 +432,14 @@ def create_problem(hp: PINNHyperparameters) -> Problem:
     pde_u = PDEResidualConstraint(
         fields=fields,
         params=params,
-        residual_fn=gs_residual_u,
+        residual_fn=gs_residual_u_inverse,
         log_key="loss/pde_u",
         weight=1e-4,
     )
     pde_v = PDEResidualConstraint(
         fields=fields,
         params=params,
-        residual_fn=gs_residual_v,
+        residual_fn=gs_residual_v_inverse,
         log_key="loss/pde_v",
         weight=1e-4,
     )
@@ -311,3 +457,6 @@ def create_problem(hp: PINNHyperparameters) -> Problem:
         fields=fields,
         params=params,
     )
+
+
+# --- END VARIANT ---

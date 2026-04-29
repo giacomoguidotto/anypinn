@@ -53,5 +53,9 @@ licenses *args:
     uv run --only-group licenses pip-licenses {{ args }}
     uv run --only-group licenses pip-licenses --summary
 
+# Check that scaffold canonical files match examples
+check-scaffold-match:
+    uv run python -m anypinn.cli._scaffold_check
+
 # Quick local CI check (lint + type check + test)
 ci: lint check test
