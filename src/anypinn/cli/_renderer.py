@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.resources as ilr
 from pathlib import Path
 
+from anypinn.cli._generator import extract_variants
 from anypinn.cli._types import DataSource, Template
 
 _TEMPLATE_DIRS: dict[Template, str] = {
@@ -63,6 +64,20 @@ def _read(pkg: str, filename: str, experiment_name: str) -> str:
     return content.replace("__EXPERIMENT_NAME__", experiment_name)
 
 
+def _has_canonical(pkg: str, filename: str) -> bool:
+    """Check if a canonical source file exists in the package."""
+    return ilr.files(pkg).joinpath(filename).is_file()
+
+
+def _read_canonical(
+    pkg: str, filename: str, experiment_name: str, selections: dict[str, str]
+) -> str:
+    """Read a canonical source file and extract selected variants."""
+    content = ilr.files(pkg).joinpath(filename).read_text(encoding="utf-8")
+    content = content.replace("__EXPERIMENT_NAME__", experiment_name)
+    return extract_variants(content, selections)
+
+
 def _pyproject_toml(project_name: str, data_source: DataSource, lightning: bool) -> str:
     """Generate a minimal pyproject.toml for the scaffolded project."""
     deps = (
@@ -97,10 +112,24 @@ def render_project(
     exp = _EXPERIMENT_NAMES[template]
     ds = "synthetic" if data_source == DataSource.SYNTHETIC else "csv"
     tr = "lightning" if lightning else "core"
+    pkg = f"anypinn.cli.scaffold.{tdir}"
+    selections = {"source": ds}
+
+    # Use canonical files (ode.py, config.py) with variant extraction when
+    # available, falling back to legacy per-variant files (ode_{ds}.py).
+    if _has_canonical(pkg, "ode.py"):
+        ode = _read_canonical(pkg, "ode.py", exp, selections)
+    else:
+        ode = _read(pkg, f"ode_{ds}.py", exp)
+
+    if _has_canonical(pkg, "config.py"):
+        config = _read_canonical(pkg, "config.py", exp, selections)
+    else:
+        config = _read(pkg, f"config_{ds}.py", exp)
 
     files = {
-        "ode.py": _read(f"anypinn.cli.scaffold.{tdir}", f"ode_{ds}.py", exp),
-        "config.py": _read(f"anypinn.cli.scaffold.{tdir}", f"config_{ds}.py", exp),
+        "ode.py": ode,
+        "config.py": config,
         "train.py": _read("anypinn.cli.scaffold._shared", f"train_{tr}.py", exp),
     }
 

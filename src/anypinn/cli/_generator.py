@@ -83,4 +83,59 @@ def extract_variants(source: str, selections: dict[str, str]) -> str:
     for value in selections.values():
         output = re.sub(rf"(\w)_{value}\b", r"\1", output)
 
+    # Collapse runs of 3+ newlines down to 2 (one blank line).
+    output = re.sub(r"\n{3,}", "\n\n", output)
+
+    # Remove unused imports left over from variant extraction.
+    output = _remove_unused_imports(output)
+
     return output
+
+
+# Patterns for import statements
+_IMPORT_SIMPLE = re.compile(r"^import (\w+)")
+_IMPORT_FROM = re.compile(r"^from [\w.]+ import (.+)$")
+
+
+def _remove_unused_imports(source: str) -> str:
+    """Remove import names that are not referenced in the rest of the file."""
+    lines = source.split("\n")
+    non_import_text = "\n".join(
+        line for line in lines if not line.startswith(("import ", "from "))
+    )
+
+    result: list[str] = []
+    for line in lines:
+        m_simple = _IMPORT_SIMPLE.match(line)
+        if m_simple:
+            name = m_simple.group(1)
+            if name not in ("__future__",) and name not in non_import_text:
+                continue
+            result.append(line)
+            continue
+
+        m_from = _IMPORT_FROM.match(line)
+        if m_from:
+            # Always keep __future__ imports
+            if line.startswith("from __future__"):
+                result.append(line)
+                continue
+            names_str = m_from.group(1).strip()
+            # Skip complex imports (multiline, already handled by inline markers)
+            if names_str.startswith("(") or line.endswith("\\"):
+                result.append(line)
+                continue
+            names = [n.strip() for n in names_str.split(",") if n.strip()]
+            used = [n for n in names if n in non_import_text]
+            if not used:
+                continue
+            if len(used) < len(names):
+                # Reconstruct import with only used names
+                module = line.split(" import ")[0]
+                line = f"{module} import {', '.join(used)}"
+            result.append(line)
+            continue
+
+        result.append(line)
+
+    return "\n".join(result)
