@@ -1,7 +1,6 @@
-# Design Rationale & Future Work
+# Design Rationale
 
-This document addresses two questions: **why AnyPINN exists** given the breadth of existing PINN
-libraries, and **what remains to be built** for the library to reach its full intended scope.
+This document addresses **why AnyPINN exists** given the breadth of existing PINN libraries.
 
 ---
 
@@ -16,8 +15,8 @@ PINA) and TensorFlow-based tools (DeepXDE, TensorDiffEq, SciANN, PyDEns, Elvet, 
 
 ### 1.1 The Framework Ecosystem Problem
 
-More than half of the existing libraries — DeepXDE (in its original form), TensorDiffEq, SciANN,
-PyDEns, Elvet, and NVIDIA SimNet — are TensorFlow-based. This is a meaningful architectural
+More than half of the existing libraries (DeepXDE in its original form, TensorDiffEq, SciANN,
+PyDEns, Elvet, and NVIDIA SimNet) are TensorFlow-based. This is a meaningful architectural
 liability. PyTorch has become the de-facto standard for ML research: its share of papers, tooling,
 and downstream ecosystem (Lightning, Hugging Face, einops, triton, `torch.compile`) dwarfs
 TensorFlow's in the research space. Directing a researcher to a TensorFlow-based PINN library in
@@ -26,7 +25,7 @@ TensorFlow's in the research space. Directing a researcher to a TensorFlow-based
 AnyPINN is pure PyTorch from the ground up. Its core primitives (`Field`, `Parameter`, `Problem`,
 `Constraint`) are all `nn.Module` subclasses. This means the library participates naturally in the
 entire PyTorch ecosystem: mixed precision, `torch.compile`, distributed data parallel, gradient
-checkpointing — none of these require library-level support because the library never wraps the
+checkpointing, none of which require library-level support because the library never wraps the
 training loop.
 
 ### 1.2 The Training Engine Coupling Problem
@@ -41,8 +40,8 @@ Every major competitor couples physics problem definition to its own training lo
 | NVIDIA Modulus | Full platform: owns Trainer, distributed, logging |
 | PINA           | Own `Trainer` wrapping Lightning                  |
 
-The consequence is that when the training ecosystem evolves — new optimizers, new distributed
-strategies, new precision formats — users must wait for the library to support them or write
+The consequence is that when the training ecosystem evolves (new optimizers, new distributed
+strategies, new precision formats), users must wait for the library to support them or write
 wrappers around the library's own abstractions.
 
 AnyPINN takes a different position: **training is not the library's business.** `Problem` is an
@@ -66,8 +65,8 @@ loop forces workarounds.
 ### 1.3 Inverse Problems as a First-Class Abstraction
 
 Most PINN libraries were designed for **forward problems**: given a known PDE and boundary or
-initial conditions, find the solution field `u(x, t)`. Inverse problems — recover unknown
-parameters from partial observations — are typically supported as extensions or workarounds.
+initial conditions, find the solution field `u(x, t)`. Inverse problems, where unknown
+parameters are recovered from partial observations, are typically supported as extensions or workarounds.
 
 AnyPINN treats the inverse problem as the primary use case. This is reflected throughout the type
 system:
@@ -81,12 +80,12 @@ changing one config line, not restructuring the problem definition.
 
 **`ValidationRegistry` provides ground-truth tracking for recovered parameters.** A CSV column can
 be bound to a parameter name at construction time. The library then logs the MSE between the
-recovered parameter and the known ground truth at every training step. This workflow — recovering
-parameters and continuously comparing them against a known reference — is central to inverse
+recovered parameter and the known ground truth at every training step. This workflow (recovering
+parameters and continuously comparing them against a known reference) is central to inverse
 problems and is not present as a first-class feature in any of the listed alternatives.
 
 **`ArgsRegistry` unifies fixed and learnable arguments.** The ODE callable receives an
-`ArgsRegistry` — a typed dict of `Argument` instances. `Parameter` inherits from `Argument`, so
+`ArgsRegistry`, a typed dict of `Argument` instances. `Parameter` inherits from `Argument`, so
 the same ODE function works whether the parameters are fixed or learned. This composability is
 absent from libraries that distinguish the two at the problem-definition level.
 
@@ -108,14 +107,14 @@ anypinn.lightning    ← Optional at every level
 The strict dependency direction (`catalog → problems → core`, `lightning → core`) ensures that each
 layer is usable without the ones above it. A user who only needs `anypinn.core` takes no
 dependency on Lightning, no dependency on problem-specific constraint implementations, and no
-dependency on the catalog. The core is 193 lines of `problem.py` and can be understood in a single
+dependency on the catalog. The core is ~200 lines of `problem.py` and can be understood in a single
 reading.
 
 ### 1.5 Developer Experience as a First-Class Concern
 
 Research libraries are routinely distributed in a state that would be unacceptable in production
 software: `assert` statements for validation, positional-argument constructors, no config
-validation, no type stubs. These are not cosmetic complaints — they produce silent failures,
+validation, no type stubs. These are not cosmetic complaints; they produce silent failures,
 confusing errors, and codebases that are hard to extend.
 
 AnyPINN addresses this with:
@@ -146,17 +145,17 @@ $ anypinn create my-project
 │  Yes
 
 ◇  Creating my-project/...
-│  pyproject.toml   — project dependencies
-│  ode.py           — mathematical definition
-│  config.py        — training configuration
-│  train.py         — execution script
-│  data/            — data directory
+│  pyproject.toml   project dependencies
+│  ode.py           mathematical definition
+│  config.py        training configuration
+│  train.py         execution script
+│  data/            data directory
 
 ●  Done! cd my-project && uv sync && uv run train.py
 ```
 
 The generated project is fully runnable. The researcher's first meaningful action is reading and
-modifying `ode.py` — not reading library documentation to understand what arguments
+modifying `ode.py`, not reading library documentation to understand what arguments
 `PINNDataModule` needs. The `--lightning / --no-lightning` flag is particularly valuable: it
 generates a training script matched to the user's chosen layer, teaching the two-layer architecture
 by letting the user choose.
@@ -190,8 +189,8 @@ This section describes what AnyPINN can do, grouped by layer.
 
 ### ODE inverse problems
 
-The primary use case. `ODEInverseProblem` composes three constraint types — residual, initial
-condition, and data matching — over arbitrary ODE systems:
+The primary use case. `ODEInverseProblem` composes three constraint types (residual, initial
+condition, and data matching) over arbitrary ODE systems:
 
 - **Arbitrary-order residual constraints.** `ODEProperties.order` specifies the ODE order (default
   1). `ResidualsConstraint` chains autograd at each derivative level up to `order`, comparing the
@@ -216,13 +215,13 @@ condition, and data matching — over arbitrary ODE systems:
   and parameters it needs; coupled systems (e.g. velocity + pressure) are expressed naturally by
   passing different sub-registries to each constraint.
 - **Composable differential operators.** `anypinn.lib.diff` provides `grad`, `partial`,
-  `mixed_partial`, `laplacian`, `divergence`, and `hessian` — all built on `torch.autograd.grad`
+  `mixed_partial`, `laplacian`, `divergence`, and `hessian`, all built on `torch.autograd.grad`
   and usable directly inside any constraint or ODE callable.
 
 ### Collocation
 
 Five built-in samplers, selected via the `collocation_sampler` string literal in
-`TrainingDataConfig`: `"uniform"`, `"random"`, `"latin_hypercube"`, `"log_uniform"` (preserves
+`TrainingDataConfig`: `"uniform"`, `"random"`, `"latin_hypercube"`, `"log_uniform_1d"` (preserves
 log-space density for epidemic models), and `"adaptive"` (residual-weighted sampling with
 configurable exploration ratio via `AdaptiveCollocationCallback`).
 
@@ -252,7 +251,7 @@ typed configuration system that makes misconfiguration a compile-time error rath
 one.
 
 The library's justification is strongest for researchers working on parameter recovery in
-dynamical systems — epidemiological models, mechanical oscillators, predator-prey dynamics — who
+dynamical systems (epidemiological models, mechanical oscillators, predator-prey dynamics) who
 want to define physics in PyTorch terms and bring their own training infrastructure. The PDE
 foundation and ODE ergonomics (arbitrary-order constraints, native derivative IC enforcement,
 configurable criteria, spatial encodings, coupled-system scoping, and adaptive collocation) are

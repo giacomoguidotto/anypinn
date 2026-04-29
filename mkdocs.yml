@@ -128,7 +128,7 @@ nav:
     - Allen-Cahn: catalog/allen-cahn.md
     - Custom ODE: catalog/custom.md
     - Blank: catalog/blank.md
-  - Design Rationale & Future Work: rationale.md
+  - Design Rationale: rationale.md
   - Contributing: CONTRIBUTING.md
   - Code of Conduct: CODE_OF_CONDUCT.md
   - Third Party Licenses:
