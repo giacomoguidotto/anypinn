@@ -1,0 +1,126 @@
+"""Custom ODE — mathematical definition."""
+
+from __future__ import annotations
+
+from torch import Tensor
+
+from anypinn.core import ArgsRegistry, ValidationRegistry
+from anypinn.problems import ODEHyperparameters, ODEInverseProblem
+
+# ============================================================================
+# Keys — define string keys for your state variables and parameters
+# ============================================================================
+
+# TODO: define state variable keys
+# Y1_KEY = "y1"
+# Y2_KEY = "y2"
+
+# TODO: define parameter keys
+# PARAM_KEY = "param"
+
+# ============================================================================
+# Constants
+# ============================================================================
+
+# TODO: set your initial conditions
+# Y1_0 = 1.0
+# Y2_0 = 0.0
+
+# TODO: set time domain
+# T_TOTAL = 10
+
+# ============================================================================
+# ODE Definition
+# ============================================================================
+
+
+def my_ode(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+    """TODO: implement your ODE system.
+
+    Args:
+        x: Independent variable (e.g. time). Shape: (N,)
+        y: State variables. Each element has shape (N,)
+        args: Parameters (both fixed and learnable).
+
+    Returns:
+        dy/dx stacked as a tensor.
+    """
+    # Example:
+    # y1, y2 = y
+    # p = args[PARAM_KEY]
+    # dy1 = -p(x) * y1
+    # dy2 = p(x) * y1 - y2
+    # return torch.stack([dy1, dy2])
+    raise NotImplementedError("TODO: implement your ODE")
+
+
+# ============================================================================
+# Validation
+# ============================================================================
+
+# --- VARIANT: source/synthetic ---
+validation_synthetic: ValidationRegistry = {
+    # TODO: add validation sources
+    # "param_name": lambda x: torch.full_like(x, TRUE_VALUE),
+}
+# --- VARIANT: source/csv ---
+validation_csv: ValidationRegistry = {
+    # TODO: add validation sources
+    # "param_name": ColumnRef(column="your_column"),
+}
+# --- END VARIANT ---
+
+# ============================================================================
+# Data Module Factory
+# ============================================================================
+
+
+# --- VARIANT: source/synthetic ---
+def create_data_module_synthetic(hp: ODEHyperparameters):
+    # TODO: create and return your DataModule
+    # See anypinn.catalog for examples of DataModule subclasses.
+    raise NotImplementedError("TODO: implement create_data_module")
+
+
+# --- VARIANT: source/csv ---
+def create_data_module_csv(hp: ODEHyperparameters):
+    # TODO: create and return your DataModule
+    # See anypinn.catalog for examples of DataModule subclasses.
+    raise NotImplementedError("TODO: implement create_data_module")
+
+
+# --- END VARIANT ---
+
+# ============================================================================
+# Problem Factory
+# ============================================================================
+
+
+def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
+    # TODO: define your problem
+    # props = ODEProperties(
+    #     ode=my_ode,
+    #     y0=torch.tensor([Y1_0, Y2_0]),
+    #     args={
+    #         # fixed arguments go here
+    #     },
+    # )
+    #
+    # fields = FieldsRegistry({
+    #     Y1_KEY: Field(config=hp.fields_config),
+    #     Y2_KEY: Field(config=hp.fields_config),
+    # })
+    # params = ParamsRegistry({
+    #     PARAM_KEY: Parameter(config=hp.params_config),
+    # })
+    #
+    # def predict_data(
+    #     x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry
+    # ) -> Tensor:
+    #     return cast(Tensor, fields[Y1_KEY](x_data))
+    #
+    # return ODEInverseProblem(
+    #     props=props, hp=hp, fields=fields, params=params,
+    #     predict_data=predict_data,
+    # )
+    raise NotImplementedError("TODO: implement create_problem")

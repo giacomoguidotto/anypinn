@@ -64,11 +64,6 @@ def _read(pkg: str, filename: str, experiment_name: str) -> str:
     return content.replace("__EXPERIMENT_NAME__", experiment_name)
 
 
-def _has_canonical(pkg: str, filename: str) -> bool:
-    """Check if a canonical source file exists in the package."""
-    return ilr.files(pkg).joinpath(filename).is_file()
-
-
 def _read_canonical(
     pkg: str, filename: str, experiment_name: str, selections: dict[str, str]
 ) -> str:
@@ -115,21 +110,9 @@ def render_project(
     pkg = f"anypinn.cli.scaffold.{tdir}"
     selections = {"source": ds}
 
-    # Use canonical files (ode.py, config.py) with variant extraction when
-    # available, falling back to legacy per-variant files (ode_{ds}.py).
-    if _has_canonical(pkg, "ode.py"):
-        ode = _read_canonical(pkg, "ode.py", exp, selections)
-    else:
-        ode = _read(pkg, f"ode_{ds}.py", exp)
-
-    if _has_canonical(pkg, "config.py"):
-        config = _read_canonical(pkg, "config.py", exp, selections)
-    else:
-        config = _read(pkg, f"config_{ds}.py", exp)
-
     files = {
-        "ode.py": ode,
-        "config.py": config,
+        "ode.py": _read_canonical(pkg, "ode.py", exp, selections),
+        "config.py": _read_canonical(pkg, "config.py", exp, selections),
         "train.py": _read("anypinn.cli.scaffold._shared", f"train_{tr}.py", exp),
     }
 
