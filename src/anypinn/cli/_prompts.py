@@ -31,7 +31,7 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
 
     menu = TerminalMenu(
         labels,
-        menu_cursor="│  ● ",
+        menu_cursor="● ",
         menu_cursor_style=("fg_cyan", "bold"),
         menu_highlight_style=("fg_cyan",),
     )
