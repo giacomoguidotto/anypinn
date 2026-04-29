@@ -3,7 +3,10 @@ strict: true
 validation:
   omitted_files: warn
   absolute_links: warn
-  unrecognized_links: warn
+  # Downgraded from warn: mkdocstrings generates cross-reference links for
+  # types from external packages (e.g. torch.Tensor) that cannot be resolved
+  # locally, producing false-positive warnings.
+  unrecognized_links: info
   anchors: warn
 theme:
   name: material
@@ -94,6 +97,10 @@ plugins:
       # These links are valid but htmlproofer cannot resolve them correctly.
       ignore_urls:
         - "*#anypinn.*"
+        # Single-letter "links" produced by mkdocstrings rendering math
+        # notation like f(t, y) or u(x) from docstrings.
+        - "x"
+        - "t"
 hooks:
   - docs/hooks/page_icons.py
   - docs/hooks/rewrite_links.py
@@ -110,6 +117,7 @@ edit_uri: edit/main/docs/
 nav:
   - index.md
   - Getting Started: getting-started.md
+  - CLI Reference: cli.md
   - Catalog:
     - catalog/index.md
     - SIR Epidemic Model: catalog/sir.md
