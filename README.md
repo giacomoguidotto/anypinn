@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/giacomoguidotto/anypinn/actions"><img src="https://github.com/giacomoguidotto/anypinn/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/giacomoguidotto/anypinn/actions"><img src="https://github.com/giacomoguidotto/anypinn/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
   <a href="https://pypi.org/project/anypinn/"><img src="https://img.shields.io/pypi/v/anypinn" alt="PyPI"></a>
   <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv"></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
