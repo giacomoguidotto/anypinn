@@ -2,6 +2,10 @@
 
 The purpose of this tile is to describe common mistakes and confusion points that agents might encounter as they work in this project. If you ever encounter something in the project that surprises you, please alert the developer working with you and indicate that this is the case in the AgentMD file to help prevent future agents from having the same issue.
 
+# Environment
+
+- Tools like `just` and `uv` are managed by mise. Run `mise activate bash` (or `mise activate zsh`) before using them.
+
 # Workflow rules
 
 - **Always run `just ci` after any code change.**

@@ -4,7 +4,9 @@
 name: Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
 
 env:
@@ -12,6 +14,7 @@ env:
 
 jobs:
   deploy:
+    if: github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: write
     runs-on: ubuntu-latest
