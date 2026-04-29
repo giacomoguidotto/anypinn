@@ -1,3 +1,5 @@
+"""Lightning callbacks for stopping, progress, predictions, and adaptive collocation."""
+
 from __future__ import annotations
 
 from collections import deque
@@ -214,14 +216,21 @@ class AdaptiveCollocationCallback(Callback):
 
 class DataScaling(DataCallback):
     """
-    Callback to transform the data and collocation points.
+    Data callback that normalizes coordinates and scales observations.
 
-    Scales x to [0, 1] and applies per-series scaling factors to y.
+    Rescales x to [0, 1] and multiplies y by per-series factors. This is
+    important when state variables span very different magnitudes (e.g. the
+    Lorenz system), as raw values can destabilize gradient-based training.
+
+    After scaling, validation functions are automatically adjusted so that
+    logged validation losses remain in the original (unscaled) coordinate
+    space.
 
     Args:
         y_scale: Scaling factor(s) for y data. Can be:
-            - A single float: applied to all series
-            - A sequence of floats: one per series (length must match number of series)
+            - A single float: applied to all series.
+            - A sequence of floats: one per series (length must match
+              the number of y columns).
     """
 
     def __init__(self, y_scale: float | Sequence[float]):

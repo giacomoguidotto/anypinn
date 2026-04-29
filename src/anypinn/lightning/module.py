@@ -1,3 +1,5 @@
+"""PINNModule: LightningModule wrapper for anypinn Problem instances."""
+
 from __future__ import annotations
 
 from typing import cast, override
