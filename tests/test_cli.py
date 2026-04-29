@@ -12,7 +12,7 @@ import pytest
 from typer.testing import CliRunner
 
 from anypinn.cli import app
-from anypinn.cli._types import TEMPLATES_WITH_DIRECTION, DataSource, Template
+from anypinn.cli._types import TEMPLATES_WITH_DIRECTION, DataSource, Direction, Template
 
 runner = CliRunner()
 
@@ -435,6 +435,210 @@ class TestCreateCommand:
 
         assert result.exit_code == 0
         assert "Done!" in result.output
+
+
+class TestDirectionAxis:
+    """Tests for the forward/inverse direction axis."""
+
+    @pytest.mark.parametrize("template", list(TEMPLATES_WITH_DIRECTION))
+    @pytest.mark.parametrize("direction", list(Direction))
+    def test_direction_combinations(
+        self, tmp_path: Path, template: Template, direction: Direction
+    ) -> None:
+        """Every PDE template x direction combo generates valid Python."""
+        project = tmp_path / f"proj-{template.value}-{direction.value}"
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project),
+                "--template",
+                template.value,
+                "--data",
+                "synthetic",
+                "--no-lightning",
+                "--direction",
+                direction.value,
+                "--no-run",
+            ],
+        )
+        assert result.exit_code == 0, result.output
+        for py_file in project.glob("*.py"):
+            source = py_file.read_text()
+            compile(source, str(py_file), "exec")
+
+    @pytest.mark.parametrize("template", list(TEMPLATES_WITH_DIRECTION))
+    def test_forward_has_no_params(self, tmp_path: Path, template: Template) -> None:
+        """Forward problems must have empty ParamsRegistry."""
+        project = tmp_path / f"proj-{template.value}-forward"
+        runner.invoke(
+            app,
+            [
+                "create",
+                str(project),
+                "--template",
+                template.value,
+                "--data",
+                "synthetic",
+                "--no-lightning",
+                "--direction",
+                "forward",
+                "--no-run",
+            ],
+        )
+        ode_content = (project / "ode.py").read_text()
+        assert "ParamsRegistry({})" in ode_content
+
+    @pytest.mark.parametrize(
+        "template",
+        [t for t in TEMPLATES_WITH_DIRECTION if t != Template.INVERSE_DIFFUSIVITY],
+    )
+    def test_inverse_has_params(self, tmp_path: Path, template: Template) -> None:
+        """Inverse problems must have non-empty ParamsRegistry.
+
+        Excludes inverse_diffusivity which learns D(x) as a Field, not a Parameter.
+        """
+        project = tmp_path / f"proj-{template.value}-inverse"
+        runner.invoke(
+            app,
+            [
+                "create",
+                str(project),
+                "--template",
+                template.value,
+                "--data",
+                "synthetic",
+                "--no-lightning",
+                "--direction",
+                "inverse",
+                "--no-run",
+            ],
+        )
+        ode_content = (project / "ode.py").read_text()
+        # Inverse should NOT have empty ParamsRegistry
+        assert "ParamsRegistry({})" not in ode_content
+
+    def test_direction_ignored_for_ode_models(self, tmp_path: Path) -> None:
+        """Direction flag is silently ignored for non-PDE templates."""
+        project = tmp_path / "proj-sir"
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(project),
+                "--template",
+                "sir",
+                "--data",
+                "synthetic",
+                "--no-lightning",
+                "--no-run",
+            ],
+        )
+        assert result.exit_code == 0
+
+    def test_invalid_direction_exits_2(self, tmp_path: Path) -> None:
+        """Invalid direction value exits with code 2."""
+        result = runner.invoke(
+            app,
+            [
+                "create",
+                str(tmp_path / "proj"),
+                "--template",
+                "heat-1d",
+                "--data",
+                "synthetic",
+                "--no-lightning",
+                "--direction",
+                "bad",
+                "--no-run",
+            ],
+        )
+        assert result.exit_code == 2
+
+
+class TestGeneratedOutputQuality:
+    """Tests that generated files are clean (no markers, no suffixes)."""
+
+    @pytest.mark.parametrize("template", list(TEMPLATES_WITH_DIRECTION))
+    @pytest.mark.parametrize("direction", list(Direction))
+    def test_no_variant_markers_in_output(
+        self, tmp_path: Path, template: Template, direction: Direction
+    ) -> None:
+        """Generated files must not contain variant marker comments."""
+        project = tmp_path / f"proj-{template.value}-{direction.value}"
+        runner.invoke(
+            app,
+            [
+                "create",
+                str(project),
+                "--template",
+                template.value,
+                "--data",
+                "synthetic",
+                "--no-lightning",
+                "--direction",
+                direction.value,
+                "--no-run",
+            ],
+        )
+        for py_file in project.glob("*.py"):
+            source = py_file.read_text()
+            assert "# --- VARIANT:" not in source, f"Marker in {py_file.name}"
+            assert "# --- END VARIANT" not in source, f"End marker in {py_file.name}"
+
+    @pytest.mark.parametrize("template", list(TEMPLATES_WITH_DIRECTION))
+    def test_no_suffixed_names_in_output(self, tmp_path: Path, template: Template) -> None:
+        """Generated files must not contain variant-suffixed function names."""
+        project = tmp_path / f"proj-{template.value}-clean"
+        runner.invoke(
+            app,
+            [
+                "create",
+                str(project),
+                "--template",
+                template.value,
+                "--data",
+                "synthetic",
+                "--no-lightning",
+                "--direction",
+                "inverse",
+                "--no-run",
+            ],
+        )
+        for py_file in project.glob("*.py"):
+            source = py_file.read_text()
+            assert "_synthetic" not in source, f"Suffix in {py_file.name}"
+            assert "_csv" not in source, f"Suffix in {py_file.name}"
+            assert "create_problem_inverse" not in source, f"Suffix in {py_file.name}"
+            assert "create_problem_forward" not in source, f"Suffix in {py_file.name}"
+            assert "create_data_module_inverse" not in source, f"Suffix in {py_file.name}"
+            assert "create_data_module_forward" not in source, f"Suffix in {py_file.name}"
+
+    @pytest.mark.parametrize("template", list(Template))
+    @pytest.mark.parametrize("data_source", list(DataSource))
+    def test_no_markers_in_any_template(
+        self, tmp_path: Path, template: Template, data_source: DataSource
+    ) -> None:
+        """No generated file from any template should contain variant markers."""
+        project = tmp_path / f"proj-{template.value}-{data_source.value}"
+        args = [
+            "create",
+            str(project),
+            "--template",
+            template.value,
+            "--data",
+            data_source.value,
+            "--no-lightning",
+            "--no-run",
+        ]
+        if template in TEMPLATES_WITH_DIRECTION:
+            args += ["--direction", "inverse"]
+        result = runner.invoke(app, args)
+        assert result.exit_code == 0
+        for py_file in project.glob("*.py"):
+            source = py_file.read_text()
+            assert "# --- VARIANT:" not in source
+            assert "# --- END VARIANT" not in source
 
 
 class TestListTemplates:
