@@ -20,14 +20,39 @@ from anypinn.core.validation import ValidationRegistry, resolve_validation
 
 
 class DataCallback:
-    """Abstract base class for building new data callbacks."""
+    """Base class for callbacks that transform data during setup.
+
+    Subclass this to apply custom preprocessing (e.g. scaling,
+    normalization) to training data and collocation points before the
+    dataset is constructed.
+    """
 
     def transform_data(self, data: DataBatch, coll: Tensor) -> tuple[DataBatch, Tensor]:
-        """Transform the data and collocation points."""
+        """Transform training data and collocation points.
+
+        Called during ``PINNDataModule.setup()`` after data is loaded
+        but before the ``PINNDataset`` is created. Multiple callbacks
+        are applied in registration order.
+
+        Args:
+            data: Tuple of (x, y) training tensors.
+            coll: Collocation point coordinates.
+
+        Returns:
+            Transformed (data, coll) tuple.
+        """
         return data, coll
 
     def on_after_setup(self, dm: "PINNDataModule") -> None:
-        """Called after setup is complete."""
+        """Hook called after ``PINNDataModule.setup()`` completes.
+
+        Use this to perform post-processing that depends on the fully
+        constructed data module (e.g. adjusting validation functions
+        to account for earlier scaling transforms).
+
+        Args:
+            dm: The fully initialized data module.
+        """
         return None
 
 
@@ -162,7 +187,18 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         )
 
     def load_data(self, config: IngestionConfig) -> DataBatch:
-        """Load raw data from IngestionConfig."""
+        """Load training data from a CSV file.
+
+        Reads the CSV at ``config.df_path``, extracts x and y columns,
+        and returns tensors shaped for PINN training.
+
+        Args:
+            config: Ingestion configuration specifying paths and columns.
+
+        Returns:
+            Tuple of ``(x, y)`` tensors with shapes ``(N, 1)`` and
+            ``(N, k, 1)`` respectively.
+        """
         df = pd.read_csv(config.df_path)
 
         if config.x_column is not None:
@@ -185,7 +221,20 @@ class PINNDataModule(pl.LightningDataModule, ABC):
 
     @abstractmethod
     def gen_data(self, config: GenerationConfig) -> DataBatch:
-        """Generate synthetic data from GenerationConfig."""
+        """Generate synthetic training data from a known solution.
+
+        Subclasses implement this to solve the ODE/PDE with known
+        parameters and return the resulting data (optionally with added
+        noise).
+
+        Args:
+            config: Generation configuration specifying the domain,
+                noise level, and ground-truth arguments.
+
+        Returns:
+            Tuple of ``(x, y)`` tensors with shapes ``(N, d)`` and
+            ``(N, k, 1)`` respectively.
+        """
 
     @override
     def setup(self, stage: str | None = None) -> None:

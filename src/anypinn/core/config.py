@@ -53,6 +53,12 @@ class ScalarConfig:
 class AdamConfig:
     """
     Configuration for the Adam optimizer.
+
+    Attributes:
+        lr: Learning rate (must be positive).
+        betas: Coefficients for computing running averages of gradient
+            and its square. Both must be in (0, 1).
+        weight_decay: L2 penalty coefficient (non-negative).
     """
 
     lr: float = 1e-3
@@ -74,6 +80,15 @@ class AdamConfig:
 class LBFGSConfig:
     """
     Configuration for the L-BFGS optimizer.
+
+    Attributes:
+        lr: Learning rate (must be positive).
+        max_iter: Maximum number of iterations per optimization step.
+        max_eval: Maximum number of function evaluations per step
+            (defaults to ``max_iter * 1.25``).
+        history_size: Number of past updates to store for the
+            approximation of the inverse Hessian.
+        line_search_fn: Line search function (``"strong_wolfe"`` or ``None``).
     """
 
     lr: float = 1.0
@@ -95,6 +110,16 @@ class LBFGSConfig:
 class ReduceLROnPlateauConfig:
     """
     Configuration for Learning Rate Scheduler (ReduceLROnPlateau).
+
+    Attributes:
+        mode: ``"min"`` to reduce LR when the metric stops decreasing,
+            ``"max"`` when it stops increasing.
+        factor: Factor by which the learning rate is reduced (must be
+            in (0, 1)).
+        patience: Number of epochs with no improvement before the LR
+            is reduced.
+        threshold: Minimum change to qualify as an improvement.
+        min_lr: Lower bound on the learning rate.
     """
 
     mode: Literal["min", "max"]
@@ -114,6 +139,11 @@ class ReduceLROnPlateauConfig:
 class CosineAnnealingConfig:
     """
     Configuration for Cosine Annealing LR Scheduler.
+
+    Attributes:
+        T_max: Maximum number of iterations (typically set to
+            ``max_epochs``).
+        eta_min: Minimum learning rate at the end of the schedule.
     """
 
     T_max: int
@@ -128,6 +158,11 @@ class CosineAnnealingConfig:
 class EarlyStoppingConfig:
     """
     Configuration for Early Stopping callback.
+
+    Attributes:
+        patience: Number of epochs with no improvement before stopping.
+        mode: ``"min"`` to stop when the metric stops decreasing,
+            ``"max"`` when it stops increasing.
     """
 
     patience: int
@@ -141,7 +176,18 @@ class EarlyStoppingConfig:
 @dataclass(kw_only=True)
 class SMMAStoppingConfig:
     """
-    Configuration for Simple Moving Average Stopping callback.
+    Configuration for Smoothed Moving Average (SMMA) Stopping callback.
+
+    Training stops when the relative improvement of the SMMA over the
+    ``lookback`` window falls below ``threshold``.
+
+    Attributes:
+        window: Number of epochs used to compute the smoothed moving
+            average.
+        threshold: Minimum relative improvement required to continue
+            training.
+        lookback: Number of SMMA values to compare for improvement
+            detection.
     """
 
     window: int
@@ -194,8 +240,16 @@ class TrainingDataConfig:
 @dataclass(kw_only=True)
 class IngestionConfig(TrainingDataConfig):
     """
-    Configuration for data ingestion from files.
-    If x_column is None, the data is assumed to be evenly spaced.
+    Configuration for loading training data from a CSV file.
+
+    Attributes:
+        df_path: Path to the CSV file.
+        x_transform: Optional transform applied to the x column values
+            after loading (e.g. unit conversion).
+        x_column: Name of the column to use as x coordinates. If
+            ``None``, rows are assumed to be evenly spaced and an
+            integer index is used.
+        y_columns: List of column names to use as y observations.
     """
 
     df_path: Path
@@ -207,7 +261,17 @@ class IngestionConfig(TrainingDataConfig):
 @dataclass(kw_only=True)
 class GenerationConfig(TrainingDataConfig):
     """
-    Configuration for data generation.
+    Configuration for generating synthetic training data.
+
+    Used in forward problems where the ground-truth ODE/PDE solution is
+    computed from known parameters and optionally corrupted with noise.
+
+    Attributes:
+        x: Coordinate tensor to evaluate the ODE/PDE at.
+        noise_level: Standard deviation of Gaussian noise added to the
+            generated observations (0.0 for clean data).
+        args_to_train: Arguments used by the data-generation ODE/PDE
+            callable to produce the synthetic solution.
     """
 
     x: Tensor
@@ -219,6 +283,26 @@ class GenerationConfig(TrainingDataConfig):
 class PINNHyperparameters:
     """
     Aggregated hyperparameters for the PINN model.
+
+    Attributes:
+        lr: Base learning rate (used as fallback when no ``optimizer``
+            config is provided).
+        training_data: Data source configuration — either
+            ``IngestionConfig`` (CSV) or ``GenerationConfig`` (synthetic).
+        fields_config: MLP architecture for the neural field(s).
+        params_config: Configuration for learnable parameters (scalar
+            or MLP-backed).
+        max_epochs: Maximum number of training epochs.
+        gradient_clip_val: Optional gradient clipping value.
+        criterion: Loss function name (``"mse"``, ``"huber"``, or
+            ``"l1"``).
+        optimizer: Optimizer configuration. If ``None``, Adam with
+            ``lr`` is used.
+        scheduler: Learning rate scheduler configuration.
+        early_stopping: Optional early stopping configuration
+            (patience-based).
+        smma_stopping: Optional SMMA stopping configuration
+            (improvement-based).
     """
 
     lr: float
