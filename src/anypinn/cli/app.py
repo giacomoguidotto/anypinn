@@ -214,7 +214,8 @@ def create(
 
     _console.print("[bold green]◇[/]  Dependencies synced")
     _console.print("[dim]│[/]")
-    _console.print("[bold cyan]●[/]  Running `uv run train.py`...")
+    _console.print("[bold cyan]●[/]  Starting training with `uv run train.py`...")
+    _console.print("   [dim]You can stop at any time and it will save the current checkpoint![/]")
     _console.print()
 
     os.chdir(project_dir)
