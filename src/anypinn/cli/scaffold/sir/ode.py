@@ -9,7 +9,7 @@ from anypinn.core import (
     ArgsRegistry,
     Argument,
     # --- VARIANT: source/csv ---
-    ColumnRef,
+    ColumnRef,  # noqa: F401
     # --- END VARIANT ---
     Field,
     FieldsRegistry,
@@ -73,8 +73,9 @@ validation_synthetic: ValidationRegistry = {
 }
 # --- VARIANT: source/csv ---
 validation_csv: ValidationRegistry = {
-    # Change the column name and transform to match your CSV
-    BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * DELTA),
+    BETA_KEY: lambda x: torch.full_like(x, TRUE_BETA),
+    # To validate against a CSV column instead, use:
+    # BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * DELTA),
 }
 # --- END VARIANT ---
 
