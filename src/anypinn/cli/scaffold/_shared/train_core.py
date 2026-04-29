@@ -35,7 +35,7 @@ def main() -> None:
     if args.predict:
         problem.load_state_dict(torch.load(model_path, weights_only=True))
     else:
-        optimizer = torch.optim.Adam(problem.parameters(), lr=hp.lr)  # noqa: F841
+        optimizer = torch.optim.Adam(problem.parameters(), lr=hp.lr)
 
         def on_interrupt(_signum, _frame):
             print("\nTraining interrupted. Saving model...")
@@ -44,13 +44,19 @@ def main() -> None:
 
         signal.signal(signal.SIGINT, on_interrupt)
 
-        # TODO: implement your training loop here
-        # for epoch in range(hp.max_epochs):
-        #     for batch in your_dataloader:
-        #         optimizer.zero_grad()
-        #         loss = problem.training_loss(batch, log=None)
-        #         loss.backward()
-        #         optimizer.step()
+        # Change these parameters to suit your problem
+        train_dl = dm.train_dataloader()
+        for epoch in range(hp.max_epochs):
+            epoch_loss = 0.0
+            for batch in train_dl:
+                optimizer.zero_grad()
+                loss = problem.training_loss(batch, log=None)
+                loss.backward()
+                optimizer.step()
+                epoch_loss += loss.item()
+
+            if (epoch + 1) % 100 == 0:
+                print(f"Epoch {epoch + 1}/{hp.max_epochs} — loss: {epoch_loss:.4e}")
 
         torch.save(problem.state_dict(), model_path)
 

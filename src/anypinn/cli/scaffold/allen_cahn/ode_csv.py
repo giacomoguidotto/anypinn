@@ -101,17 +101,12 @@ class AllenCahnResidualScorer:
 # ============================================================================
 
 
-def create_data_module(
-    hp: PINNHyperparameters,
-    fields: FieldsRegistry,
-    params: ParamsRegistry,
-) -> AllenCahnDataModule:
-    scorer = AllenCahnResidualScorer(fields, params)
+def create_data_module(hp: PINNHyperparameters) -> AllenCahnDataModule:
+    # To enable adaptive collocation, pass residual_scorer=AllenCahnResidualScorer(fields, params)
     return AllenCahnDataModule(
         hp=hp,
         true_epsilon=TRUE_EPSILON,
         grid_size=GRID_SIZE,
-        residual_scorer=scorer,
     )
 
 

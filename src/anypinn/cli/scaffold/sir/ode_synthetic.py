@@ -76,8 +76,27 @@ validation: ValidationRegistry = {
 def create_data_module(hp: ODEHyperparameters):
     from anypinn.catalog.sir import SIRInvDataModule
 
+    # Unscaled SIR for data generation (no C or T scaling)
+    def SIR_unscaled(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+        S, I = y
+        b, d, N = args[BETA_KEY], args[DELTA_KEY], args[N_KEY]
+        dS = -b(x) * S * I / N(x)
+        dI = b(x) * S * I / N(x) - d(x) * I
+        return torch.stack([dS, dI])
+
+    gen_props = ODEProperties(
+        ode=SIR_unscaled,
+        y0=torch.tensor([N_POP - 1, 1]),
+        args={
+            BETA_KEY: Argument(TRUE_BETA),
+            DELTA_KEY: Argument(DELTA),
+            N_KEY: Argument(N_POP),
+        },
+    )
+
     return SIRInvDataModule(
         hp=hp,
+        gen_props=gen_props,
         validation=validation,
         callbacks=[DataScaling(y_scale=1 / C)],
     )

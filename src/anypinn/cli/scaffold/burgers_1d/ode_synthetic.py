@@ -112,17 +112,12 @@ def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry
 validation: ValidationRegistry = {NU_KEY: lambda x: torch.full_like(x, TRUE_NU)}
 
 
-def create_data_module(
-    hp: PINNHyperparameters,
-    fields: FieldsRegistry,
-    params: ParamsRegistry,
-) -> Burgers1DDataModule:
-    scorer = BurgersResidualScorer(fields, params)
+def create_data_module(hp: PINNHyperparameters) -> Burgers1DDataModule:
+    # To enable adaptive collocation, pass residual_scorer=BurgersResidualScorer(fields, params)
     return Burgers1DDataModule(
         hp=hp,
         true_nu=TRUE_NU,
         grid_size=GRID_SIZE,
-        residual_scorer=scorer,
         validation=validation,
     )
 
