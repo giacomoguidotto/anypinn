@@ -1,3 +1,5 @@
+"""FitzHugh-Nagumo neuron model catalog entry."""
+
 from __future__ import annotations
 
 from collections.abc import Sequence

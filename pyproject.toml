@@ -62,6 +62,7 @@ type_check = [
 ]
 lint = [
     "ruff",
+    "interrogate",
 ]
 docs = [
     "mkdocs>=1.6.1,<2",
@@ -203,6 +204,25 @@ exclude_also = [
     "raise NotImplementedError",
     "@abstractmethod",
 ]
+
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = false
+ignore-magic = true
+ignore-semiprivate = true
+ignore-private = true
+ignore-property-decorators = true
+ignore-module = false
+ignore-nested-functions = true
+ignore-nested-classes = true
+ignore-setters = true
+fail-under = 95
+exclude = [
+    "tests",
+    "src/anypinn/cli/scaffold",
+    "examples",
+]
+verbose = 1
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/anypinn"]

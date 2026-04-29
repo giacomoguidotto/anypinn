@@ -1,3 +1,5 @@
+"""Inverse diffusivity problem catalog entry."""
+
 from __future__ import annotations
 
 from collections.abc import Callable

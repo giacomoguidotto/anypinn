@@ -1,3 +1,5 @@
+"""Poisson equation (2D) catalog entry."""
+
 from __future__ import annotations
 
 import math

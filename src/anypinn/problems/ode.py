@@ -153,6 +153,7 @@ class ResidualsConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
+        """Compute the ODE residual loss over collocation points."""
         _, x_coll = batch
 
         n_fields = len(self.fields)
@@ -229,6 +230,7 @@ class ICConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
+        """Compute the initial-condition loss."""
         device = batch[1].device
 
         if self.t0.device != device:
@@ -315,6 +317,7 @@ class DataConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
+        """Compute the data-fitting loss."""
         (x_data, y_data), _ = batch
 
         y_data_pred = self.predict_data(x_data, self.fields, self.params)

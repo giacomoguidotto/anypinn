@@ -57,5 +57,9 @@ licenses *args:
 check-scaffold-match:
     uv run python -m anypinn.cli._scaffold_check
 
-# Quick local CI check (lint + type check + test)
-ci: lint check test
+# Check docstring coverage
+docstrings:
+    uv run interrogate src/anypinn/
+
+# Quick local CI check (lint + type check + docstrings + test)
+ci: lint check docstrings test

@@ -1,3 +1,5 @@
+"""Utility functions for training, logging, and data handling."""
+
 from collections.abc import Callable, Iterable
 from typing import TypeVar, cast
 
