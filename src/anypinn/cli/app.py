@@ -12,9 +12,15 @@ from rich.console import Console
 from typer import Argument, Exit, Option, Typer
 
 import anypinn
-from anypinn.cli._prompts import _confirm, prompt_data_source, prompt_lightning, prompt_template
+from anypinn.cli._prompts import (
+    _confirm,
+    prompt_data_source,
+    prompt_direction,
+    prompt_lightning,
+    prompt_template,
+)
 from anypinn.cli._renderer import render_project
-from anypinn.cli._types import DataSource, Template
+from anypinn.cli._types import TEMPLATES_WITH_DIRECTION, DataSource, Direction, Template
 
 app = Typer(add_completion=False, context_settings={"help_option_names": ["-h", "--help"]})
 _console = Console(highlight=False)
@@ -83,6 +89,10 @@ def create(
     ] = None,
     data_source: Annotated[
         DataSource | None, Option("--data", "-d", help="Training data source")
+    ] = None,
+    direction_str: Annotated[
+        str | None,
+        Option("--direction", help="Problem direction (forward or inverse). Only for PDE models."),
     ] = None,
     lightning: Annotated[
         bool | None,
@@ -162,6 +172,25 @@ def create(
         _console.print(f"[dim]│[/]  {template.label}")
         _console.print("[dim]│[/]")
 
+    # Direction prompt (only for PDE templates that support both)
+    direction: Direction | None = None
+    if template in TEMPLATES_WITH_DIRECTION:
+        if direction_str is not None:
+            try:
+                direction = Direction(direction_str)
+            except ValueError:
+                valid = ", ".join(f"'{d.value}'" for d in Direction)
+                _console.print(
+                    f"[bold red]Error:[/] [bold]{direction_str!r}[/] is not a valid direction."
+                )
+                _console.print(f"[dim]Valid values:[/] {valid}")
+                raise Exit(code=2) from None
+            _console.print("[bold green]◇[/]  Problem direction")
+            _console.print(f"[dim]│[/]  {direction.label}")
+            _console.print("[dim]│[/]")
+        else:
+            direction = prompt_direction()
+
     if data_source is None:
         data_source = prompt_data_source()
     else:
@@ -180,7 +209,7 @@ def create(
     # Render
     _console.print(f"[bold green]◇[/]  Creating '{display_name}/'")
 
-    created = render_project(project_dir, template, data_source, lightning)
+    created = render_project(project_dir, template, data_source, lightning, direction)
 
     max_name = max(len(n) for n in created)
     for i, name in enumerate(created):

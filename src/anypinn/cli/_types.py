@@ -68,6 +68,35 @@ class Template(str, Enum):
         return descriptions[self]
 
 
+class Direction(str, Enum):
+    """Problem direction."""
+
+    FORWARD = "forward"
+    INVERSE = "inverse"
+
+    @property
+    def label(self) -> str:
+        labels: dict[Direction, str] = {
+            Direction.FORWARD: "Forward (solve for state, parameters known)",
+            Direction.INVERSE: "Inverse (estimate unknown parameters from data)",
+        }
+        return labels[self]
+
+
+# Templates that support both forward and inverse directions.
+# Templates not in this set have a fixed direction (ODE models are inverse-only,
+# Poisson 2D is forward-only, etc.) and skip the direction prompt.
+TEMPLATES_WITH_DIRECTION: set[Template] = {
+    Template.HEAT_1D,
+    Template.BURGERS_1D,
+    Template.WAVE_1D,
+    Template.GRAY_SCOTT_2D,
+    Template.INVERSE_DIFFUSIVITY,
+    Template.ALLEN_CAHN,
+    Template.POISSON_2D,
+}
+
+
 class DataSource(str, Enum):
     """Training data source."""
 

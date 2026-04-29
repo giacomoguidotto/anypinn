@@ -8,7 +8,7 @@ from typing import TypeVar
 from rich.console import Console
 from simple_term_menu import TerminalMenu
 
-from anypinn.cli._types import DataSource, Template
+from anypinn.cli._types import DataSource, Direction, Template
 
 _console = Console()
 
@@ -97,3 +97,10 @@ def prompt_data_source() -> DataSource:
 def prompt_lightning() -> bool:
     """Prompt user whether to include Lightning wrapper."""
     return _confirm("Include Lightning training wrapper?", default=True)
+
+
+def prompt_direction() -> Direction:
+    """Prompt user to choose forward or inverse problem."""
+    directions = list(Direction)
+    labels = [d.label for d in directions]
+    return _select("Problem direction", directions, labels)

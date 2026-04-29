@@ -12,7 +12,7 @@ import pytest
 from typer.testing import CliRunner
 
 from anypinn.cli import app
-from anypinn.cli._types import DataSource, Template
+from anypinn.cli._types import TEMPLATES_WITH_DIRECTION, DataSource, Template
 
 runner = CliRunner()
 
@@ -40,19 +40,19 @@ class TestCreateCommand:
         project = tmp_path / name
 
         lightning_flag = "--lightning" if lightning else "--no-lightning"
-        result = runner.invoke(
-            app,
-            [
-                "create",
-                str(project),
-                "--template",
-                template.value,
-                "--data",
-                data_source.value,
-                lightning_flag,
-                "--no-run",
-            ],
-        )
+        args = [
+            "create",
+            str(project),
+            "--template",
+            template.value,
+            "--data",
+            data_source.value,
+            lightning_flag,
+            "--no-run",
+        ]
+        if template in TEMPLATES_WITH_DIRECTION:
+            args += ["--direction", "inverse"]
+        result = runner.invoke(app, args)
 
         assert result.exit_code == 0, result.output
 

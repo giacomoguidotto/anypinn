@@ -6,7 +6,7 @@ import importlib.resources as ilr
 from pathlib import Path
 
 from anypinn.cli._generator import extract_variants
-from anypinn.cli._types import DataSource, Template
+from anypinn.cli._types import DataSource, Direction, Template
 
 _TEMPLATE_DIRS: dict[Template, str] = {
     Template.SIR: "sir",
@@ -101,6 +101,7 @@ def render_project(
     template: Template,
     data_source: DataSource,
     lightning: bool,
+    direction: Direction | None = None,
 ) -> list[str]:
     """Render a template to files on disk. Returns list of created file/dir names."""
     tdir = _TEMPLATE_DIRS[template]
@@ -108,7 +109,9 @@ def render_project(
     ds = "synthetic" if data_source == DataSource.SYNTHETIC else "csv"
     tr = "lightning" if lightning else "core"
     pkg = f"anypinn.cli.scaffold.{tdir}"
-    selections = {"source": ds}
+    selections: dict[str, str] = {"source": ds}
+    if direction is not None:
+        selections["direction"] = direction.value
 
     files = {
         "ode.py": _read_canonical(pkg, "ode.py", exp, selections),
