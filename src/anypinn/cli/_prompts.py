@@ -28,7 +28,6 @@ def _clear_lines(n: int) -> None:
 def _select(question: str, options: list[T], labels: list[str]) -> T:
     """Display a clack-style selection prompt and return the chosen option."""
     _console.print(f"[bold cyan]◆[/]  {question}")
-    _print_bar()
 
     menu = TerminalMenu(
         labels,
@@ -44,10 +43,9 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     index: int = int(raw_index)
     selected = options[index]
 
-    # Overwrite the │ bar (from caller) + ◆ question + │ bar
-    _clear_lines(3)
+    # Overwrite just the ◆ question line
+    _clear_lines(1)
 
-    _print_bar()
     _console.print(f"[bold green]◇[/]  {question}")
     for i, lbl in enumerate(labels):
         if i == index:
