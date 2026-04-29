@@ -36,6 +36,7 @@ class UniformSampler:
         pass
 
     def sample(self, n: int, domain: Domain) -> Tensor:
+        """Return ``n`` points on a uniform Cartesian grid over ``domain``."""
         d = domain.ndim
         pts_per_dim = math.ceil(n ** (1.0 / d))
 
@@ -58,6 +59,7 @@ class RandomSampler:
             self._gen.manual_seed(seed)
 
     def sample(self, n: int, domain: Domain) -> Tensor:
+        """Return ``n`` uniformly random points within ``domain``."""
         d = domain.ndim
         u = torch.rand((n, d), generator=self._gen)
         for i, (lo, hi) in enumerate(domain.bounds):
@@ -81,6 +83,7 @@ class LatinHypercubeSampler:
             self._gen.manual_seed(seed)
 
     def sample(self, n: int, domain: Domain) -> Tensor:
+        """Return ``n`` Latin Hypercube-sampled points within ``domain``."""
         d = domain.ndim
         result = torch.empty(n, d)
 
@@ -112,6 +115,7 @@ class LogUniform1DSampler:
             self._gen.manual_seed(seed)
 
     def sample(self, n: int, domain: Domain) -> Tensor:
+        """Return ``n`` log-uniformly spaced points within ``domain``."""
         if domain.ndim != 1:
             raise ValueError(
                 f"log_uniform_1d sampler supports only 1-D domains, got ndim={domain.ndim}."
@@ -172,6 +176,7 @@ class AdaptiveSampler:
         self._random = RandomSampler(seed=seed)
 
     def sample(self, n: int, domain: Domain) -> Tensor:
+        """Return ``n`` residual-weighted points within ``domain``."""
         n_explore = max(1, int(n * self._explore))
         n_exploit = n - n_explore
 
