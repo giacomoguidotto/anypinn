@@ -41,13 +41,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        include:
-          - name: lint
-            cmd: just lint
-          - name: type_check
-            cmd: just check
-          - name: docs
-            cmd: just docs
+        name: [lint, type_check, docs]
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -69,7 +63,10 @@ jobs:
         run: uv sync --locked
 
       - name: ${{ matrix.name }}
-        run: ${{ matrix.cmd }}
+        run: >-
+          ${{ matrix.name == 'lint' && 'just lint' ||
+              matrix.name == 'type_check' && 'just check' ||
+              'just docs' }}
 
   container:
     runs-on: ubuntu-24.04
@@ -142,7 +139,7 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-  pages:
+  docs:
     needs: [test, quality, container]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-24.04
