@@ -16,12 +16,20 @@ from anypinn.core.types import PredictionBatch
 
 class PINNModule(pl.LightningModule):
     """
-    Generic PINN Lightning module.
-    Expects external Problem + Sampler + optimizer config.
+    LightningModule wrapper for a ``Problem`` instance.
+
+    Delegates physics computation to the ``Problem`` and handles
+    optimizer/scheduler configuration, context injection, and
+    prediction formatting. You rarely need to subclass this.
 
     Args:
         problem: The PINN problem definition (constraints, fields, etc.).
         hp: Hyperparameters for training.
+
+    Example:
+        >>> module = PINNModule(problem=problem, hp=hp)
+        >>> trainer = pl.Trainer(max_epochs=hp.max_epochs)
+        >>> trainer.fit(module, datamodule=data_module)
     """
 
     def __init__(

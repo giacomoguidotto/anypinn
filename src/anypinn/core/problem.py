@@ -17,7 +17,21 @@ from anypinn.core.validation import _ColumnLookup
 class Constraint(ABC):
     """
     Abstract base class for a constraint (loss term) in the PINN.
-    Returns a loss value for the given batch.
+
+    Subclass this and implement ``loss()`` to define custom physics or
+    data-fitting terms. The ``Problem`` sums all constraint losses during
+    training.
+
+    Example:
+        >>> class EnergyConstraint(Constraint):
+        ...     def loss(self, batch, criterion, log=None):
+        ...         (x_data, y_data), x_coll = batch
+        ...         energy = compute_energy(x_coll)
+        ...         target = torch.zeros_like(energy)
+        ...         loss = criterion(energy, target)
+        ...         if log is not None:
+        ...             log("loss/energy", loss)
+        ...         return loss
     """
 
     def inject_context(self, context: InferredContext) -> None:
@@ -52,14 +66,25 @@ class Constraint(ABC):
 
 class Problem(nn.Module):
     """
-    Aggregates operator residuals and constraints into total loss.
-    Manages fields, parameters, constraints, and validation.
+    Aggregates constraints into a total training loss.
+
+    Manages fields (neural networks), learnable parameters, and the loss
+    criterion. Call ``training_loss()`` during each training step and
+    ``predict()`` for inference.
 
     Args:
         constraints: List of constraints to enforce.
         criterion: Loss function module.
-        fields: List of fields (neural networks) to solve for.
-        params: List of learnable parameters.
+        fields: Registry of named neural fields.
+        params: Registry of named learnable parameters.
+
+    Example:
+        >>> problem = Problem(
+        ...     constraints=[residual_constraint, ic_constraint],
+        ...     criterion=nn.MSELoss(),
+        ...     fields={"u": field},
+        ...     params={"alpha": Parameter(ScalarConfig(init_value=0.01))},
+        ... )
     """
 
     def __init__(

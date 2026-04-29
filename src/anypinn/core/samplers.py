@@ -222,6 +222,13 @@ def build_sampler(
 
     Raises:
         ValueError: If ``strategy="adaptive"`` but no scorer is provided.
+
+    Example:
+        >>> sampler = build_sampler("latin_hypercube", seed=42)
+        >>> domain = Domain(bounds=[(0, 1)])
+        >>> points = sampler.sample(100, domain)
+        >>> points.shape
+        torch.Size([100, 1])
     """
     if strategy == "adaptive":
         if scorer is None:

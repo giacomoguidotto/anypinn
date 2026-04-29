@@ -52,6 +52,12 @@ class Domain:
 
         Returns:
             Domain with bounds and dx inferred from the data.
+
+        Example:
+            >>> coords = torch.linspace(0, 10, 100).unsqueeze(1)
+            >>> domain = Domain.from_x(coords)
+            >>> domain.x0, domain.x1
+            (0.0, 10.0)
         """
         if x.ndim != 2:
             raise ValueError(f"Expected 2-D coordinate tensor (N, d), got shape {tuple(x.shape)}.")
@@ -110,11 +116,23 @@ def get_activation(name: Activations) -> nn.Module:
 
 class Field(nn.Module):
     """
-    A neural field mapping coordinates -> vector of state variables.
-    Example (ODE): t -> [S, I, R].
+    A neural field mapping coordinates to a vector of state variables.
+
+    For an ODE this maps ``t -> [S, I, R]``; for a PDE it maps
+    ``(x, t) -> u(x, t)``.
 
     Args:
         config: Configuration for the MLP backing this field.
+
+    Example:
+        >>> field = Field(MLPConfig(
+        ...     in_dim=1, out_dim=3,
+        ...     hidden_layers=[32, 32],
+        ...     activation="tanh",
+        ... ))
+        >>> t = torch.rand(10, 1)
+        >>> field(t).shape
+        torch.Size([10, 3])
     """
 
     def __init__(
@@ -169,11 +187,22 @@ class Field(nn.Module):
 
 class Argument:
     """
-    Represents an argument that can be passed to an ODE/PDE function.
-    Can be a fixed float value or a callable function.
+    A fixed (non-learnable) argument passed to an ODE/PDE function.
+
+    Wraps a float constant or a callable and provides a uniform
+    ``__call__`` interface. See also ``Parameter`` for the learnable
+    variant.
 
     Args:
         value: The value (float) or function (callable).
+
+    Example:
+        >>> beta = Argument(0.3)
+        >>> beta(torch.tensor([1.0]))
+        tensor(0.3000)
+        >>> beta_fn = Argument(lambda t: 0.3 * torch.exp(-0.1 * t))
+        >>> beta_fn(torch.tensor([0.0]))
+        tensor([0.3000])
     """
 
     def __init__(self, value: float | Callable[[Tensor], Tensor]):
@@ -206,11 +235,26 @@ class Argument:
 
 class Parameter(nn.Module, Argument):
     """
-    Learnable parameter. Supports scalar or function-valued parameter.
-    For function-valued parameters (e.g. β(t)), uses a small MLP.
+    A learnable parameter that participates in gradient optimization.
+
+    Supports scalar parameters (a single trainable value) or
+    function-valued parameters (e.g. beta(t)) backed by a small MLP.
+    Because ``Parameter`` is a subclass of ``Argument``, it can be
+    used anywhere an ``Argument`` is expected.
 
     Args:
         config: Configuration for the parameter (ScalarConfig or MLPConfig).
+
+    Example:
+        >>> # Scalar parameter starting at 0.3
+        >>> beta = Parameter(ScalarConfig(init_value=0.3))
+        >>> beta(torch.tensor([1.0]))  # returns ~0.3
+        >>> # Function-valued parameter beta(t)
+        >>> beta_t = Parameter(MLPConfig(
+        ...     in_dim=1, out_dim=1,
+        ...     hidden_layers=[8],
+        ...     activation="tanh",
+        ... ))
     """
 
     def __init__(
