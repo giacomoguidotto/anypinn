@@ -1,3 +1,5 @@
+"""Allen-Cahn equation catalog entry."""
+
 from __future__ import annotations
 
 import math

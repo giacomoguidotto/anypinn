@@ -84,6 +84,7 @@ class DirichletBCConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
+        """Compute the Dirichlet boundary condition loss."""
         device = next(self.field.parameters()).device
         x_bc = self.bc.sampler(self.bc.n_pts).to(device)
         u_pred = self.field(x_bc)
@@ -134,6 +135,7 @@ class NeumannBCConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
+        """Compute the Neumann boundary condition loss."""
         device = next(self.field.parameters()).device
         x_bc = self.bc.sampler(self.bc.n_pts).to(device).detach().requires_grad_(True)
         u_pred = self.field(x_bc)
@@ -189,6 +191,7 @@ class PeriodicBCConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
+        """Compute the periodic boundary condition loss."""
         device = next(self.field.parameters()).device
         n_pts = self.bc_left.n_pts
 
@@ -264,6 +267,7 @@ class PDEResidualConstraint(Constraint):
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
+        """Compute the PDE interior residual loss."""
         _, x_coll = batch
         x_coll = x_coll.detach().requires_grad_(True)
         residual = self.residual_fn(x_coll, self.fields, self.params)

@@ -1,3 +1,5 @@
+"""Lorenz system catalog entry."""
+
 from __future__ import annotations
 
 from collections.abc import Sequence

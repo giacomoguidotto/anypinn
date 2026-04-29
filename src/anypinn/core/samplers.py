@@ -19,7 +19,9 @@ class CollocationSampler(Protocol):
     points inside the domain bounds.
     """
 
-    def sample(self, n: int, domain: Domain) -> Tensor: ...
+    def sample(self, n: int, domain: Domain) -> Tensor:
+        """Return ``n`` collocation points within ``domain``."""
+        ...
 
 
 class UniformSampler:

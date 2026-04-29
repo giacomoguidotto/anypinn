@@ -238,6 +238,7 @@ class DataScaling(DataCallback):
 
     @override
     def transform_data(self, data: DataBatch, coll: Tensor) -> tuple[DataBatch, Tensor]:
+        """Normalize x to [0, 1] and scale y by the configured factors."""
         x, y = data
 
         x_min, x_max = x.min(), x.max()

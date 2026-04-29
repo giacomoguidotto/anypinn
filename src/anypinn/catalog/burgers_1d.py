@@ -1,3 +1,5 @@
+"""Burgers equation (1D) catalog entry."""
+
 from __future__ import annotations
 
 import math

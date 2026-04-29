@@ -1,3 +1,5 @@
+"""Gray-Scott reaction-diffusion (2D) catalog entry."""
+
 from __future__ import annotations
 
 from typing import override
