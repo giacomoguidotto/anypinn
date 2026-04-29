@@ -38,10 +38,17 @@ jobs:
         run: just test
 
   quality:
+    name: quality (${{ matrix.label }})
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        name: [lint, type_check, docs]
+        include:
+          - label: lint
+            cmd: just lint
+          - label: type check
+            cmd: just check
+          - label: docs
+            cmd: just docs
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -62,11 +69,8 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked
 
-      - name: ${{ matrix.name }}
-        run: >-
-          ${{ matrix.name == 'lint' && 'just lint' ||
-              matrix.name == 'type_check' && 'just check' ||
-              'just docs' }}
+      - name: ${{ matrix.label }}
+        run: ${{ matrix.cmd }}
 
   container:
     runs-on: ubuntu-24.04
