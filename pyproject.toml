@@ -71,6 +71,9 @@ docs = [
 
     # Python API documentation (not neccessary for applications).
     "mkdocstrings[python]",
+
+    # Versioned documentation.
+    "mike",
 ]
 licenses = [
     "pip-licenses-cli",

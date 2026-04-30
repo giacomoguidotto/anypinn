@@ -42,9 +42,13 @@ docs-offline:
 docs-serve:
     PYTHONPATH=src uv run python -m mkdocs serve
 
-# Deploy docs to GitHub Pages
+# Deploy docs to GitHub Pages (versioned with mike)
 docs-deploy:
-    PYTHONPATH=src uv run python -m mkdocs gh-deploy --force
+    #!/usr/bin/env bash
+    set -euo pipefail
+    VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+    PYTHONPATH=src uv run mike deploy --push --update-aliases "$VERSION" latest
+    PYTHONPATH=src uv run mike set-default --push latest
 
 # Generate license report
 licenses *args:
