@@ -8,7 +8,7 @@ hide:
 
 **Solve differential equations with Physics-Informed Neural Networks.**
 
-Modular. Training-agnostic. Inverse-problem-first.
+Most PINN libraries make you wire up every loss term, collocation grid, and training loop by hand before you see a single result. AnyPINN gives you a working experiment in one command and then lets you peel back every layer when you're ready.
 
 ---
 
@@ -62,12 +62,11 @@ Modular. Training-agnostic. Inverse-problem-first.
 ## Quick Start
 
 ```bash
-anypinn create my-project --template sir --data synthetic --lightning
-cd my-project && uv sync && uv run train.py
+uvx anypinn create my-project
 ```
 
-That's it — a working SIR epidemic model recovering transmission rate beta from
-synthetic observations, training with PyTorch Lightning, logging to TensorBoard.
+That's it — `anypinn create` scaffolds a complete, runnable project with your
+choice of template, data source, and training framework.
 
 [:octicons-arrow-right-24: Full walkthrough](getting-started/first-project.md)
 
