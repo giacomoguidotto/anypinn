@@ -1,9 +1,14 @@
 [
   {
-    "version": "0.0.0.post1+0ae58fd",
-    "title": "0.0.0.post1+0ae58fd",
+    "version": "0.24.1.post17+3a396ea",
+    "title": "0.24.1.post17+3a396ea",
     "aliases": [
       "latest"
     ]
+  },
+  {
+    "version": "0.0.0.post1+0ae58fd",
+    "title": "0.0.0.post1+0ae58fd",
+    "aliases": []
   }
 ]
