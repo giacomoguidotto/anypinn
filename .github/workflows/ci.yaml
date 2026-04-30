@@ -47,6 +47,8 @@ jobs:
             cmd: just lint
           - label: type check
             cmd: just check
+          - label: docstrings
+            cmd: just docstrings
           - label: docs
             cmd: just docs
     steps:
