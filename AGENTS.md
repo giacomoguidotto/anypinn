@@ -30,6 +30,8 @@ The purpose of this tile is to describe common mistakes and confusion points tha
   - New model templates → `docs/catalog/` (use card grid format in `catalog/index.md`)
   - API documentation → `docs/reference/` (curated `:::` directives, not raw autodoc)
 - **Versioning** uses `mike`. Deployment is `mike deploy --push --update-aliases <version> latest`, not `mkdocs gh-deploy`.
+- **Announcement banner:** Set via `mkdocs.yml` under `theme.custom_dir: docs/overrides` with an `overrides/main.html` template, or use `extra.announcement` in `mkdocs.yml`. Use for release highlights or important notices.
+- **Status badges on pages:** Add `status: new`, `status: deprecated`, or `status: experimental` in a page's YAML front matter to show a badge in the sidebar and on the page. Use `new` for recently added pages, `deprecated` for pages scheduled for removal.
 - **Build commands:** `just docs` to build, `just docs-serve` to preview locally.
 - **Run `just docs` after any docs change** to verify the build succeeds (the build runs in strict mode).
 
