@@ -47,7 +47,7 @@ _EXPERIMENT_NAMES: dict[Template, str] = {
 }
 
 _BASE_DEPS: list[str] = [
-    "anypinn",
+    "anypinn[lib]",
     "numpy",
     "scipy",
 ]

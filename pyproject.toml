@@ -37,6 +37,10 @@ dependencies = [
     "rich",
     "typer-slim[standard]",
     "simple-term-menu",
+]
+
+[project.optional-dependencies]
+lib = [
     "torch",
     "lightning",
     "pandas",

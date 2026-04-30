@@ -335,7 +335,7 @@ class TestCreateCommand:
         assert result.exit_code == 0
 
         pyproject = (project_dir / "pyproject.toml").read_text()
-        assert '"anypinn"' in pyproject
+        assert '"anypinn[lib]"' in pyproject
         assert '"tensorboard"' not in pyproject
 
     def test_synthetic_data_source_references_generation(self, project_dir: Path) -> None:
