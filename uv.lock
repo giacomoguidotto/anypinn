@@ -178,14 +178,18 @@ wheels = [
 name = "anypinn"
 source = { editable = "." }
 dependencies = [
+    { name = "rich" },
+    { name = "simple-term-menu" },
+    { name = "typer-slim" },
+]
+
+[package.optional-dependencies]
+lib = [
     { name = "lightning" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pandas", version = "3.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "rich" },
-    { name = "simple-term-menu" },
     { name = "torch" },
     { name = "torchdiffeq" },
-    { name = "typer-slim" },
 ]
 
 [package.dev-dependencies]
@@ -248,12 +252,12 @@ utils = [
 
 [package.metadata]
 requires-dist = [
-    { name = "lightning" },
-    { name = "pandas" },
+    { name = "lightning", extras = [], marker = "extra == 'lib'" },
+    { name = "pandas", extras = [], marker = "extra == 'lib'" },
     { name = "rich" },
     { name = "simple-term-menu" },
-    { name = "torch" },
-    { name = "torchdiffeq" },
+    { name = "torch", extras = [], marker = "extra == 'lib'" },
+    { name = "torchdiffeq", extras = [], marker = "extra == 'lib'" },
     { name = "typer-slim", extras = ["standard"] },
 ]
 
