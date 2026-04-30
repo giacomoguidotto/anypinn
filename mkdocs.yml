@@ -10,13 +10,22 @@ validation:
   anchors: warn
 theme:
   name: material
-  # By default, fonts are pulled from Google on the Internet. To support offline usage, this is
-  # disabled.
-  font: false
+  font:
+    text: Inter
+    code: JetBrains Mono
   palette:
-    scheme: slate
-    primary: green
-    accent: yellow
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
   logo: assets/logo.png
   icon:
     # GitHub specific.
