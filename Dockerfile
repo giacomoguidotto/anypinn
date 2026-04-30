@@ -41,20 +41,21 @@ RUN pip install "uv==${UV_VERSION}"
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 
 # Copy in project dependency specification.
-COPY pyproject.toml uv.lock LICENSE ./
+# README.md is required by hatchling to read project metadata.
+COPY pyproject.toml uv.lock LICENSE README.md ./
 
 # Install only project dependencies, as this is cached until pyproject.toml uv.lock are updated.
-RUN uv sync --locked --no-default-groups --no-install-project
+# --frozen: lightning is quarantined on PyPI after a supply-chain attack (2026-04-30).
+# Restore to --locked once lightning is restored and `uv lock` can regenerate cleanly.
+RUN uv sync --frozen --no-default-groups --no-install-project
 
 # Copy in source files.
-# README.md is required for the package to build. It can be ommited for non-package applications.
-COPY README.md ./
 COPY src src
 
 # Install the rest of the application into the virtual environment.
 # Omit this step if your project is a non-package application and copy the source in the second
 # stage instead.
-RUN uv sync --locked --no-default-groups --no-editable
+RUN uv sync --frozen --no-default-groups --no-editable
 
 ## Final Image
 # The image used in the final image MUST match exactly to the python_builder image.
