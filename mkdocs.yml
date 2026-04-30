@@ -54,6 +54,7 @@ theme:
 markdown_extensions:
   - abbr
   - admonition
+  - attr_list
   - footnotes
   - pymdownx.arithmatex:
       generic: true
@@ -69,11 +70,17 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.tabbed:
       alternate_style: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - md_in_html
 extra_css:
   - static/stylesheets/extra.css
@@ -89,7 +96,8 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/giacomoguidotto/anypinn
 plugins:
-  - search
+  - search:
+      separator: '[\s\-\.]+'
   - offline:
       enabled: !ENV [MKDOCS_MATERIAL_OFFLINE, false]
   - mkdocstrings:
