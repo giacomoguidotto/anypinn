@@ -18,6 +18,21 @@ The purpose of this tile is to describe common mistakes and confusion points tha
   4. ODE definitions, constants, keys, and problem factories must match between example and scaffold
   5. Run `just check-scaffold-match` to verify consistency
 
+# Documentation
+
+- **Structure:** The docs use MkDocs Material with 5 navigation tabs: Home, Getting Started, Guides, Catalog, API Reference (plus Community).
+- **API reference is hand-curated.** There is no auto-generation plugin. Each public class is rendered via an explicit `:::` directive in `docs/reference/{core,problems,lightning}.md`. When adding a new public class, you **must** add a corresponding `:::` entry to the appropriate reference page.
+- **Page icons** are managed in `docs/hooks/page_icons.py`. When adding a new page, add its icon mapping there.
+- **Navigation** is defined explicitly in `mkdocs.yml` under `nav:`. New pages must be added to the nav or they won't appear.
+- **Content placement rules:**
+  - Learning-oriented content (tutorials, walkthroughs) → `docs/getting-started/`
+  - Task-oriented content (how to do X) → `docs/guides/`
+  - New model templates → `docs/catalog/` (use card grid format in `catalog/index.md`)
+  - API documentation → `docs/reference/` (curated `:::` directives, not raw autodoc)
+- **Versioning** uses `mike`. Deployment is `mike deploy --push --update-aliases <version> latest`, not `mkdocs gh-deploy`.
+- **Build commands:** `just docs` to build, `just docs-serve` to preview locally.
+- **Run `just docs` after any docs change** to verify the build succeeds (the build runs in strict mode).
+
 # Scaffold architecture
 
 - Each model has a single canonical `ode.py` and `config.py` in `src/anypinn/cli/scaffold/<name>/`.

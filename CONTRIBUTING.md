@@ -37,6 +37,57 @@ Thanks for wanting to contribute to AnyPINN! Please read our [Code of Conduct](C
 - Keep the layer separation: `anypinn.core` stays pure PyTorch, Lightning stays optional. `anypinn.core` must not import from `anypinn.lightning`, `anypinn.problems`, or `anypinn.catalog`.
 - If you change the architecture or data flow, update both `CLAUDE.md` and `README.md`.
 
+## Documentation
+
+The docs live in `docs/` and are built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).
+
+### Preview locally
+
+```bash
+just docs-serve
+```
+
+This starts a hot-reloading server at `http://localhost:8000`. Changes to Markdown files and source docstrings are picked up automatically.
+
+### Where to add content
+
+| Content type | Directory | Example |
+| ------------ | --------- | ------- |
+| Tutorials, walkthroughs | `docs/getting-started/` | "First Project" |
+| Task-oriented how-to guides | `docs/guides/` | "Use CSV Data" |
+| New model templates | `docs/catalog/` | "SIR Epidemic Model" |
+| API reference | `docs/reference/` | Core, Problems, Lightning |
+
+New pages must also be added to:
+
+1. **`mkdocs.yml`** — the `nav:` section, or the page won't appear in navigation.
+2. **`docs/hooks/page_icons.py`** — the `PAGE_ICONS` dict, for sidebar icons.
+
+### API reference
+
+The API reference is **hand-curated**, not auto-generated. Each public class is rendered using an explicit [mkdocstrings](https://mkdocstrings.github.io/) directive:
+
+```markdown
+::: anypinn.core.Field
+    options:
+      show_source: false
+      show_signature_annotations: true
+```
+
+When you add a new public class, add a corresponding `:::` entry to the appropriate file in `docs/reference/`. Group related classes under section headers.
+
+### Versioning
+
+Docs are versioned with [mike](https://github.com/jimporter/mike). The CI workflow extracts the version from `pyproject.toml` and deploys with `mike deploy`. A version dropdown appears in the header of the deployed site.
+
+### Verify the build
+
+Always build before pushing docs changes — the build runs in strict mode and will catch broken links and missing references:
+
+```bash
+just docs
+```
+
 ## Conventions
 
 - Commits: [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`)
