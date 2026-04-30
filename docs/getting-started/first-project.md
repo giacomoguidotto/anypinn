@@ -70,6 +70,8 @@ anypinn create my-project --template sir --data synthetic --lightning
     ```
     ● anypinn v0.x.x
     │
+    ◇ Generating project in 'my-project'...
+    │
     ◇ Choose a starting point
     │  SIR Epidemic Model
     │
@@ -79,14 +81,17 @@ anypinn create my-project --template sir --data synthetic --lightning
     ◇ Include Lightning training wrapper?
     │  Yes
     │
-    ◇ Creating my-project/...
-    │  pyproject.toml   — project dependencies
-    │  ode.py           — mathematical definition
-    │  config.py        — training configuration
-    │  train.py         — execution script
-    │  data/            — data directory
+    ◇ Creating 'my-project/'
+    │  ├ pyproject.toml    project dependencies
+    │  ├ ode.py            mathematical definition
+    │  ├ config.py         training configuration
+    │  ├ train.py          execution script
+    │  └ data/             data directory
     │
-    ● Done! cd my-project && uv sync && uv run train.py
+    ◇ Dependencies synced
+    │
+    ● Starting training with `uv run train.py`...
+       You can stop at any time and it will save the current checkpoint!
     ```
 
 ---
