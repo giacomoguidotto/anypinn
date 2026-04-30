@@ -2,6 +2,11 @@
   {
     "version": "0.24.1.post17+3a396ea",
     "title": "0.24.1.post17+3a396ea",
+    "aliases": []
+  },
+  {
+    "version": "0.24.1",
+    "title": "0.24.1",
     "aliases": [
       "latest"
     ]
