@@ -150,7 +150,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
 
   docs:
-    needs: [test, quality, container]
+    needs: [release]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-24.04
     permissions:
@@ -159,7 +159,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0        # Full history so uv-dynamic-versioning can read git tags
+          # Full history so uv-dynamic-versioning can read git tags.
+          # Also re-fetch after release may have pushed a new tag.
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v8.1.0
@@ -175,7 +177,7 @@ jobs:
           python-version-file: ".python-version"
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --locked
 
       - name: Configure Git for mike
         run: |
@@ -185,6 +187,13 @@ jobs:
 
       - name: Deploy versioned docs
         run: |
-          VERSION=$(uv run python -c "from importlib.metadata import version; import re; print(re.match(r'\d+\.\d+\.\d+', version('anypinn')).group())")
+          # Use the version from semantic-release if a release was made,
+          # otherwise read the current version from the installed package.
+          if [ "${{ needs.release.outputs.released }}" = "true" ]; then
+            VERSION="${{ needs.release.outputs.version }}"
+          else
+            VERSION=$(uv run python -c "from importlib.metadata import version; import re; print(re.match(r'\d+\.\d+\.\d+', version('anypinn')).group())")
+          fi
+          echo "Deploying docs as v${VERSION}"
           PYTHONPATH=src uv run mike deploy --push --update-aliases "$VERSION" latest
           PYTHONPATH=src uv run mike set-default --push latest
