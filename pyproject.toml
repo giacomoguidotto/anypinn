@@ -71,8 +71,6 @@ docs = [
 
     # Python API documentation (not neccessary for applications).
     "mkdocstrings[python]",
-    # Autodoc.
-    "mkdocs-api-autonav",
 ]
 licenses = [
     "pip-licenses-cli",

@@ -30,10 +30,12 @@ theme:
     - content.tabs.link
     - content.tooltips
     - navigation.indexes
-    - navigation.expand
     - navigation.footer
     - navigation.path
     - navigation.instant
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.top
     - navigation.tracking
     - search.highlight
@@ -83,10 +85,6 @@ plugins:
           options:
             show_if_no_docstring: true
             show_signature_annotations: true
-  # Autodoc configuration.
-  # https://github.com/tlambert03/mkdocs-api-autonav#configuration
-  - api-autonav:
-      modules: ["src/anypinn"]
   # This plugin is used to validate URLs (including anchors).
   - htmlproofer:
       # This is not enabled by default because this requires network I/O, so it is inherently not
@@ -115,29 +113,55 @@ repo_name: anypinn
 repo_url: https://github.com/giacomoguidotto/anypinn
 edit_uri: edit/main/docs/
 nav:
-  - index.md
-  - Getting Started: getting-started.md
-  - CLI Reference: cli.md
+  - Home:
+    - index.md
+  - Getting Started:
+    - getting-started/index.md
+    - PINN Primer: getting-started/pinn-primer.md
+    - Installation: getting-started/installation.md
+    - First Project: getting-started/first-project.md
+    - Understanding the Output: getting-started/understanding-the-output.md
+    - Next Steps: getting-started/next-steps.md
+  - Guides:
+    - guides/index.md
+    - Define a Custom ODE: guides/custom-ode.md
+    - Promote a Constant to a Parameter: guides/promote-constant-to-parameter.md
+    - Forward vs Inverse Problems: guides/inverse-vs-forward.md
+    - PDE Forward Problems: guides/pde-forward-problems.md
+    - Use CSV Data: guides/csv-data.md
+    - Tune Hyperparameters: guides/tune-hyperparameters.md
+    - Loss Weighting Strategies: guides/loss-weighting.md
+    - Lightning vs Core Training: guides/lightning-vs-core.md
+    - Architecture: guides/architecture.md
   - Catalog:
     - catalog/index.md
-    - SIR Epidemic Model: catalog/sir.md
-    - SEIR Epidemic Model: catalog/seir.md
-    - Damped Oscillator: catalog/damped-oscillator.md
-    - Lotka-Volterra: catalog/lotka-volterra.md
-    - Van der Pol Oscillator: catalog/van-der-pol.md
-    - Lorenz System: catalog/lorenz.md
-    - FitzHugh-Nagumo: catalog/fitzhugh-nagumo.md
-    - Gray-Scott 2D: catalog/gray-scott-2d.md
-    - Poisson 2D: catalog/poisson-2d.md
-    - Heat Equation 1D: catalog/heat-1d.md
-    - Burgers Equation 1D: catalog/burgers-1d.md
-    - Wave Equation 1D: catalog/wave-1d.md
-    - Inverse Diffusivity: catalog/inverse-diffusivity.md
-    - Allen-Cahn: catalog/allen-cahn.md
-    - Custom ODE: catalog/custom.md
-    - Blank: catalog/blank.md
-  - Design Rationale: rationale.md
-  - Contributing: CONTRIBUTING.md
-  - Code of Conduct: CODE_OF_CONDUCT.md
-  - Third Party Licenses:
-    - licenses/license_report.md
+    - ODE Inverse Problems:
+      - SIR Epidemic Model: catalog/sir.md
+      - SEIR Epidemic Model: catalog/seir.md
+      - Damped Oscillator: catalog/damped-oscillator.md
+      - Lotka-Volterra: catalog/lotka-volterra.md
+      - Van der Pol Oscillator: catalog/van-der-pol.md
+      - Lorenz System: catalog/lorenz.md
+      - FitzHugh-Nagumo: catalog/fitzhugh-nagumo.md
+    - PDE Problems:
+      - Gray-Scott 2D: catalog/gray-scott-2d.md
+      - Poisson 2D: catalog/poisson-2d.md
+      - Heat Equation 1D: catalog/heat-1d.md
+      - Burgers Equation 1D: catalog/burgers-1d.md
+      - Wave Equation 1D: catalog/wave-1d.md
+      - Inverse Diffusivity: catalog/inverse-diffusivity.md
+      - Allen-Cahn: catalog/allen-cahn.md
+    - Utility Templates:
+      - Custom ODE: catalog/custom.md
+      - Blank: catalog/blank.md
+  - API Reference:
+    - reference/index.md
+    - Core: reference/core.md
+    - Problems: reference/problems.md
+    - Lightning: reference/lightning.md
+    - CLI: reference/cli.md
+  - Community:
+    - Contributing: CONTRIBUTING.md
+    - Code of Conduct: CODE_OF_CONDUCT.md
+    - Third Party Licenses:
+      - licenses/license_report.md
