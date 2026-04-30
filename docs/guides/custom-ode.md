@@ -29,9 +29,9 @@ def my_ode(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
 | Parameter | Shape | Meaning |
 | --------- | ----- | ------- |
 | `x` | `(m, 1)` | Independent variable (e.g. time) |
-| `y` | `(n_fields, m, 1)` | Current state — one entry per field |
+| `y` | `(n_fields, m, 1)` | Current state, one entry per field |
 | `args` | `ArgsRegistry` | Named arguments and parameters |
-| **returns** | `(n_fields, m, 1)` | Derivatives — one per field |
+| **returns** | `(n_fields, m, 1)` | Derivatives, one per field |
 
 Every entry in `args` is callable: `args["beta"](x)` works for both fixed
 `Argument`s and learnable `Parameter`s.
@@ -86,7 +86,7 @@ def create_problem(hp):
 !!! tip "Fixed vs learnable"
 
     If `lambda` is known, use `Argument(0.5)` instead of `Parameter(...)` and
-    move it into `props.args`. The ODE callable doesn't change — both are
+    move it into `props.args`. The ODE callable doesn't change, since both are
     accessed the same way via `args["lambda"](x)`.
 
 ---

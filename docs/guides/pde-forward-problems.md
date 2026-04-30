@@ -82,7 +82,7 @@ periodic = PeriodicBCConstraint(
 
 ## PDE residual
 
-Define the PDE residual — the quantity that should be zero at the solution.
+Define the PDE residual, the quantity that should be zero at the solution.
 AnyPINN computes spatial derivatives using automatic differentiation:
 
 ```python
@@ -172,9 +172,9 @@ trainer = pl.Trainer(
 
 Several catalog templates demonstrate PDE forward problems:
 
-- **Poisson 2D** — elliptic PDE with Dirichlet boundaries
-- **Allen-Cahn** — stiff reaction-diffusion
-- **Heat 1D** — parabolic PDE with diffusivity recovery
-- **Burgers 1D** — nonlinear PDE with adaptive collocation
+- **Poisson 2D**: elliptic PDE with Dirichlet boundaries
+- **Allen-Cahn**: stiff reaction-diffusion
+- **Heat 1D**: parabolic PDE with diffusivity recovery
+- **Burgers 1D**: nonlinear PDE with adaptive collocation
 
 Browse the [Catalog](../catalog/index.md) for complete implementations.

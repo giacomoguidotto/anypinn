@@ -31,7 +31,7 @@ loading in `ode.py` to match your column names.
 
 ## Try a different template
 
-Each template demonstrates different AnyPINN features — Fourier encodings
+Each template demonstrates different AnyPINN features: Fourier encodings
 (Lotka-Volterra), Huber loss (Lorenz), boundary conditions (Poisson 2D),
 adaptive collocation (Burgers 1D). Scaffold several and compare how the ODE
 definition and config differ.

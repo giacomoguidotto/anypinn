@@ -37,13 +37,13 @@ props = ODEProperties(
     ode=my_ode,
     y0=torch.tensor([...]),
     args={
-        "gamma": Argument(0.1),  # Known — fixed value
+        "gamma": Argument(0.1),  # Known, fixed value
     },
 )
 
 # Unknown quantities go in params
 params = ParamsRegistry({
-    "beta": Parameter(config=hp.params_config),  # Unknown — learned
+    "beta": Parameter(config=hp.params_config),  # Unknown, learned
 })
 ```
 
@@ -58,9 +58,9 @@ def my_ode(x, y, args):
 
 The `ODEInverseProblem` class composes three constraints:
 
-1. **Residual loss** — enforces the ODE on collocation points
-2. **Initial condition loss** — enforces the initial state
-3. **Data loss** — fits the predicted fields to observations
+1. **Residual loss**: enforces the ODE on collocation points
+2. **Initial condition loss**: enforces the initial state
+3. **Data loss**: fits the predicted fields to observations
 
 All three are necessary for a well-posed inverse problem.
 
@@ -71,8 +71,8 @@ All three are necessary for a well-posed inverse problem.
 For forward problems, there are no unknown parameters and typically no observed
 data to fit against. The loss has only two terms:
 
-1. **Residual loss** — enforces the differential equation
-2. **Initial/boundary condition loss** — enforces constraints
+1. **Residual loss**: enforces the differential equation
+2. **Initial/boundary condition loss**: enforces constraints
 
 AnyPINN supports forward problems through two paths:
 

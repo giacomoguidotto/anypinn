@@ -80,7 +80,7 @@ observed quantities. Make sure the output order matches `y_columns`:
 ```python
 def predict_data(x_data: Tensor, fields: FieldsRegistry, _params: ParamsRegistry) -> Tensor:
     I_pred = fields["I"](x_data)
-    return I_pred.unsqueeze(1)  # Shape: (n_points, 1, 1) — one column
+    return I_pred.unsqueeze(1)  # Shape: (n_points, 1, 1), one column
 ```
 
 If you observe multiple quantities:
@@ -99,8 +99,8 @@ def predict_data(x_data, fields, _params):
 Use `DataCallback` subclasses to transform data before training. Common use
 cases:
 
-- **Normalization** — scale observations to a manageable range
-- **Time rescaling** — map the time domain to `[0, 1]`
+- **Normalization**: scale observations to a manageable range
+- **Time rescaling**: map the time domain to `[0, 1]`
 
 The built-in `DataScaling` callback handles common scaling:
 

@@ -71,11 +71,11 @@ Dependencies flow strictly inward (`catalog → problems → core`,
 
 ## Developer experience
 
-- **Typed frozen dataclasses** — `@dataclass(frozen=True, kw_only=True)` for
+- **Typed frozen dataclasses**: `@dataclass(frozen=True, kw_only=True)` for
   all configuration. Typos are caught at construction time.
-- **Static type checking** — `ty` in CI ensures type correctness.
-- **Semantic versioning** — Conventional Commits drive automated releases.
-- **Modern tooling** — `uv` + `hatchling` + Ruff.
+- **Static type checking**: `ty` in CI ensures type correctness.
+- **Semantic versioning**: Conventional Commits drive automated releases.
+- **Modern tooling**: `uv` + `hatchling` + Ruff.
 
 ---
 

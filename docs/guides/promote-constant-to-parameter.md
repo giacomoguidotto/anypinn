@@ -2,7 +2,7 @@
 
 One of AnyPINN's key design choices is that fixed constants and learnable
 parameters share the same interface. This guide shows how to turn a known
-value into something the network recovers — a one-line change.
+value into something the network recovers, in a single line.
 
 ---
 
@@ -37,7 +37,7 @@ props = ODEProperties(
     },
 )
 
-# create_problem — no params for beta
+# create_problem (no params for beta)
 params = ParamsRegistry({})
 ```
 
@@ -55,7 +55,7 @@ props = ODEProperties(
     },
 )
 
-# create_problem — beta is now learnable
+# create_problem (beta is now learnable)
 params = ParamsRegistry({
     "beta": Parameter(config=hp.params_config),  # (1)!
 })

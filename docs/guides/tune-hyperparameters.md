@@ -65,9 +65,9 @@ fields_config=MLPConfig(
 
 **Rules of thumb:**
 
-- Start with `[64, 128, 128, 64]` — this works for most problems
+- Start with `[64, 128, 128, 64]`, which works for most problems
 - Add depth (more layers) for complex dynamics before adding width
-- Use `tanh` as the default activation — it's smooth and works well with
+- Use `tanh` as the default activation. It's smooth and works well with
   automatic differentiation
 - Use `softplus` as output activation when the field must be positive
 

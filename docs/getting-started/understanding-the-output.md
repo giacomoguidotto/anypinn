@@ -75,7 +75,7 @@ It contains three items:
 
 | Item | Type | Contents |
 | ---- | ---- | -------- |
-| `batch` | `tuple[Tensor, Tensor]` | `(x_data, y_data)` — the original training data |
+| `batch` | `tuple[Tensor, Tensor]` | `(x_data, y_data)`, the original training data |
 | `preds` | `dict[str, Tensor]` | Predicted fields and parameters, keyed by name |
 | `trues` | `dict[str, Tensor]` or `None` | Ground-truth values (if validation was configured) |
 
@@ -98,9 +98,9 @@ The `model.ckpt` file is a standard PyTorch Lightning checkpoint. It contains
 the full model state (fields, parameters, optimizer, scheduler) and can be
 loaded for:
 
-- **Resuming training** — Lightning's `Trainer` handles this automatically
-- **Transfer learning** — load fields from a trained model into a new problem
-- **Inspection** — examine recovered parameter values directly
+- **Resuming training**: Lightning's `Trainer` handles this automatically
+- **Transfer learning**: load fields from a trained model into a new problem
+- **Inspection**: examine recovered parameter values directly
 
 ```python
 import torch
