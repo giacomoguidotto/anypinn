@@ -7,6 +7,10 @@ permissions:
 
 env:
   UV_VERSION: "0.10.0"
+  # lightning is quarantined on PyPI after a supply-chain attack (2026-04-30).
+  # Freeze resolution so uv never tries to reach the quarantined package.
+  # Remove this once lightning is restored and `uv lock` can regenerate cleanly.
+  UV_FROZEN: "1"
 
 jobs:
   test:
@@ -32,7 +36,7 @@ jobs:
         uses: extractions/setup-just@v4
 
       - name: Install dependencies
-        run: uv sync --frozen
+        run: uv sync
 
       - name: Run tests
         run: just test
@@ -69,7 +73,7 @@ jobs:
           python-version-file: ".python-version"
 
       - name: Install dependencies
-        run: uv sync --frozen
+        run: uv sync
 
       - name: ${{ matrix.label }}
         run: ${{ matrix.cmd }}
@@ -171,7 +175,7 @@ jobs:
           python-version-file: ".python-version"
 
       - name: Install dependencies
-        run: uv sync --frozen
+        run: uv sync
 
       - name: Configure Git for mike
         run: |
