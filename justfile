@@ -46,7 +46,7 @@ docs-serve:
 docs-deploy:
     #!/usr/bin/env bash
     set -euo pipefail
-    VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+    VERSION=$(uv run python -c "from importlib.metadata import version; print(version('anypinn'))")
     PYTHONPATH=src uv run mike deploy --push --update-aliases "$VERSION" latest
     PYTHONPATH=src uv run mike set-default --push latest
 
