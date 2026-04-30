@@ -44,14 +44,14 @@ Each project scaffolded by `anypinn create` includes its own `pyproject.toml`
 with pinned dependencies. Running `uv sync` inside the project directory
 installs everything you need:
 
-- **PyTorch** — tensor computation and automatic differentiation
-- **NumPy / SciPy** — numerical utilities
-- **torchdiffeq** — ODE integration for synthetic data generation
-- **PyTorch Lightning** — optional, included when `--lightning` is selected
-- **Pandas** — CSV data loading
-- **Matplotlib / Seaborn** — result visualization
+- **PyTorch**: tensor computation and automatic differentiation
+- **NumPy / SciPy**: numerical utilities
+- **torchdiffeq**: ODE integration for synthetic data generation
+- **PyTorch Lightning**: optional, included when `--lightning` is selected
+- **Pandas**: CSV data loading
+- **Matplotlib / Seaborn**: result visualization
 
-You do not need to install these manually — the generated project handles it.
+You do not need to install these manually. The generated project handles it.
 
 ---
 
@@ -62,5 +62,5 @@ the appropriate PyTorch build for your system. See the
 [PyTorch installation guide](https://pytorch.org/get-started/locally/) for
 platform-specific instructions.
 
-When using Lightning, GPU training is automatic — the `Trainer` detects
+When using Lightning, GPU training is automatic: the `Trainer` detects
 available hardware and uses it.

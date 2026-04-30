@@ -11,7 +11,7 @@ both approaches.
 | | Lightning | Core |
 | --- | --- | --- |
 | **Best for** | Standard training with logging and callbacks | Custom training procedures |
-| **Setup effort** | Minimal — `anypinn create --lightning` generates everything | You write the loop |
+| **Setup effort** | Minimal: `anypinn create --lightning` generates everything | You write the loop |
 | **Logging** | TensorBoard + CSV out of the box | You call `log()` yourself |
 | **Checkpointing** | Automatic | You call `torch.save()` |
 | **Early stopping** | Built-in callback | You implement the logic |
@@ -78,7 +78,7 @@ for epoch in range(hp.max_epochs):
         optimizer.step()
 ```
 
-The `Problem` is an `nn.Module` — everything works exactly as you'd expect
+The `Problem` is an `nn.Module`, so everything works exactly as you'd expect
 from PyTorch.
 
 ---

@@ -18,9 +18,9 @@ In `config.py`:
 ```python
 hp = ODEHyperparameters(
     ...
-    pde_weight=1,      # w_r  — physics enforcement
-    ic_weight=1,       # w_ic — initial condition
-    data_weight=1,     # w_d  — data fitting
+    pde_weight=1,      # w_r:  physics enforcement
+    ic_weight=1,       # w_ic: initial condition
+    data_weight=1,     # w_d:  data fitting
 )
 ```
 

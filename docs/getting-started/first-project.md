@@ -41,7 +41,7 @@ Choose between **synthetic** or **CSV**:
 
 - **Synthetic** generates training data by numerically integrating the ODE with
   [`torchdiffeq`](https://github.com/rtqichen/torchdiffeq). This is the right
-  starting point for learning the library — no external data needed.
+  starting point for learning the library, since no external data is needed.
 - **CSV** loads observations from a file in the `data/` directory. Use this
   when you have real experimental measurements.
 
@@ -106,21 +106,21 @@ my-project/
 ├── ode.py            # ODE definition, fields, parameters, validation
 ├── config.py         # All hyperparameters in a single frozen dataclass
 ├── train.py          # Training script (Lightning or plain PyTorch)
-└── data/             # Empty — for CSV data or saved predictions
+└── data/             # Empty (for CSV data or saved predictions)
 ```
 
-### `ode.py` — the physics
+### `ode.py`: the physics
 
 This is the file you will modify most. It contains:
 
-- **The ODE callable** — a function `f(x, y, args) -> Tensor` that returns
+- **The ODE callable**: a function `f(x, y, args) -> Tensor` that returns
   derivatives. `x` is the independent variable (e.g. time), `y` is the state
   vector, and `args` is an `ArgsRegistry` holding both fixed constants and
   learnable parameters.
-- **`create_problem(hp)`** — a factory that wires up `Field`s (neural network
+- **`create_problem(hp)`**: a factory that wires up `Field`s (neural network
   solution approximations), `Parameter`s (quantities to recover), and the ODE
   into an `ODEInverseProblem`.
-- **`validation`** — a `ValidationRegistry` mapping parameter names to
+- **`validation`**: a `ValidationRegistry` mapping parameter names to
   ground-truth callables. The library logs MSE against these at every training
   step.
 
@@ -141,7 +141,7 @@ def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
 The PINN recovers `beta` by minimizing the residual of the ODE against observed
 data.
 
-### `config.py` — hyperparameters
+### `config.py`: hyperparameters
 
 All training hyperparameters live in a single `ODEHyperparameters` dataclass:
 
@@ -161,9 +161,9 @@ hp = ODEHyperparameters(
 ```
 
 The config is frozen and keyword-only. Changing a hyperparameter means changing
-one value here — the rest of the project picks it up automatically.
+one value here, and the rest of the project picks it up automatically.
 
-### `train.py` — execution
+### `train.py`: execution
 
 With the Lightning wrapper, `train.py` sets up loggers, callbacks, and a
 `Trainer`. With the core loop, it is a standard PyTorch training script. Both

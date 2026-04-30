@@ -19,7 +19,7 @@ Most PINN libraries make you wire up every loss term, collocation grid, and trai
     ---
 
     `anypinn create` scaffolds a runnable project from 16 built-in templates.
-    No boilerplate, no wiring — edit physics and press start.
+    No boilerplate, no wiring. Edit physics and press start.
 
     [:octicons-arrow-right-24: Get started](getting-started/index.md)
 
@@ -45,28 +45,14 @@ Most PINN libraries make you wire up every loss term, collocation grid, and trai
 
 ---
 
-## Quick Install
-
-=== "uv"
-
-    ```bash
-    uv tool install anypinn
-    ```
-
-=== "pip"
-
-    ```bash
-    pip install anypinn
-    ```
-
 ## Quick Start
 
 ```bash
 uvx anypinn create my-project
 ```
 
-That's it — `anypinn create` scaffolds a complete, runnable project with your
-choice of template, data source, and training framework.
+`anypinn create` scaffolds a complete, runnable project with your choice of
+template, data source, and training framework.
 
 [:octicons-arrow-right-24: Full walkthrough](getting-started/first-project.md)
 

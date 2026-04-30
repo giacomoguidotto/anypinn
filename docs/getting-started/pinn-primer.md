@@ -46,7 +46,7 @@ $$
 | **Data loss** | Fit observed measurements | Data points |
 
 The key insight: the residual loss uses **automatic differentiation** to compute
-\(dy_\text{NN}/dt\) exactly — no finite differences, no discretization error.
+\(dy_\text{NN}/dt\) exactly, with no finite differences and no discretization error.
 The physics is enforced continuously across the domain, not just at grid points.
 
 ---
@@ -66,17 +66,17 @@ partial observations. This is AnyPINN's primary use case.
 
 ## Collocation points
 
-The residual loss is evaluated at **collocation points** — coordinates sampled
+The residual loss is evaluated at **collocation points**, coordinates sampled
 across the domain where the differential equation must hold. More collocation
 points means better enforcement of the physics, but also more computation per
 training step.
 
 AnyPINN supports several sampling strategies:
 
-- **Uniform** — regular grid
-- **Random** — uniform random
-- **Latin Hypercube** — space-filling quasi-random
-- **Adaptive** — residual-weighted, concentrating points where the equation is
+- **Uniform**: regular grid
+- **Random**: uniform random
+- **Latin Hypercube**: space-filling quasi-random
+- **Adaptive**: residual-weighted, concentrating points where the equation is
   hardest to satisfy
 
 ---
@@ -97,8 +97,8 @@ Finding the right balance is problem-specific. See the
 
 ## Where AnyPINN fits
 
-AnyPINN handles the wiring for you. You write the ODE/PDE callable —
-the mathematical definition of your problem — and AnyPINN constructs the
+AnyPINN handles the wiring for you. You write the ODE/PDE callable
+(the mathematical definition of your problem), and AnyPINN constructs the
 composite loss, manages fields and parameters, handles collocation sampling,
 and provides validation against ground truth. Training is delegated to
 PyTorch or PyTorch Lightning.
