@@ -781,7 +781,7 @@
   <a href="#odepy-the-physics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ode.py — the physics
+        ode.py: the physics
       
     </span>
   </a>
@@ -792,7 +792,7 @@
   <a href="#configpy-hyperparameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config.py — hyperparameters
+        config.py: hyperparameters
       
     </span>
   </a>
@@ -803,7 +803,7 @@
   <a href="#trainpy-execution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        train.py — execution
+        train.py: execution
       
     </span>
   </a>
@@ -2551,7 +2551,7 @@
   <a href="#odepy-the-physics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ode.py — the physics
+        ode.py: the physics
       
     </span>
   </a>
@@ -2562,7 +2562,7 @@
   <a href="#configpy-hyperparameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config.py — hyperparameters
+        config.py: hyperparameters
       
     </span>
   </a>
@@ -2573,7 +2573,7 @@
   <a href="#trainpy-execution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        train.py — execution
+        train.py: execution
       
     </span>
   </a>
@@ -2692,7 +2692,7 @@ initial conditions, known parameters, and validation ground truths. Run
 <ul>
 <li><strong>Synthetic</strong> generates training data by numerically integrating the ODE with
   <a href="https://github.com/rtqichen/torchdiffeq"><code>torchdiffeq</code></a>. This is the right
-  starting point for learning the library — no external data needed.</li>
+  starting point for learning the library, since no external data is needed.</li>
 <li><strong>CSV</strong> loads observations from a file in the <code>data/</code> directory. Use this
   when you have real experimental measurements.</li>
 </ul>
@@ -2747,19 +2747,19 @@ PyTorch loop:</p>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>├── ode.py            # ODE definition, fields, parameters, validation
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>├── config.py         # All hyperparameters in a single frozen dataclass
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>├── train.py          # Training script (Lightning or plain PyTorch)
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>└── data/             # Empty — for CSV data or saved predictions
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>└── data/             # Empty (for CSV data or saved predictions)
 </span></code></pre></div>
-<h3 id="odepy-the-physics"><code>ode.py</code> — the physics</h3>
+<h3 id="odepy-the-physics"><code>ode.py</code>: the physics</h3>
 <p>This is the file you will modify most. It contains:</p>
 <ul>
-<li><strong>The ODE callable</strong> — a function <code>f(x, y, args) -&gt; Tensor</code> that returns
+<li><strong>The ODE callable</strong>: a function <code>f(x, y, args) -&gt; Tensor</code> that returns
   derivatives. <code>x</code> is the independent variable (e.g. time), <code>y</code> is the state
   vector, and <code>args</code> is an <code>ArgsRegistry</code> holding both fixed constants and
   learnable parameters.</li>
-<li><strong><code>create_problem(hp)</code></strong> — a factory that wires up <code>Field</code>s (neural network
+<li><strong><code>create_problem(hp)</code></strong>: a factory that wires up <code>Field</code>s (neural network
   solution approximations), <code>Parameter</code>s (quantities to recover), and the ODE
   into an <code>ODEInverseProblem</code>.</li>
-<li><strong><code>validation</code></strong> — a <code>ValidationRegistry</code> mapping parameter names to
+<li><strong><code>validation</code></strong>: a <code>ValidationRegistry</code> mapping parameter names to
   ground-truth callables. The library logs MSE against these at every training
   step.</li>
 </ul>
@@ -2776,7 +2776,7 @@ PyTorch loop:</p>
 <p><code>beta</code> is a <code>Parameter</code> (learnable); <code>delta</code> and <code>N</code> are <code>Argument</code>s (fixed).
 The PINN recovers <code>beta</code> by minimizing the residual of the ODE against observed
 data.</p>
-<h3 id="configpy-hyperparameters"><code>config.py</code> — hyperparameters</h3>
+<h3 id="configpy-hyperparameters"><code>config.py</code>: hyperparameters</h3>
 <p>All training hyperparameters live in a single <code>ODEHyperparameters</code> dataclass:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">hp</span> <span class="o">=</span> <span class="n">ODEHyperparameters</span><span class="p">(</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">lr</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>
@@ -2792,8 +2792,8 @@ data.</p>
 </span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">)</span>
 </span></code></pre></div>
 <p>The config is frozen and keyword-only. Changing a hyperparameter means changing
-one value here — the rest of the project picks it up automatically.</p>
-<h3 id="trainpy-execution"><code>train.py</code> — execution</h3>
+one value here, and the rest of the project picks it up automatically.</p>
+<h3 id="trainpy-execution"><code>train.py</code>: execution</h3>
 <p>With the Lightning wrapper, <code>train.py</code> sets up loggers, callbacks, and a
 <code>Trainer</code>. With the core loop, it is a standard PyTorch training script. Both
 support <code>--predict</code> to load a saved checkpoint and run inference without

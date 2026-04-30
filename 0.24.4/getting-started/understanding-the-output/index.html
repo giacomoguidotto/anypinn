@@ -2653,7 +2653,7 @@ it with:</p>
 <tr>
 <td><code>batch</code></td>
 <td><code>tuple[Tensor, Tensor]</code></td>
-<td><code>(x_data, y_data)</code> — the original training data</td>
+<td><code>(x_data, y_data)</code>, the original training data</td>
 </tr>
 <tr>
 <td><code>preds</code></td>
@@ -2679,9 +2679,9 @@ checkpoint.</p>
 the full model state (fields, parameters, optimizer, scheduler) and can be
 loaded for:</p>
 <ul>
-<li><strong>Resuming training</strong> — Lightning's <code>Trainer</code> handles this automatically</li>
-<li><strong>Transfer learning</strong> — load fields from a trained model into a new problem</li>
-<li><strong>Inspection</strong> — examine recovered parameter values directly</li>
+<li><strong>Resuming training</strong>: Lightning's <code>Trainer</code> handles this automatically</li>
+<li><strong>Transfer learning</strong>: load fields from a trained model into a new problem</li>
+<li><strong>Inspection</strong>: examine recovered parameter values directly</li>
 </ul>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>

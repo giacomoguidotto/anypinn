@@ -2467,21 +2467,21 @@ from any directory:</p>
 with pinned dependencies. Running <code>uv sync</code> inside the project directory
 installs everything you need:</p>
 <ul>
-<li><strong>PyTorch</strong> — tensor computation and automatic differentiation</li>
-<li><strong>NumPy / SciPy</strong> — numerical utilities</li>
-<li><strong>torchdiffeq</strong> — ODE integration for synthetic data generation</li>
-<li><strong>PyTorch Lightning</strong> — optional, included when <code>--lightning</code> is selected</li>
-<li><strong>Pandas</strong> — CSV data loading</li>
-<li><strong>Matplotlib / Seaborn</strong> — result visualization</li>
+<li><strong>PyTorch</strong>: tensor computation and automatic differentiation</li>
+<li><strong>NumPy / SciPy</strong>: numerical utilities</li>
+<li><strong>torchdiffeq</strong>: ODE integration for synthetic data generation</li>
+<li><strong>PyTorch Lightning</strong>: optional, included when <code>--lightning</code> is selected</li>
+<li><strong>Pandas</strong>: CSV data loading</li>
+<li><strong>Matplotlib / Seaborn</strong>: result visualization</li>
 </ul>
-<p>You do not need to install these manually — the generated project handles it.</p>
+<p>You do not need to install these manually. The generated project handles it.</p>
 <hr />
 <h2 id="gpu-support">GPU Support</h2>
 <p>AnyPINN uses PyTorch under the hood. If you have a CUDA-capable GPU, install
 the appropriate PyTorch build for your system. See the
 <a href="https://pytorch.org/get-started/locally/">PyTorch installation guide</a> for
 platform-specific instructions.</p>
-<p>When using Lightning, GPU training is automatic — the <code>Trainer</code> detects
+<p>When using Lightning, GPU training is automatic: the <code>Trainer</code> detects
 available hardware and uses it.</p>
 
 

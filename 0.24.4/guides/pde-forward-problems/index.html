@@ -2638,7 +2638,7 @@ each dimension:</p>
 </span></code></pre></div>
 <hr />
 <h2 id="pde-residual">PDE residual</h2>
-<p>Define the PDE residual — the quantity that should be zero at the solution.
+<p>Define the PDE residual, the quantity that should be zero at the solution.
 AnyPINN computes spatial derivatives using automatic differentiation:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">anypinn.problems</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDEResidualConstraint</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">anypinn.lib.diff</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
@@ -2709,10 +2709,10 @@ adaptive collocation to concentrate points where the residual is largest:</p>
 <h2 id="catalog-examples">Catalog examples</h2>
 <p>Several catalog templates demonstrate PDE forward problems:</p>
 <ul>
-<li><strong>Poisson 2D</strong> — elliptic PDE with Dirichlet boundaries</li>
-<li><strong>Allen-Cahn</strong> — stiff reaction-diffusion</li>
-<li><strong>Heat 1D</strong> — parabolic PDE with diffusivity recovery</li>
-<li><strong>Burgers 1D</strong> — nonlinear PDE with adaptive collocation</li>
+<li><strong>Poisson 2D</strong>: elliptic PDE with Dirichlet boundaries</li>
+<li><strong>Allen-Cahn</strong>: stiff reaction-diffusion</li>
+<li><strong>Heat 1D</strong>: parabolic PDE with diffusivity recovery</li>
+<li><strong>Burgers 1D</strong>: nonlinear PDE with adaptive collocation</li>
 </ul>
 <p>Browse the <a href="../../catalog/">Catalog</a> for complete implementations.</p>
 

@@ -2587,7 +2587,7 @@ from the <strong>Custom</strong> or <strong>Blank</strong> template.</p>
 <tr>
 <td><code>y</code></td>
 <td><code>(n_fields, m, 1)</code></td>
-<td>Current state — one entry per field</td>
+<td>Current state, one entry per field</td>
 </tr>
 <tr>
 <td><code>args</code></td>
@@ -2597,7 +2597,7 @@ from the <strong>Custom</strong> or <strong>Blank</strong> template.</p>
 <tr>
 <td><strong>returns</strong></td>
 <td><code>(n_fields, m, 1)</code></td>
-<td>Derivatives — one per field</td>
+<td>Derivatives, one per field</td>
 </tr>
 </tbody>
 </table>
@@ -2644,7 +2644,7 @@ solution) and <code>Parameter</code>s (quantities to recover):</p>
 <div class="admonition tip">
 <p class="admonition-title">Fixed vs learnable</p>
 <p>If <code>lambda</code> is known, use <code>Argument(0.5)</code> instead of <code>Parameter(...)</code> and
-move it into <code>props.args</code>. The ODE callable doesn't change — both are
+move it into <code>props.args</code>. The ODE callable doesn't change, since both are
 accessed the same way via <code>args["lambda"](x)</code>.</p>
 </div>
 <hr />

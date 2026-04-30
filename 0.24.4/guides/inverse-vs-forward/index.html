@@ -2538,13 +2538,13 @@ observations.</p>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">ode</span><span class="o">=</span><span class="n">my_ode</span><span class="p">,</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">y0</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">...</span><span class="p">]),</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">args</span><span class="o">=</span><span class="p">{</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="n">Argument</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>  <span class="c1"># Known — fixed value</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="n">Argument</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>  <span class="c1"># Known, fixed value</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">},</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># Unknown quantities go in params</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">params</span> <span class="o">=</span> <span class="n">ParamsRegistry</span><span class="p">({</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">hp</span><span class="o">.</span><span class="n">params_config</span><span class="p">),</span>  <span class="c1"># Unknown — learned</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">hp</span><span class="o">.</span><span class="n">params_config</span><span class="p">),</span>  <span class="c1"># Unknown, learned</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">})</span>
 </span></code></pre></div>
 <p>The ODE callable accesses both the same way:</p>
@@ -2555,9 +2555,9 @@ observations.</p>
 </span></code></pre></div>
 <p>The <code>ODEInverseProblem</code> class composes three constraints:</p>
 <ol>
-<li><strong>Residual loss</strong> — enforces the ODE on collocation points</li>
-<li><strong>Initial condition loss</strong> — enforces the initial state</li>
-<li><strong>Data loss</strong> — fits the predicted fields to observations</li>
+<li><strong>Residual loss</strong>: enforces the ODE on collocation points</li>
+<li><strong>Initial condition loss</strong>: enforces the initial state</li>
+<li><strong>Data loss</strong>: fits the predicted fields to observations</li>
 </ol>
 <p>All three are necessary for a well-posed inverse problem.</p>
 <hr />
@@ -2565,8 +2565,8 @@ observations.</p>
 <p>For forward problems, there are no unknown parameters and typically no observed
 data to fit against. The loss has only two terms:</p>
 <ol>
-<li><strong>Residual loss</strong> — enforces the differential equation</li>
-<li><strong>Initial/boundary condition loss</strong> — enforces constraints</li>
+<li><strong>Residual loss</strong>: enforces the differential equation</li>
+<li><strong>Initial/boundary condition loss</strong>: enforces constraints</li>
 </ol>
 <p>AnyPINN supports forward problems through two paths:</p>
 <h3 id="ode-forward-problems">ODE forward problems</h3>

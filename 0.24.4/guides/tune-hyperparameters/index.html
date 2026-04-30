@@ -2628,9 +2628,9 @@ the loss plateaus. This is almost always better than a fixed rate:</p>
 </span></code></pre></div>
 <p><strong>Rules of thumb:</strong></p>
 <ul>
-<li>Start with <code>[64, 128, 128, 64]</code> — this works for most problems</li>
+<li>Start with <code>[64, 128, 128, 64]</code>, which works for most problems</li>
 <li>Add depth (more layers) for complex dynamics before adding width</li>
-<li>Use <code>tanh</code> as the default activation — it's smooth and works well with
+<li>Use <code>tanh</code> as the default activation. It's smooth and works well with
   automatic differentiation</li>
 <li>Use <code>softplus</code> as output activation when the field must be positive</li>
 </ul>

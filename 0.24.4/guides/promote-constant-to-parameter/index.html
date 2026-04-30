@@ -2480,7 +2480,7 @@
 <h1 id="promote-a-constant-to-a-parameter">Promote a Constant to a Parameter</h1>
 <p>One of AnyPINN's key design choices is that fixed constants and learnable
 parameters share the same interface. This guide shows how to turn a known
-value into something the network recovers — a one-line change.</p>
+value into something the network recovers, in a single line.</p>
 <hr />
 <h2 id="the-pattern">The pattern</h2>
 <p>In every ODE callable, arguments are accessed the same way regardless of
@@ -2505,7 +2505,7 @@ a constant to a learnable parameter.</p>
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="p">},</span>
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">)</span>
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c1"># create_problem — no params for beta</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c1"># create_problem (no params for beta)</span>
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="n">params</span> <span class="o">=</span> <span class="n">ParamsRegistry</span><span class="p">({})</span>
 </span></code></pre></div>
 <h2 id="after-learnable-parameter">After: learnable parameter</h2>
@@ -2520,7 +2520,7 @@ a constant to a learnable parameter.</p>
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">},</span>
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">)</span>
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># create_problem — beta is now learnable</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># create_problem (beta is now learnable)</span>
 </span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">params</span> <span class="o">=</span> <span class="n">ParamsRegistry</span><span class="p">({</span>
 </span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">hp</span><span class="o">.</span><span class="n">params_config</span><span class="p">),</span>  <span class="c1"># (1)!</span>
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">})</span>
