@@ -80,6 +80,32 @@ When you add a new public class, add a corresponding `:::` entry to the appropri
 
 Docs are versioned with [mike](https://github.com/jimporter/mike). The CI workflow extracts the version from `pyproject.toml` and deploys with `mike deploy`. A version dropdown appears in the header of the deployed site.
 
+### Announcement banner
+
+Use the announcement banner for release highlights or important notices. Add it
+to `mkdocs.yml`:
+
+```yaml
+extra:
+  announcement: "AnyPINN v0.25 is out! <a href='getting-started/'>Get started →</a>"
+```
+
+### Status badges
+
+Mark pages as `new`, `deprecated`, or `experimental` by adding a `status` field
+to the page's YAML front matter:
+
+```markdown
+---
+status: new
+---
+
+# My New Page
+```
+
+This shows a badge next to the page title in the sidebar. Use `new` for recently
+added pages and `deprecated` for pages scheduled for removal.
+
 ### Verify the build
 
 Always build before pushing docs changes — the build runs in strict mode and will catch broken links and missing references:
