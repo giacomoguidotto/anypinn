@@ -46,7 +46,7 @@ docs-serve:
 docs-deploy:
     #!/usr/bin/env bash
     set -euo pipefail
-    VERSION=$(uv run python -c "from importlib.metadata import version; print(version('anypinn'))")
+    VERSION=$(uv run python -c "from importlib.metadata import version; import re; print(re.match(r'\d+\.\d+\.\d+', version('anypinn')).group())")
     PYTHONPATH=src uv run mike deploy --push --update-aliases "$VERSION" latest
     PYTHONPATH=src uv run mike set-default --push latest
 
