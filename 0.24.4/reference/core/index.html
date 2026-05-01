@@ -2279,28 +2279,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#anypinn.core.Parameter--scalar-parameter-starting-at-03" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Scalar parameter starting at 0.3
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#anypinn.core.Parameter--function-valued-parameter-betat" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Function-valued parameter beta(t)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#anypinn.core.Parameter.config" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5131,28 +5109,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#anypinn.core.Parameter--scalar-parameter-starting-at-03" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Scalar parameter starting at 0.3
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#anypinn.core.Parameter--function-valued-parameter-betat" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Function-valued parameter beta(t)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#anypinn.core.Parameter.config" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7667,16 +7623,11 @@ solving physics-informed neural network problems.</p>
 
 <details class="example" open>
   <summary>Example</summary>
-  <blockquote>
-<blockquote>
-<blockquote>
-<p>coords = torch.linspace(0, 10, 100).unsqueeze(1)
-domain = Domain.from_x(coords)
-domain.x0, domain.x1
-(0.0, 10.0)</p>
-</blockquote>
-</blockquote>
-</blockquote>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">coords</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">from_x</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">domain</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">x1</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># (0.0, 10.0)</span>
+</span></code></pre></div>
 </details>
 
     </div>
@@ -7741,20 +7692,15 @@ domain.x0, domain.x1
 
 <details class="example" open>
   <summary>Example</summary>
-  <blockquote>
-<blockquote>
-<blockquote>
-<p>field = Field(MLPConfig(
-...     in_dim=1, out_dim=3,
-...     hidden_layers=[32, 32],
-...     activation="tanh",
-... ))
-t = torch.rand(10, 1)
-field(t).shape
-torch.Size([10, 3])</p>
-</blockquote>
-</blockquote>
-</blockquote>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">MLPConfig</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">in_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_dim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">hidden_layers</span><span class="o">=</span><span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">))</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">field</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># torch.Size([10, 3])</span>
+</span></code></pre></div>
 </details>
 
 
@@ -7962,18 +7908,13 @@ variant.</p>
 
 <details class="example" open>
   <summary>Example</summary>
-  <blockquote>
-<blockquote>
-<blockquote>
-<p>beta = Argument(0.3)
-beta(torch.tensor([1.0]))
-tensor(0.3000)
-beta_fn = Argument(lambda t: 0.3 * torch.exp(-0.1 * t))
-beta_fn(torch.tensor([0.0]))
-tensor([0.3000])</p>
-</blockquote>
-</blockquote>
-</blockquote>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">beta</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">beta</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]))</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># tensor(0.3000)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">beta_fn</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">beta_fn</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># tensor([0.3000])</span>
+</span></code></pre></div>
 </details>
 
 
@@ -8160,21 +8101,16 @@ used anywhere an <code>Argument</code> is expected.</p>
 
 <details class="example" open>
   <summary>Example</summary>
-  <blockquote>
-<blockquote>
-<blockquote>
-<h2 id="anypinn.core.Parameter--scalar-parameter-starting-at-03">Scalar parameter starting at 0.3</h2>
-<p>beta = Parameter(ScalarConfig(init_value=0.3))
-beta(torch.tensor([1.0]))  # returns ~0.3</p>
-<h2 id="anypinn.core.Parameter--function-valued-parameter-betat">Function-valued parameter beta(t)</h2>
-<p>beta_t = Parameter(MLPConfig(
-...     in_dim=1, out_dim=1,
-...     hidden_layers=[8],
-...     activation="tanh",
-... ))</p>
-</blockquote>
-</blockquote>
-</blockquote>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Scalar parameter starting at 0.3</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">beta</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">ScalarConfig</span><span class="p">(</span><span class="n">init_value</span><span class="o">=</span><span class="mf">0.3</span><span class="p">))</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">beta</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]))</span>  <span class="c1"># returns ~0.3</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Function-valued parameter beta(t)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">beta_t</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">MLPConfig</span><span class="p">(</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">in_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">hidden_layers</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">))</span>
+</span></code></pre></div>
 </details>
 
 
@@ -8397,21 +8333,16 @@ training.</p>
 
 <details class="example" open>
   <summary>Example</summary>
-  <blockquote>
-<blockquote>
-<blockquote>
-<p>class EnergyConstraint(Constraint):
-...     def loss(self, batch, criterion, log=None):
-...         (x_data, y_data), x_coll = batch
-...         energy = compute_energy(x_coll)
-...         target = torch.zeros_like(energy)
-...         loss = criterion(energy, target)
-...         if log is not None:
-...             log("loss/energy", loss)
-...         return loss</p>
-</blockquote>
-</blockquote>
-</blockquote>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">EnergyConstraint</span><span class="p">(</span><span class="n">Constraint</span><span class="p">):</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">y_data</span><span class="p">),</span> <span class="n">x_coll</span> <span class="o">=</span> <span class="n">batch</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n">energy</span> <span class="o">=</span> <span class="n">compute_energy</span><span class="p">(</span><span class="n">x_coll</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="k">if</span> <span class="n">log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>            <span class="n">log</span><span class="p">(</span><span class="s2">&quot;loss/energy&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="k">return</span> <span class="n">loss</span>
+</span></code></pre></div>
 </details>
 
 
@@ -8699,18 +8630,13 @@ criterion. Call <code>training_loss()</code> during each training step and
 
 <details class="example" open>
   <summary>Example</summary>
-  <blockquote>
-<blockquote>
-<blockquote>
-<p>problem = Problem(
-...     constraints=[residual_constraint, ic_constraint],
-...     criterion=nn.MSELoss(),
-...     fields={"u": field},
-...     params={"alpha": Parameter(ScalarConfig(init_value=0.01))},
-... )</p>
-</blockquote>
-</blockquote>
-</blockquote>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">constraints</span><span class="o">=</span><span class="p">[</span><span class="n">residual_constraint</span><span class="p">,</span> <span class="n">ic_constraint</span><span class="p">],</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">criterion</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">fields</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;u&quot;</span><span class="p">:</span> <span class="n">field</span><span class="p">},</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">ScalarConfig</span><span class="p">(</span><span class="n">init_value</span><span class="o">=</span><span class="mf">0.01</span><span class="p">))},</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
+</span></code></pre></div>
 </details>
 
 
@@ -12778,17 +12704,12 @@ mode collapse.</p>
 
 <details class="example" open>
   <summary>Example</summary>
-  <blockquote>
-<blockquote>
-<blockquote>
-<p>sampler = build_sampler("latin_hypercube", seed=42)
-domain = Domain(bounds=[(0, 1)])
-points = sampler.sample(100, domain)
-points.shape
-torch.Size([100, 1])</p>
-</blockquote>
-</blockquote>
-</blockquote>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sampler</span> <span class="o">=</span> <span class="n">build_sampler</span><span class="p">(</span><span class="s2">&quot;latin_hypercube&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">points</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">points</span><span class="o">.</span><span class="n">shape</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># torch.Size([100, 1])</span>
+</span></code></pre></div>
 </details>
 
     </div>
@@ -13962,15 +13883,10 @@ data is loaded.</p>
 
 <details class="example" open>
   <summary>Example</summary>
-  <blockquote>
-<blockquote>
-<blockquote>
-<p>validation = {
-...     "beta": ColumnRef(column="Rt", transform=lambda rt: rt * delta),
-... }</p>
-</blockquote>
-</blockquote>
-</blockquote>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">validation</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="n">ColumnRef</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rt</span><span class="p">:</span> <span class="n">rt</span> <span class="o">*</span> <span class="n">delta</span><span class="p">),</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
+</span></code></pre></div>
 </details>
 
 
