@@ -26,9 +26,11 @@ class ColumnRef:
         transform: Optional transformation to apply to the column values.
 
     Example:
-        >>> validation = {
-        ...     "beta": ColumnRef(column="Rt", transform=lambda rt: rt * delta),
-        ... }
+        ```python
+        validation = {
+            "beta": ColumnRef(column="Rt", transform=lambda rt: rt * delta),
+        }
+        ```
     """
 
     column: str
@@ -66,11 +68,13 @@ ValidationRegistry: TypeAlias = dict[str, ValidationSource]
 Registry mapping parameter names to their validation sources.
 
 Example:
-    >>> validation: ValidationRegistry = {
-    ...     "beta": lambda x: torch.sin(x),  # Pure function
-    ...     "gamma": ColumnRef(column="gamma_true"),  # From data
-    ...     "delta": None,  # No validation
-    ... }
+    ```python
+    validation: ValidationRegistry = {
+        "beta": lambda x: torch.sin(x),  # Pure function
+        "gamma": ColumnRef(column="gamma_true"),  # From data
+        "delta": None,  # No validation
+    }
+    ```
 """
 
 ResolvedValidation: TypeAlias = dict[str, Callable[[Tensor], Tensor]]

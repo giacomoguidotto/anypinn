@@ -27,9 +27,11 @@ class PINNModule(pl.LightningModule):
         hp: Hyperparameters for training.
 
     Example:
-        >>> module = PINNModule(problem=problem, hp=hp)
-        >>> trainer = pl.Trainer(max_epochs=hp.max_epochs)
-        >>> trainer.fit(module, datamodule=data_module)
+        ```python
+        module = PINNModule(problem=problem, hp=hp)
+        trainer = pl.Trainer(max_epochs=hp.max_epochs)
+        trainer.fit(module, datamodule=data_module)
+        ```
     """
 
     def __init__(

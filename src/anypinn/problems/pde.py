@@ -31,15 +31,17 @@ class BoundaryCondition:
         n_pts: Number of boundary points sampled per training step.
 
     Example:
-        >>> # Left boundary of a 1-D+time domain at x=0
-        >>> bc_left = BoundaryCondition(
-        ...     sampler=lambda n: torch.stack([
-        ...         torch.zeros(n),            # x = 0
-        ...         torch.rand(n) * T_max,     # t in [0, T]
-        ...     ], dim=-1),
-        ...     value=lambda coords: torch.zeros(coords.shape[0], 1),
-        ...     n_pts=50,
-        ... )
+        ```python
+        # Left boundary of a 1-D+time domain at x=0
+        bc_left = BoundaryCondition(
+            sampler=lambda n: torch.stack([
+                torch.zeros(n),            # x = 0
+                torch.rand(n) * T_max,     # t in [0, T]
+            ], dim=-1),
+            value=lambda coords: torch.zeros(coords.shape[0], 1),
+            n_pts=50,
+        )
+        ```
     """
 
     def __init__(
@@ -231,19 +233,23 @@ class PDEResidualConstraint(Constraint):
         weight: Loss term weight.
 
     Example:
-        >>> from anypinn.lib.diff import grad, partial
-        >>> def heat_residual(x, fields, params):
-        ...     u = fields["u"]
-        ...     u_pred = u(x)
-        ...     u_t = partial(u_pred, x, dim=1)   # du/dt
-        ...     u_x = partial(u_pred, x, dim=0)   # du/dx
-        ...     u_xx = partial(u_x, x, dim=0)     # d2u/dx2
-        ...     alpha = params["alpha"](x)
-        ...     return u_t - alpha * u_xx          # residual = 0
-        >>> constraint = PDEResidualConstraint(
-        ...     fields=fields, params=params,
-        ...     residual_fn=heat_residual,
-        ... )
+        ```python
+        from anypinn.lib.diff import grad, partial
+
+        def heat_residual(x, fields, params):
+            u = fields["u"]
+            u_pred = u(x)
+            u_t = partial(u_pred, x, dim=1)   # du/dt
+            u_x = partial(u_pred, x, dim=0)   # du/dx
+            u_xx = partial(u_x, x, dim=0)     # d2u/dx2
+            alpha = params["alpha"](x)
+            return u_t - alpha * u_xx          # residual = 0
+
+        constraint = PDEResidualConstraint(
+            fields=fields, params=params,
+            residual_fn=heat_residual,
+        )
+        ```
     """
 
     def __init__(
