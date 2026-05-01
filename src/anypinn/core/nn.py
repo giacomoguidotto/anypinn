@@ -54,10 +54,12 @@ class Domain:
             Domain with bounds and dx inferred from the data.
 
         Example:
-            >>> coords = torch.linspace(0, 10, 100).unsqueeze(1)
-            >>> domain = Domain.from_x(coords)
-            >>> domain.x0, domain.x1
-            (0.0, 10.0)
+            ```python
+            coords = torch.linspace(0, 10, 100).unsqueeze(1)
+            domain = Domain.from_x(coords)
+            domain.x0, domain.x1
+            # (0.0, 10.0)
+            ```
         """
         if x.ndim != 2:
             raise ValueError(f"Expected 2-D coordinate tensor (N, d), got shape {tuple(x.shape)}.")
@@ -125,14 +127,16 @@ class Field(nn.Module):
         config: Configuration for the MLP backing this field.
 
     Example:
-        >>> field = Field(MLPConfig(
-        ...     in_dim=1, out_dim=3,
-        ...     hidden_layers=[32, 32],
-        ...     activation="tanh",
-        ... ))
-        >>> t = torch.rand(10, 1)
-        >>> field(t).shape
-        torch.Size([10, 3])
+        ```python
+        field = Field(MLPConfig(
+            in_dim=1, out_dim=3,
+            hidden_layers=[32, 32],
+            activation="tanh",
+        ))
+        t = torch.rand(10, 1)
+        field(t).shape
+        # torch.Size([10, 3])
+        ```
     """
 
     def __init__(
@@ -197,12 +201,14 @@ class Argument:
         value: The value (float) or function (callable).
 
     Example:
-        >>> beta = Argument(0.3)
-        >>> beta(torch.tensor([1.0]))
-        tensor(0.3000)
-        >>> beta_fn = Argument(lambda t: 0.3 * torch.exp(-0.1 * t))
-        >>> beta_fn(torch.tensor([0.0]))
-        tensor([0.3000])
+        ```python
+        beta = Argument(0.3)
+        beta(torch.tensor([1.0]))
+        # tensor(0.3000)
+        beta_fn = Argument(lambda t: 0.3 * torch.exp(-0.1 * t))
+        beta_fn(torch.tensor([0.0]))
+        # tensor([0.3000])
+        ```
     """
 
     def __init__(self, value: float | Callable[[Tensor], Tensor]):
@@ -246,15 +252,17 @@ class Parameter(nn.Module, Argument):
         config: Configuration for the parameter (ScalarConfig or MLPConfig).
 
     Example:
-        >>> # Scalar parameter starting at 0.3
-        >>> beta = Parameter(ScalarConfig(init_value=0.3))
-        >>> beta(torch.tensor([1.0]))  # returns ~0.3
-        >>> # Function-valued parameter beta(t)
-        >>> beta_t = Parameter(MLPConfig(
-        ...     in_dim=1, out_dim=1,
-        ...     hidden_layers=[8],
-        ...     activation="tanh",
-        ... ))
+        ```python
+        # Scalar parameter starting at 0.3
+        beta = Parameter(ScalarConfig(init_value=0.3))
+        beta(torch.tensor([1.0]))  # returns ~0.3
+        # Function-valued parameter beta(t)
+        beta_t = Parameter(MLPConfig(
+            in_dim=1, out_dim=1,
+            hidden_layers=[8],
+            activation="tanh",
+        ))
+        ```
     """
 
     def __init__(

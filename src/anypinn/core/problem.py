@@ -23,15 +23,17 @@ class Constraint(ABC):
     training.
 
     Example:
-        >>> class EnergyConstraint(Constraint):
-        ...     def loss(self, batch, criterion, log=None):
-        ...         (x_data, y_data), x_coll = batch
-        ...         energy = compute_energy(x_coll)
-        ...         target = torch.zeros_like(energy)
-        ...         loss = criterion(energy, target)
-        ...         if log is not None:
-        ...             log("loss/energy", loss)
-        ...         return loss
+        ```python
+        class EnergyConstraint(Constraint):
+            def loss(self, batch, criterion, log=None):
+                (x_data, y_data), x_coll = batch
+                energy = compute_energy(x_coll)
+                target = torch.zeros_like(energy)
+                loss = criterion(energy, target)
+                if log is not None:
+                    log("loss/energy", loss)
+                return loss
+        ```
     """
 
     def inject_context(self, context: InferredContext) -> None:
@@ -79,12 +81,14 @@ class Problem(nn.Module):
         params: Registry of named learnable parameters.
 
     Example:
-        >>> problem = Problem(
-        ...     constraints=[residual_constraint, ic_constraint],
-        ...     criterion=nn.MSELoss(),
-        ...     fields={"u": field},
-        ...     params={"alpha": Parameter(ScalarConfig(init_value=0.01))},
-        ... )
+        ```python
+        problem = Problem(
+            constraints=[residual_constraint, ic_constraint],
+            criterion=nn.MSELoss(),
+            fields={"u": field},
+            params={"alpha": Parameter(ScalarConfig(init_value=0.01))},
+        )
+        ```
     """
 
     def __init__(
