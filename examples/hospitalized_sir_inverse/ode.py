@@ -34,6 +34,8 @@ H_KEY = "H"
 C_I = 1e6
 C_H = 1e3
 T = 120
+START_DATE = "2020-02-01"
+N_DAYS = 118
 
 
 # ============================================================================
@@ -143,6 +145,8 @@ def plot_and_save(
     I_obs_data, H_obs_data = y_data[:, 0], y_data[:, 1]
     delta = props.args[DELTA_KEY](t_data)
 
+    dates = pd.to_datetime(START_DATE) + pd.to_timedelta(t_data * N_DAYS, unit="D")
+
     I_pred = C_I * preds[I_KEY]
     Rt_pred = preds[Rt_KEY]
     sigma_pred = preds[SIGMA_KEY]
@@ -160,51 +164,31 @@ def plot_and_save(
     fig.suptitle("Hospitalized SIR Model", fontsize=14)
 
     ax = axes[0, 0]
-    sns.lineplot(x=t_data, y=H_pred, label=r"$\Delta H_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
-    sns.scatterplot(
-        x=t_data,
-        y=H_obs,
-        label=r"$\Delta H_{\mathrm{obs}}$",
-        ax=ax,
-        color=_LIGHT[0],
-        s=10,
-        alpha=0.4,
-    )
+    ax.plot(dates, H_pred, label=r"$\Delta H_{\mathrm{pred}}$", color=_DARK[0])
+    ax.scatter(dates, H_obs, label=r"$\Delta H_{\mathrm{obs}}$", color=_LIGHT[0], s=10, alpha=0.4)
     ax.set_title("State Predictions")
-    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Daily Hospitalizations")
     ax.legend()
 
     ax = axes[0, 1]
-    sns.lineplot(x=t_data, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
-    sns.scatterplot(
-        x=t_data,
-        y=I_obs,
-        label=r"$I_{\mathrm{obs}}$",
-        ax=ax,
-        color=_LIGHT[1],
-        s=10,
-        alpha=0.4,
-    )
+    ax.plot(dates, I_pred, label=r"$I_{\mathrm{pred}}$", color=_DARK[1])
+    ax.scatter(dates, I_obs, label=r"$I_{\mathrm{obs}}$", color=_LIGHT[1], s=10, alpha=0.4)
     ax.set_title("State Predictions")
-    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Population")
     ax.legend()
 
     ax = axes[1, 0]
     if Rt_true is not None:
-        sns.lineplot(x=t_data, y=Rt_true, label=r"$R_{t,\mathrm{true}}$", ax=ax, color=_DARK[0])
-    sns.lineplot(
-        x=t_data,
-        y=Rt_pred,
+        ax.plot(dates, Rt_true, label=r"$R_{t,\mathrm{true}}$", color=_DARK[0])
+    ax.plot(
+        dates,
+        Rt_pred,
         label=r"$R_{t,\mathrm{pred}}$",
-        ax=ax,
         linestyle="--" if Rt_true is not None else "-",
         color=_LIGHT[0] if Rt_true is not None else _DARK[0],
     )
     ax.axhline(y=1, color="red", linestyle=":", alpha=0.5, label="$R_t = 1$")
     ax.set_title("Parameter Recovery")
-    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
@@ -213,25 +197,22 @@ def plot_and_save(
 
     ax = axes[1, 1]
     if sigma_true is not None:
-        sns.lineplot(
-            x=t_data, y=sigma_true, label=r"$\sigma_{\mathrm{true}}$", ax=ax, color=_DARK[1]
-        )
-    sns.lineplot(
-        x=t_data,
-        y=sigma_pred,
+        ax.plot(dates, sigma_true, label=r"$\sigma_{\mathrm{true}}$", color=_DARK[1])
+    ax.plot(
+        dates,
+        sigma_pred,
         label=r"$\sigma_{\mathrm{pred}}$",
-        ax=ax,
         linestyle="--" if sigma_true is not None else "-",
         color=_LIGHT[1] if sigma_true is not None else _DARK[1],
     )
     ax.set_title("Parameter Recovery")
-    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
     ax.legend()
 
+    fig.autofmt_xdate(rotation=30)
     plt.tight_layout()
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
     plt.close(fig)
