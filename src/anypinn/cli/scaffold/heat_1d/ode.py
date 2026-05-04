@@ -3,7 +3,12 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -21,6 +26,7 @@ from anypinn.core import (
     # --- END VARIANT ---
     ParamsRegistry,
     PINNHyperparameters,
+    Predictions,
     Problem,
     # --- VARIANT: direction/inverse ---
     ScalarConfig,
@@ -254,6 +260,134 @@ def create_problem_inverse(hp: PINNHyperparameters) -> Problem:
         fields=fields,
         params=params,
     )
+
+
+# --- END VARIANT ---
+
+
+# ============================================================================
+# Plotting and Saving
+# ============================================================================
+
+
+# --- VARIANT: source/synthetic ---
+def plot_and_save_synthetic(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, _trues = predictions
+    xt_data, u_data = batch
+
+    if xt_data.ndim == 1:
+        xt_data = xt_data.reshape(-1, 2)
+
+    x_np = xt_data[:, 0].numpy()
+    t_np = xt_data[:, 1].numpy()
+    u_pred = preds[U_KEY].numpy()
+    u_true = u_data.reshape(-1).numpy()
+
+    n_side = math.isqrt(x_np.shape[0])
+    X = x_np.reshape(n_side, n_side)
+    T = t_np.reshape(n_side, n_side)
+    U_pred = u_pred.reshape(n_side, n_side)
+    U_true = u_true.reshape(n_side, n_side)
+    error = np.abs(U_pred - U_true)
+
+    alpha_recovered = preds.get(ALPHA_KEY)
+    alpha_str = ""
+    if alpha_recovered is not None:
+        alpha_val = alpha_recovered.mean().item()
+        alpha_str = (
+            rf" | $\alpha_{{\mathrm{{pred}}}} = {alpha_val:.4f}$,"
+            rf" $\alpha_{{\mathrm{{true}}}} = {TRUE_ALPHA}$"
+        )
+
+    sns.set_theme(style="darkgrid")
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    fig.suptitle(f"Heat Equation 1D{alpha_str}", fontsize=14)
+
+    im0 = axes[0].pcolormesh(X, T, U_pred, shading="auto", cmap="viridis")
+    axes[0].set_title(r"Predicted $u(x,t)$")
+    axes[0].set_xlabel(r"$x$")
+    axes[0].set_ylabel(r"$t$")
+    axes[0].set_aspect("equal")
+    fig.colorbar(im0, ax=axes[0])
+
+    im1 = axes[1].pcolormesh(X, T, U_true, shading="auto", cmap="viridis")
+    axes[1].set_title(r"True $u(x,t)$")
+    axes[1].set_xlabel(r"$x$")
+    axes[1].set_ylabel(r"$t$")
+    axes[1].set_aspect("equal")
+    fig.colorbar(im1, ax=axes[1])
+
+    im2 = axes[2].pcolormesh(X, T, error, shading="auto", cmap="hot")
+    axes[2].set_title(r"Pointwise Error $|u_{\mathrm{pred}} - u_{\mathrm{true}}|$")
+    axes[2].set_xlabel(r"$x$")
+    axes[2].set_ylabel(r"$t$")
+    axes[2].set_aspect("equal")
+    fig.colorbar(im2, ax=axes[2])
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame(
+        {
+            "x": x_np,
+            "t": t_np,
+            "u_pred": u_pred,
+            "u_true": u_true,
+            "error": error.reshape(-1),
+        }
+    )
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")
+
+
+# --- VARIANT: source/csv ---
+def plot_and_save_csv(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, _trues = predictions
+    xt_data, _u_data = batch
+
+    if xt_data.ndim == 1:
+        xt_data = xt_data.reshape(-1, 2)
+
+    x_np = xt_data[:, 0].numpy()
+    t_np = xt_data[:, 1].numpy()
+    u_pred = preds[U_KEY].numpy()
+
+    n_side = math.isqrt(x_np.shape[0])
+    X = x_np.reshape(n_side, n_side)
+    T = t_np.reshape(n_side, n_side)
+    U_pred = u_pred.reshape(n_side, n_side)
+
+    alpha_recovered = preds.get(ALPHA_KEY)
+    alpha_str = ""
+    if alpha_recovered is not None:
+        alpha_val = alpha_recovered.mean().item()
+        alpha_str = rf" | $\alpha_{{\mathrm{{pred}}}} = {alpha_val:.4f}$"
+
+    sns.set_theme(style="darkgrid")
+    fig, ax = plt.subplots(1, 1, figsize=(8, 5))
+    fig.suptitle(f"Heat Equation 1D{alpha_str}", fontsize=14)
+
+    im0 = ax.pcolormesh(X, T, U_pred, shading="auto", cmap="viridis")
+    ax.set_title(r"Predicted $u(x,t)$")
+    ax.set_xlabel(r"$x$")
+    ax.set_ylabel(r"$t$")
+    ax.set_aspect("equal")
+    fig.colorbar(im0, ax=ax)
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame({"x": x_np, "t": t_np, "u_pred": u_pred})
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")
 
 
 # --- END VARIANT ---

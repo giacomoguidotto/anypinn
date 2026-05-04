@@ -609,7 +609,9 @@ class TestGeneratedOutputQuality:
         for py_file in project.glob("*.py"):
             source = py_file.read_text()
             assert "_synthetic" not in source, f"Suffix in {py_file.name}"
-            assert "_csv" not in source, f"Suffix in {py_file.name}"
+            # Exclude pandas .to_csv() method calls from the suffix check
+            sanitized = source.replace(".to_csv", "")
+            assert "_csv" not in sanitized, f"Suffix in {py_file.name}"
             assert "create_problem_inverse" not in source, f"Suffix in {py_file.name}"
             assert "create_problem_forward" not in source, f"Suffix in {py_file.name}"
             assert "create_data_module_inverse" not in source, f"Suffix in {py_file.name}"

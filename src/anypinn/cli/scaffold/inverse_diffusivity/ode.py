@@ -3,7 +3,12 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -23,6 +28,7 @@ from anypinn.core import (
     MLPConfig,
     ParamsRegistry,
     PINNHyperparameters,
+    Predictions,
     Problem,
     # --- VARIANT: direction/inverse ---
     ValidationRegistry,
@@ -269,6 +275,169 @@ def create_problem_inverse(hp: PINNHyperparameters) -> Problem:
         fields=fields,
         params=params,
     )
+
+
+# --- END VARIANT ---
+
+# ============================================================================
+# Plotting and Saving
+# ============================================================================
+
+_DARK = ["#1f77b4"]
+_LIGHT = ["#aec7e8"]
+
+
+# --- VARIANT: source/synthetic ---
+def plot_and_save_synthetic(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, _trues = predictions
+    xt_data, u_data = batch
+
+    if xt_data.ndim == 1:
+        xt_data = xt_data.reshape(-1, 2)
+
+    x_np = xt_data[:, 0].numpy()
+    t_np = xt_data[:, 1].numpy()
+    u_pred = preds[U_KEY].numpy()
+    u_true = u_data.reshape(-1).numpy()
+
+    n_side = math.isqrt(x_np.shape[0])
+    X = x_np.reshape(n_side, n_side)
+    T = t_np.reshape(n_side, n_side)
+    U_pred = u_pred.reshape(n_side, n_side)
+    U_true = u_true.reshape(n_side, n_side)
+    error = np.abs(U_pred - U_true)
+
+    d_pred = preds.get(D_KEY)
+
+    sns.set_theme(style="darkgrid")
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    fig.suptitle("Inverse Diffusivity", fontsize=14)
+
+    im0 = axes[0].pcolormesh(X, T, U_pred, shading="auto", cmap="viridis")
+    axes[0].set_title(r"Predicted $u(x,t)$")
+    axes[0].set_xlabel(r"$x$")
+    axes[0].set_ylabel(r"$t$")
+    axes[0].set_aspect("equal")
+    fig.colorbar(im0, ax=axes[0])
+
+    im1 = axes[1].pcolormesh(X, T, error, shading="auto", cmap="hot")
+    axes[1].set_title(r"Pointwise Error $|u_{\mathrm{pred}} - u_{\mathrm{true}}|$")
+    axes[1].set_xlabel(r"$x$")
+    axes[1].set_ylabel(r"$t$")
+    axes[1].set_aspect("equal")
+    fig.colorbar(im1, ax=axes[1])
+
+    x_line = np.linspace(0, 1, 200)
+    d_true = 0.1 + 0.05 * np.sin(2 * np.pi * x_line)
+    axes[2].plot(x_line, d_true, color=_DARK[0], label=r"$D_{\mathrm{true}}(x)$", linewidth=2)
+
+    if d_pred is not None:
+        d_pred_np = d_pred.numpy()
+        d_grid = d_pred_np.reshape(n_side, n_side)
+        d_mean = d_grid.mean(axis=1)
+        x_grid_unique = X[:, 0]
+        axes[2].plot(
+            x_grid_unique,
+            d_mean,
+            color=_LIGHT[0],
+            linestyle="--",
+            label=r"$D_{\mathrm{pred}}(x)$",
+            linewidth=2,
+        )
+
+    axes[2].set_title("Parameter Recovery")
+    axes[2].set_xlabel(r"$x$")
+    axes[2].set_ylabel("Value")
+    axes[2].legend()
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame(
+        {
+            "x": x_np,
+            "t": t_np,
+            "u_pred": u_pred,
+            "u_true": u_true,
+            "error": error.reshape(-1),
+        }
+    )
+    if d_pred is not None:
+        df["D_pred"] = d_pred.numpy()
+        df["D_true"] = TRUE_D_FN(xt_data[:, 0:1]).squeeze().numpy()
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")
+
+
+# --- VARIANT: source/csv ---
+def plot_and_save_csv(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, _trues = predictions
+    xt_data, _u_data = batch
+
+    if xt_data.ndim == 1:
+        xt_data = xt_data.reshape(-1, 2)
+
+    x_np = xt_data[:, 0].numpy()
+    t_np = xt_data[:, 1].numpy()
+    u_pred = preds[U_KEY].numpy()
+
+    n_side = math.isqrt(x_np.shape[0])
+    X = x_np.reshape(n_side, n_side)
+    T = t_np.reshape(n_side, n_side)
+    U_pred = u_pred.reshape(n_side, n_side)
+
+    d_pred = preds.get(D_KEY)
+
+    sns.set_theme(style="darkgrid")
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    fig.suptitle("Inverse Diffusivity", fontsize=14)
+
+    im0 = axes[0].pcolormesh(X, T, U_pred, shading="auto", cmap="viridis")
+    axes[0].set_title(r"Predicted $u(x,t)$")
+    axes[0].set_xlabel(r"$x$")
+    axes[0].set_ylabel(r"$t$")
+    axes[0].set_aspect("equal")
+    fig.colorbar(im0, ax=axes[0])
+
+    x_line = np.linspace(0, 1, 200)
+    d_true = 0.1 + 0.05 * np.sin(2 * np.pi * x_line)
+    axes[1].plot(x_line, d_true, color=_DARK[0], label=r"$D_{\mathrm{true}}(x)$", linewidth=2)
+
+    if d_pred is not None:
+        d_pred_np = d_pred.numpy()
+        d_grid = d_pred_np.reshape(n_side, n_side)
+        d_mean = d_grid.mean(axis=1)
+        x_grid_unique = X[:, 0]
+        axes[1].plot(
+            x_grid_unique,
+            d_mean,
+            color=_LIGHT[0],
+            linestyle="--",
+            label=r"$D_{\mathrm{pred}}(x)$",
+            linewidth=2,
+        )
+
+    axes[1].set_title("Parameter Recovery")
+    axes[1].set_xlabel(r"$x$")
+    axes[1].set_ylabel("Value")
+    axes[1].legend()
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame({"x": x_np, "t": t_np, "u_pred": u_pred})
+    if d_pred is not None:
+        df["D_pred"] = d_pred.numpy()
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")
 
 
 # --- END VARIANT ---
