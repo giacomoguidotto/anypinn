@@ -4,6 +4,15 @@ AnyPINN's `Problem` is a plain `nn.Module`. You can train it with PyTorch
 Lightning or with a raw PyTorch loop. This guide helps you choose and shows
 both approaches.
 
+!!! info "What is PyTorch Lightning?"
+
+    Training a neural network involves a loop: compute predictions, measure
+    error, update parameters, repeat. PyTorch Lightning is a framework that
+    wraps this loop and adds common functionality on top: saving progress to
+    disk, logging metrics, distributing work across GPUs, and stopping early
+    when the model stops improving. The alternative ("core") is writing that
+    loop yourself, which gives you full control at the cost of more code.
+
 ---
 
 ## When to use which

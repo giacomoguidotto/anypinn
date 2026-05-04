@@ -31,13 +31,13 @@ Most PINN libraries make you wire up every loss term, collocation grid, and trai
 
 ## 🚀 Quick Start
 
-The fastest way to start is the bootstrap CLI. It scaffolds a complete, runnable project interactively. Run it with [uvx](https://docs.astral.sh/uv/guides/tools/) (ships with `uv`):
+The fastest way to start is from the terminal. The command below generates a complete, runnable project interactively, no manual setup needed. [uvx](https://docs.astral.sh/uv/guides/tools/) lets you run it without installing anything permanently:
 
 ```bash
 uvx anypinn create my-project
 ```
 
-or with [pipx](https://pipx.pypa.io/stable/installation/):
+[pipx](https://pipx.pypa.io/stable/installation/) works the same way:
 
 ```bash
 pipx run anypinn create my-project

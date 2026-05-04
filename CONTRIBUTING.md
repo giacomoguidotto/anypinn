@@ -19,7 +19,7 @@ Thanks for wanting to contribute to AnyPINN! Please read our [Code of Conduct](C
     just ci
     ```
 
-    This runs lint, typecheck, and tests — the same pipeline as CI.
+    This runs lint, typecheck, and tests, the same pipeline as CI.
 
 ## Tooling
 
@@ -60,8 +60,8 @@ This starts a hot-reloading server at `http://localhost:8000`. Changes to Markdo
 
 New pages must also be added to:
 
-1. **`mkdocs.yml`** — the `nav:` section, or the page won't appear in navigation.
-2. **`docs/hooks/page_icons.py`** — the `PAGE_ICONS` dict, for sidebar icons.
+1. **`mkdocs.yml`**: the `nav:` section, or the page won't appear in navigation.
+2. **`docs/hooks/page_icons.py`**: the `PAGE_ICONS` dict, for sidebar icons.
 
 ### API reference
 
@@ -108,7 +108,7 @@ added pages and `deprecated` for pages scheduled for removal.
 
 ### Verify the build
 
-Always build before pushing docs changes — the build runs in strict mode and will catch broken links and missing references:
+Always build before pushing docs changes. The build runs in strict mode and will catch broken links and missing references:
 
 ```bash
 just docs
@@ -122,5 +122,5 @@ just docs
   - `feat!:` or `BREAKING CHANGE:` triggers a **major** release (e.g. 0.2.0 → 1.0.0)
 - Branch names: `feat/`, `fix/`, `docs/`, etc.
 - Line length: 99
-- Absolute imports only — no relative imports
+- Absolute imports only (no relative imports)
 - All config dataclasses: `@dataclass(frozen=True, kw_only=True)`

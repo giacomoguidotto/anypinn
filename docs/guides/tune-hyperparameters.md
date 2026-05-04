@@ -3,6 +3,15 @@
 All training hyperparameters live in a single frozen dataclass in `config.py`.
 This guide covers the most impactful knobs and when to turn them.
 
+!!! info "What are hyperparameters?"
+
+    Training a PINN is an optimization process: the network's parameters are
+    adjusted iteratively to minimize a loss function. Hyperparameters are the
+    settings that control *how* this optimization runs: how fast parameters
+    change per step (learning rate), how many steps to take (epochs), and how
+    to balance competing objectives (loss weights). They are not learned
+    automatically; you choose them.
+
 ---
 
 ## The hyperparameter hierarchy
