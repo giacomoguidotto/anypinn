@@ -252,14 +252,15 @@ utils = [
 
 [package.metadata]
 requires-dist = [
-    { name = "lightning", extras = [], marker = "extra == 'lib'" },
-    { name = "pandas", extras = [], marker = "extra == 'lib'" },
+    { name = "lightning", marker = "extra == 'lib'" },
+    { name = "pandas", marker = "extra == 'lib'" },
     { name = "rich" },
     { name = "simple-term-menu" },
-    { name = "torch", extras = [], marker = "extra == 'lib'" },
-    { name = "torchdiffeq", extras = [], marker = "extra == 'lib'" },
+    { name = "torch", marker = "extra == 'lib'" },
+    { name = "torchdiffeq", marker = "extra == 'lib'" },
     { name = "typer-slim", extras = ["standard"] },
 ]
+provides-extras = ["lib"]
 
 [package.metadata.requires-dev]
 core = [
