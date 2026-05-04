@@ -40,7 +40,7 @@ class Template(str, Enum):
             Template.WAVE_1D: "Wave Equation 1D",
             Template.INVERSE_DIFFUSIVITY: "Inverse Diffusivity",
             Template.ALLEN_CAHN: "Allen-Cahn",
-            Template.CUSTOM: "Custom ODE",
+            Template.CUSTOM: "Custom",
             Template.BLANK: "Blank project",
         }
         return labels[self]
@@ -62,7 +62,7 @@ class Template(str, Enum):
             Template.WAVE_1D: "1D hyperbolic PDE inverse problem. Recovers wave speed from sparse measurements.",  # noqa: E501
             Template.INVERSE_DIFFUSIVITY: "Space-dependent diffusivity D(x) recovered as a neural network Field in \u2202u/\u2202t = \u2207\u00b7(D(x)\u2207u).",  # noqa: E501
             Template.ALLEN_CAHN: "Stiff reaction-diffusion PDE with sharp interfaces. Forward problem with AdaptiveSampler and periodic BCs.",  # noqa: E501
-            Template.CUSTOM: "Minimal skeleton for a user-defined ODE. All factories are stubs.",
+            Template.CUSTOM: "Minimal skeleton for a custom problem. All factories are stubs.",
             Template.BLANK: "Empty project structure with no ODE—start from scratch.",
         }
         return descriptions[self]

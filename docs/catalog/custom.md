@@ -1,10 +1,10 @@
-# Custom ODE
+# Custom
 
 ```bash
 anypinn create my-project --template custom
 ```
 
-Minimal skeleton for a user-defined ODE. All factories (`create_problem`, `create_data_module`) are
+Minimal skeleton for a user-defined problem. All factories (`create_problem`, `create_data_module`) are
 stubs ready to be filled in with your own physics.
 
 ## When to Use

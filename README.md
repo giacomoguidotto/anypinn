@@ -61,7 +61,7 @@ The `examples/` directory has ready-made, self-contained scripts covering epidem
 
 ## 🔬 Defining Your Own Problem
 
-If you want to go beyond the built-in templates, here is the full workflow for defining a custom ODE inverse problem.
+If you want to go beyond the built-in templates, here is the full workflow for defining a custom inverse problem.
 
 ### 1: Define the ODE
 

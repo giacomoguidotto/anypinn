@@ -138,7 +138,7 @@ anypinn create --list-templates
 
 <div class="grid cards" markdown>
 
-- :material-pencil: **[Custom ODE](custom.md)**
+- :material-pencil: **[Custom](custom.md)**
 
     ---
 

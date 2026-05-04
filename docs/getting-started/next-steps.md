@@ -43,7 +43,7 @@ definition and config differ.
 Start from the Custom or Blank template and write your own ODE callable,
 fields, and parameters from scratch.
 
-[:octicons-arrow-right-24: Guide: Define a custom ODE](../guides/custom-ode.md)
+[:octicons-arrow-right-24: Guide: Define a custom problem](../guides/custom.md)
 
 ## Drop Lightning
 

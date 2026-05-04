@@ -145,7 +145,7 @@ nav:
     - Next Steps: getting-started/next-steps.md
   - Guides:
     - guides/index.md
-    - Define a Custom ODE: guides/custom-ode.md
+    - Define a Custom Problem: guides/custom.md
     - Promote a Constant to a Parameter: guides/promote-constant-to-parameter.md
     - Forward vs Inverse Problems: guides/inverse-vs-forward.md
     - PDE Forward Problems: guides/pde-forward-problems.md
@@ -173,7 +173,7 @@ nav:
       - Inverse Diffusivity: catalog/inverse-diffusivity.md
       - Allen-Cahn: catalog/allen-cahn.md
     - Utility Templates:
-      - Custom ODE: catalog/custom.md
+      - Custom: catalog/custom.md
       - Blank: catalog/blank.md
   - API Reference:
     - reference/index.md

@@ -1,4 +1,4 @@
-"""Custom ODE — training configuration."""
+"""Custom — training configuration."""
 
 from __future__ import annotations
 

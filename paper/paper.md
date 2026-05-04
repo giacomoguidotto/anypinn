@@ -91,7 +91,7 @@ configuration objects in a script rather than editing files by hand.
 `FourierEncoding` and `RandomFourierFeatures` are available as `nn.Module` input encodings,
 lifting low-frequency MLPs to high-frequency solutions without changes to the training loop.
 
-The four-step workflow for a custom ODE inverse problem is:
+The four-step workflow for a custom inverse problem is:
 
 ```python
 # 1. Define the ODE
