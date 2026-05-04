@@ -1478,10 +1478,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,17 +2532,86 @@
 <h1 id="fitzhugh-nagumo">FitzHugh-Nagumo</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>fitzhugh-nagumo
 </span></code></pre></div>
-<p>Two-field nonlinear neuron model. Recovers timescale ε from a partially observed voltage trace.</p>
-<h2 id="problem">Problem</h2>
-<p>Two fields (v, w), one learnable parameter (ε):</p>
+<p>Two-field nonlinear neuron model. Recovers timescale <span class="arithmatex">\(\varepsilon\)</span> and threshold parameter <span class="arithmatex">\(a\)</span>
+from a partially observed voltage trace.</p>
+<h2 id="background">Background</h2>
+<p>The FitzHugh-Nagumo model, simplified by FitzHugh (1961) and Nagumo et al. (1962) from the
+four-variable Hodgkin-Huxley equations, captures the essential dynamics of neural spike
+generation with just two variables: a fast voltage-like variable <span class="arithmatex">\(v\)</span> and a slow recovery variable
+<span class="arithmatex">\(w\)</span>. The model exhibits <strong>excitable</strong> dynamics: small perturbations decay, but a sufficiently
+large stimulus drives the system through a full action potential (spike) before returning to rest.
+The timescale separation parameter <span class="arithmatex">\(\varepsilon \ll 1\)</span> governs how fast the recovery variable <span class="arithmatex">\(w\)</span>
+responds relative to the voltage <span class="arithmatex">\(v\)</span>.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
-\dot{v} = v - \frac{v^3}{3} - w + I_{\text{ext}}, \qquad
-\dot{w} = \varepsilon(v + a - bw)
+\begin{cases}
+\dfrac{dv}{dt} = v - \dfrac{v^3}{3} - w + I_{\text{ext}} \\[8pt]
+\dfrac{dw}{dt} = \varepsilon\,(v + a - b\,w)
+\end{cases}
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(v(t)\)</span>: membrane voltage (fast variable, <strong>observed</strong>)</li>
+<li><span class="arithmatex">\(w(t)\)</span>: recovery current (slow variable, <strong>latent</strong>)</li>
+<li><span class="arithmatex">\(\varepsilon\)</span>: timescale separation (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(a\)</span>: excitability threshold (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(b\)</span>: recovery sensitivity (known)</li>
+<li><span class="arithmatex">\(I_{\text{ext}}\)</span>: external stimulus current (known)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\varepsilon\)</span></td>
+<td><code>TRUE_EPSILON</code></td>
+<td><span class="arithmatex">\(0.08\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(a\)</span></td>
+<td><code>TRUE_A</code></td>
+<td><span class="arithmatex">\(0.7\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Known constants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(b\)</span></td>
+<td><code>B</code></td>
+<td><span class="arithmatex">\(0.8\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(I_{\text{ext}}\)</span></td>
+<td><code>I_EXT</code></td>
+<td><span class="arithmatex">\(0.5\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(v(0) = -1.0, \quad w(0) = 1.0\)</span></p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(t \in [0, 50]\)</span></p>
+<p><strong>Observability:</strong> only <span class="arithmatex">\(v\)</span> (voltage) is observed; <span class="arithmatex">\(w\)</span> is a latent state reconstructed by the
+network.</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>Partial observability (only voltage is observed)</li>
-<li>Scalar <code>Parameter</code> recovery</li>
+<li>Multi-parameter <code>Parameter</code> recovery (<span class="arithmatex">\(\varepsilon\)</span> and <span class="arithmatex">\(a\)</span>)</li>
 <li>Neural excitation dynamics</li>
 </ul>
 <h2 id="results">Results</h2>

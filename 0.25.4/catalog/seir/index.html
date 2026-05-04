@@ -1338,10 +1338,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,15 +2532,76 @@
 <h1 id="seir-epidemic-model">SEIR Epidemic Model</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>seir
 </span></code></pre></div>
-<p>Extended epidemic model with an exposed compartment E. Recovers transmission rate β from partially
-observed data.</p>
-<h2 id="problem">Problem</h2>
-<p>Three fields (S, E, I), one learnable scalar parameter (β):</p>
+<p>Extended epidemic model with an exposed compartment <span class="arithmatex">\(E\)</span>. Recovers transmission rate <span class="arithmatex">\(\beta\)</span> from
+partially observed data.</p>
+<h2 id="background">Background</h2>
+<p>The SEIR model extends the classical SIR framework by introducing an <strong>E</strong>xposed compartment for
+individuals who are infected but not yet infectious, capturing the incubation period
+characteristic of diseases such as COVID-19, measles, and influenza. The latency rate <span class="arithmatex">\(\sigma\)</span>
+(inverse of the mean incubation period) controls the transition from exposed to infectious, adding
+a delay that significantly affects outbreak timing and peak height.</p>
+<h2 id="governing-equations">Governing Equations</h2>
+<p>The model uses population fractions (<span class="arithmatex">\(S + E + I + R = 1\)</span>):</p>
 <div class="arithmatex">\[
-\frac{dS}{dt} = -\beta \frac{SI}{N}, \qquad
-\frac{dE}{dt} = \beta \frac{SI}{N} - \sigma E, \qquad
-\frac{dI}{dt} = \sigma E - \delta I
+\begin{cases}
+\dfrac{dS}{dt} = -\beta\, S\, I \\[8pt]
+\dfrac{dE}{dt} = \beta\, S\, I - \sigma\, E \\[8pt]
+\dfrac{dI}{dt} = \sigma\, E - \gamma\, I
+\end{cases}
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(S(t)\)</span>: susceptible fraction</li>
+<li><span class="arithmatex">\(E(t)\)</span>: exposed (latent) fraction</li>
+<li><span class="arithmatex">\(I(t)\)</span>: infected fraction</li>
+<li><span class="arithmatex">\(\beta\)</span>: transmission rate (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(\sigma\)</span>: latency rate, i.e. <span class="arithmatex">\(1 / \text{incubation period}\)</span> (known)</li>
+<li><span class="arithmatex">\(\gamma\)</span>: recovery rate, i.e. <span class="arithmatex">\(1 / \text{infectious period}\)</span> (known)</li>
+</ul>
+<p>The recovered fraction follows by conservation: <span class="arithmatex">\(R(t) = 1 - S(t) - E(t) - I(t)\)</span>.</p>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\beta\)</span></td>
+<td><code>TRUE_BETA</code></td>
+<td><span class="arithmatex">\(0.5\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Known constants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\sigma\)</span></td>
+<td><code>TRUE_SIGMA</code></td>
+<td><span class="arithmatex">\(1/5.2 \approx 0.192\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\gamma\)</span></td>
+<td><code>TRUE_GAMMA</code></td>
+<td><span class="arithmatex">\(1/10 = 0.1\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(S(0) = 0.99, \quad E(0) = 0.01, \quad I(0) = 0.001\)</span></p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(t \in [0, 160]\)</span> days</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>Multi-field ODE system (3 fields)</li>

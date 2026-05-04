@@ -1585,10 +1585,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2490,11 +2534,67 @@
 </span></code></pre></div>
 <p>Coupled two-field reaction-diffusion PDE. Recovers diffusion rates and reaction parameters from
 pattern snapshots.</p>
-<h2 id="problem">Problem</h2>
+<h2 id="background">Background</h2>
+<p>The Gray-Scott model describes two reacting and diffusing chemical species in a continuously
+stirred tank reactor: a substrate <span class="arithmatex">\(u\)</span> is fed at rate <span class="arithmatex">\(F\)</span> and consumed by an autocatalytic reaction
+<span class="arithmatex">\(u + 2v \to 3v\)</span>, while the product <span class="arithmatex">\(v\)</span> decays at rate <span class="arithmatex">\(F + k\)</span>. Depending on the feed rate <span class="arithmatex">\(F\)</span>
+and kill rate <span class="arithmatex">\(k\)</span>, the system produces a rich variety of Turing-type patterns including spots, stripes,
+labyrinthine structures, and self-replicating pulses. It is widely studied as a prototype for
+self-organizing pattern formation in chemistry and developmental biology.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
-\frac{\partial u}{\partial t} = D_u \nabla^2 u - uv^2 + F(1-u), \qquad
-\frac{\partial v}{\partial t} = D_v \nabla^2 v + uv^2 - (F+k)v
+\begin{cases}
+\dfrac{\partial u}{\partial t} = D_u\,\nabla^2 u - u\,v^2 + F\,(1 - u) \\[8pt]
+\dfrac{\partial v}{\partial t} = D_v\,\nabla^2 v + u\,v^2 - (F + k)\,v
+\end{cases}
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(u(\mathbf{x}, t)\)</span>: substrate concentration</li>
+<li><span class="arithmatex">\(v(\mathbf{x}, t)\)</span>: product concentration</li>
+<li><span class="arithmatex">\(D_u, D_v\)</span>: diffusion coefficients (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(F\)</span>: feed rate (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(k\)</span>: kill rate (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(\nabla^2 = \dfrac{\partial^2}{\partial x^2} + \dfrac{\partial^2}{\partial y^2}\)</span>: 2D Laplacian</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(D_u\)</span></td>
+<td><code>TRUE_DU</code></td>
+<td><span class="arithmatex">\(5 \times 10^{-3}\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(D_v\)</span></td>
+<td><code>TRUE_DV</code></td>
+<td><span class="arithmatex">\(2.5 \times 10^{-3}\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(F\)</span></td>
+<td><code>TRUE_F</code></td>
+<td><span class="arithmatex">\(0.04\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(k\)</span></td>
+<td><code>TRUE_K</code></td>
+<td><span class="arithmatex">\(0.06\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(u = 1,\; v = 0\)</span> everywhere, except a central square
+<span class="arithmatex">\([0.4, 0.6]^2\)</span> where <span class="arithmatex">\(u = 0.5,\; v = 0.25\)</span> (seeding the pattern).</p>
+<p><strong>Domain:</strong> <span class="arithmatex">\((x, y) \in [0, 1]^2, \quad t \in [0, 200]\)</span></p>
+<p><strong>Boundary conditions:</strong> Neumann (zero-flux) on all edges.</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>2D PDE with coupled fields</li>

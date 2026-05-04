@@ -1669,10 +1669,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,11 +2532,45 @@
 <h1 id="burgers-equation-1d">Burgers Equation 1D</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>burgers-1d
 </span></code></pre></div>
-<p>1D nonlinear PDE with shock formation. Recovers viscosity ν with adaptive collocation.</p>
-<h2 id="problem">Problem</h2>
+<p>1D nonlinear PDE with shock formation. Recovers viscosity <span class="arithmatex">\(\nu\)</span> with adaptive collocation.</p>
+<h2 id="background">Background</h2>
+<p>The viscous Burgers equation combines nonlinear advection (<span class="arithmatex">\(u\,\partial u / \partial x\)</span>) with
+diffusion (<span class="arithmatex">\(\nu\,\partial^2 u / \partial x^2\)</span>). It serves as a one-dimensional prototype for the
+Navier-Stokes equations and is a standard benchmark for methods that must handle shock formation.
+As the viscosity <span class="arithmatex">\(\nu \to 0\)</span> the solution develops steep gradients that evolve into shock-like
+fronts, concentrating the PDE residual in narrow regions. This motivates the use of adaptive
+collocation, which places more training points where the residual is largest.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
-\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = \nu \frac{\partial^2 u}{\partial x^2}
+\frac{\partial u}{\partial t} + u\,\frac{\partial u}{\partial x} = \nu\,\frac{\partial^2 u}{\partial x^2}
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(u(x, t)\)</span>: velocity field</li>
+<li><span class="arithmatex">\(\nu\)</span>: kinematic viscosity (<strong>to recover</strong>)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\nu\)</span></td>
+<td><code>TRUE_NU</code></td>
+<td><span class="arithmatex">\(0.01 / \pi \approx 0.00318\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial condition:</strong> <span class="arithmatex">\(u(x, 0) = -\sin(\pi x)\)</span></p>
+<p><strong>Boundary conditions:</strong> <span class="arithmatex">\(u(-1, t) = u(1, t) = 0\)</span> (homogeneous Dirichlet).</p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(x \in [-1, 1], \quad t \in [0, 1]\)</span></p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>Adaptive collocation via <code>AdaptiveCollocationCallback</code></li>

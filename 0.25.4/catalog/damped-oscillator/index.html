@@ -1366,10 +1366,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,12 +2532,72 @@
 <h1 id="damped-oscillator">Damped Oscillator</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>damped-oscillator
 </span></code></pre></div>
-<p>Harmonic oscillator with damping. Recovers damping ratio ζ from displacement observations.</p>
-<h2 id="problem">Problem</h2>
-<p>Second-order ODE with learnable damping ratio ζ:</p>
+<p>Harmonic oscillator with damping. Recovers damping ratio <span class="arithmatex">\(\zeta\)</span> from displacement observations.</p>
+<h2 id="background">Background</h2>
+<p>The damped harmonic oscillator is a fundamental model in mechanics, electrical engineering, and
+control theory. It describes a system subject to a restoring force proportional to displacement
+and a dissipative force proportional to velocity. The damping ratio <span class="arithmatex">\(\zeta\)</span> classifies the
+response into three regimes: <strong>underdamped</strong> (<span class="arithmatex">\(\zeta &lt; 1\)</span>, oscillatory decay),
+<strong>critically damped</strong> (<span class="arithmatex">\(\zeta = 1\)</span>, fastest non-oscillatory return), and <strong>overdamped</strong>
+(<span class="arithmatex">\(\zeta &gt; 1\)</span>, sluggish return). The template uses an underdamped configuration
+(<span class="arithmatex">\(\zeta = 0.15\)</span>).</p>
+<h2 id="governing-equations">Governing Equations</h2>
+<p>Second-order ODE with learnable damping ratio <span class="arithmatex">\(\zeta\)</span>:</p>
 <div class="arithmatex">\[
-\ddot{x} + 2\zeta\omega_0 \dot{x} + \omega_0^2 x = 0
+\ddot{x} + 2\zeta\omega_0\,\dot{x} + \omega_0^2\,x = 0
 \]</div>
+<p>Equivalently, as a first-order system with velocity <span class="arithmatex">\(v = \dot{x}\)</span>:</p>
+<div class="arithmatex">\[
+\begin{cases}
+\dfrac{dx}{dt} = v \\[8pt]
+\dfrac{dv}{dt} = -2\zeta\omega_0\,v - \omega_0^2\,x
+\end{cases}
+\]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(x(t)\)</span>: displacement</li>
+<li><span class="arithmatex">\(v(t)\)</span>: velocity</li>
+<li><span class="arithmatex">\(\omega_0\)</span>: natural frequency (known)</li>
+<li><span class="arithmatex">\(\zeta\)</span>: damping ratio (<strong>to recover</strong>)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\zeta\)</span></td>
+<td><code>TRUE_ZETA</code></td>
+<td><span class="arithmatex">\(0.15\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Known constants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\omega_0\)</span></td>
+<td><code>TRUE_OMEGA0</code></td>
+<td><span class="arithmatex">\(2\pi \approx 6.283\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(x(0) = 1.0, \quad \dot{x}(0) = 0.0\)</span></p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(t \in [0, 5]\)</span> s</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>Second-order ODE support via <code>ODEProperties.order</code></li>

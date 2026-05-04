@@ -1725,10 +1725,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,16 +2532,52 @@
 <h1 id="inverse-diffusivity">Inverse Diffusivity</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>inverse-diffusivity
 </span></code></pre></div>
-<p>Recovers a space-dependent diffusivity D(x) represented as a neural network <code>Field</code>, rather than a
-single scalar parameter.</p>
-<h2 id="problem">Problem</h2>
+<p>Recovers a space-dependent diffusivity <span class="arithmatex">\(D(x)\)</span> represented as a neural network <code>Field</code>, rather
+than a single scalar parameter.</p>
+<h2 id="background">Background</h2>
+<p>Recovering spatially varying material properties from indirect measurements is a central problem
+in inverse theory, with applications in thermal conductivity imaging, permeability estimation in
+porous media, and non-destructive material testing. Unlike the other PDE templates where the
+unknown is a scalar, here the diffusivity <span class="arithmatex">\(D(x)\)</span> is a <strong>function</strong>. The template represents it
+as a learnable neural network <code>Field</code>, demonstrating function-valued parameter recovery. The
+expanded form of the divergence operator <span class="arithmatex">\(\nabla \cdot (D\,\nabla u) = D\,u_{xx} + D'\,u_x\)</span>
+shows how the spatial gradient of <span class="arithmatex">\(D\)</span> couples to the solution gradient.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
 \frac{\partial u}{\partial t} = \nabla \cdot \bigl(D(x)\,\nabla u\bigr)
+  = D(x)\,\frac{\partial^2 u}{\partial x^2} + D'(x)\,\frac{\partial u}{\partial x}
 \]</div>
-<p>where D(x) is unknown and learned as a neural network.</p>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(u(x, t)\)</span>: temperature / concentration field</li>
+<li><span class="arithmatex">\(D(x)\)</span>: spatially varying diffusivity (<strong>to recover</strong> as a neural network <code>Field</code>)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Function to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True profile</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(D(x)\)</span></td>
+<td><code>TRUE_D_FN</code></td>
+<td><span class="arithmatex">\(0.1 + 0.05\,\sin(2\pi x)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The diffusivity ranges from <span class="arithmatex">\(0.05\)</span> to <span class="arithmatex">\(0.15\)</span> over the spatial domain.</p>
+<p><strong>Initial condition:</strong> <span class="arithmatex">\(u(x, 0) = \sin(\pi x)\)</span></p>
+<p><strong>Boundary conditions:</strong> <span class="arithmatex">\(u(0, t) = u(1, t) = 0\)</span> (homogeneous Dirichlet).</p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(x \in [0, 1], \quad t \in [0, 1]\)</span></p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
-<li>Function-valued parameter recovery (D(x) as a <code>Field</code>)</li>
+<li>Function-valued parameter recovery (<span class="arithmatex">\(D(x)\)</span> as a <code>Field</code>)</li>
 <li>Composable differential operators from <code>anypinn.lib.diff</code></li>
 <li>PDE inverse problem with spatially varying coefficients</li>
 </ul>

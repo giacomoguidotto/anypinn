@@ -1310,10 +1310,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,13 +2532,76 @@
 <h1 id="sir-epidemic-model">SIR Epidemic Model</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>sir
 </span></code></pre></div>
-<p>Classic S→I→R compartmental model. Recovers transmission rate β from partially observed infected
-counts.</p>
-<h2 id="problem">Problem</h2>
-<p>Two fields (S, I), one learnable scalar parameter (β), with known recovery rate δ and population N:</p>
+<p>Classic S→I→R compartmental model. Recovers transmission rate <span class="arithmatex">\(\beta\)</span> from partially observed
+infected counts.</p>
+<h2 id="background">Background</h2>
+<p>The SIR model, introduced by Kermack and McKendrick (1927), is the foundation of compartmental
+epidemiology. It divides a population into three mutually exclusive compartments —
+<strong>S</strong>usceptible, <strong>I</strong>nfected, and <strong>R</strong>ecovered, tracking how individuals flow between them.
+The dynamics are governed by two competing processes: infection at rate <span class="arithmatex">\(\beta\)</span> and recovery at
+rate <span class="arithmatex">\(\delta\)</span>, whose ratio defines the basic reproduction number <span class="arithmatex">\(R_0 = \beta / \delta\)</span>. An
+epidemic occurs when <span class="arithmatex">\(R_0 &gt; 1\)</span>.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
-\frac{dS}{dt} = -\beta \frac{SI}{N}, \qquad \frac{dI}{dt} = \beta \frac{SI}{N} - \delta I
+\begin{cases}
+\dfrac{dS}{dt} = -\beta \dfrac{SI}{N} \\[8pt]
+\dfrac{dI}{dt} = \beta \dfrac{SI}{N} - \delta\, I
+\end{cases}
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(S(t)\)</span>: susceptible population</li>
+<li><span class="arithmatex">\(I(t)\)</span>: infected population</li>
+<li><span class="arithmatex">\(N\)</span>: total population (constant)</li>
+<li><span class="arithmatex">\(\beta\)</span>: transmission rate (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(\delta\)</span>: recovery rate (known)</li>
+</ul>
+<p>The recovered compartment follows by conservation: <span class="arithmatex">\(R(t) = N - S(t) - I(t)\)</span>.</p>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\beta\)</span></td>
+<td><code>TRUE_BETA</code></td>
+<td><span class="arithmatex">\(0.6\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Known constants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\delta\)</span></td>
+<td><code>DELTA</code></td>
+<td><span class="arithmatex">\(1/5 = 0.2\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(N\)</span></td>
+<td><code>N_POP</code></td>
+<td><span class="arithmatex">\(56 \times 10^6\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(S(0) = N - 1, \quad I(0) = 1\)</span></p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(t \in [0, 90]\)</span> days</p>
+<p><strong>Scaling:</strong> populations are divided by <span class="arithmatex">\(C = 10^6\)</span> and time is normalized by <span class="arithmatex">\(T = 90\)</span> in the
+training ODE. The generated code maps between physical and scaled units automatically.</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>Scalar <code>Parameter</code> recovery</li>

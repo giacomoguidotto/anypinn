@@ -1697,10 +1697,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,11 +2532,48 @@
 <h1 id="wave-equation-1d">Wave Equation 1D</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>wave-1d
 </span></code></pre></div>
-<p>1D hyperbolic PDE inverse problem. Recovers wave speed c from sparse displacement measurements.</p>
-<h2 id="problem">Problem</h2>
+<p>1D hyperbolic PDE inverse problem. Recovers wave speed <span class="arithmatex">\(c\)</span> from sparse displacement measurements.</p>
+<h2 id="background">Background</h2>
+<p>The wave equation governs the propagation of disturbances in elastic media such as vibrating strings,
+acoustic pressure waves, and electromagnetic fields. As a hyperbolic PDE it preserves the shape
+of initial disturbances (unlike the heat equation, which smooths them), transporting energy at
+speed <span class="arithmatex">\(c\)</span> without dissipation. The template uses a standing-wave exact solution (product of
+spatial and temporal modes) so that the recovered wave speed can be verified analytically.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
 \frac{\partial^2 u}{\partial t^2} = c^2 \frac{\partial^2 u}{\partial x^2}
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(u(x, t)\)</span>: displacement field</li>
+<li><span class="arithmatex">\(c\)</span>: wave propagation speed (<strong>to recover</strong>)</li>
+</ul>
+<p>Exact solution used for data generation:</p>
+<div class="arithmatex">\[
+u(x, t) = \sin(\pi x)\,\cos(c\,\pi\,t)
+\]</div>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(c\)</span></td>
+<td><code>TRUE_C</code></td>
+<td><span class="arithmatex">\(1.0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(u(x, 0) = \sin(\pi x), \quad \dfrac{\partial u}{\partial t}(x, 0) = 0\)</span></p>
+<p><strong>Boundary conditions:</strong> <span class="arithmatex">\(u(0, t) = u(1, t) = 0\)</span> (homogeneous Dirichlet).</p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(x \in [0, 1], \quad t \in [0, 1]\)</span></p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>Hyperbolic PDE handling</li>

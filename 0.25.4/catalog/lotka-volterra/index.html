@@ -1394,10 +1394,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,13 +2532,79 @@
 <h1 id="lotka-volterra">Lotka-Volterra</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>lotka-volterra
 </span></code></pre></div>
-<p>Predator-prey dynamics. Recovers predation rate β from population observations.</p>
-<h2 id="problem">Problem</h2>
-<p>Two fields (prey, predator), one learnable parameter (β):</p>
+<p>Predator-prey dynamics. Recovers predation rate <span class="arithmatex">\(\beta\)</span> from population observations.</p>
+<h2 id="background">Background</h2>
+<p>The Lotka-Volterra equations, formulated independently by Alfred Lotka (1925) and Vito Volterra
+(1926), are the classical model of predator-prey interaction in ecology. The system exhibits
+characteristic oscillatory cycles: prey abundance fuels predator growth, which in turn suppresses
+prey, leading to predator decline and eventual prey recovery. The four rate constants
+(<span class="arithmatex">\(\alpha, \beta, \delta, \gamma\)</span>) control the amplitude and period of these cycles. The model is
+a cornerstone of mathematical biology and population dynamics.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
-\frac{dx}{dt} = \alpha x - \beta x y, \qquad
-\frac{dy}{dt} = \delta x y - \gamma y
+\begin{cases}
+\dfrac{dx}{dt} = \alpha\, x - \beta\, x\, y \\[8pt]
+\dfrac{dy}{dt} = \delta\, x\, y - \gamma\, y
+\end{cases}
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(x(t)\)</span>: prey population</li>
+<li><span class="arithmatex">\(y(t)\)</span>: predator population</li>
+<li><span class="arithmatex">\(\alpha\)</span>: prey birth rate (known)</li>
+<li><span class="arithmatex">\(\beta\)</span>: predation rate (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(\delta\)</span>: predator growth rate per prey consumed (known)</li>
+<li><span class="arithmatex">\(\gamma\)</span>: predator death rate (known)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\beta\)</span></td>
+<td><code>TRUE_BETA</code></td>
+<td><span class="arithmatex">\(0.02\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Known constants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\alpha\)</span></td>
+<td><code>TRUE_ALPHA</code></td>
+<td><span class="arithmatex">\(0.5\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\delta\)</span></td>
+<td><code>TRUE_DELTA</code></td>
+<td><span class="arithmatex">\(0.01\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\gamma\)</span></td>
+<td><code>TRUE_GAMMA</code></td>
+<td><span class="arithmatex">\(0.5\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(x(0) = 40, \quad y(0) = 9\)</span></p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(t \in [0, 50]\)</span></p>
+<p><strong>Scaling:</strong> populations are divided by <span class="arithmatex">\(P = 100\)</span> in the training ODE.</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li><code>FourierEncoding</code> for capturing oscillatory solutions</li>

@@ -1753,10 +1753,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,17 +2532,53 @@
 <h1 id="allen-cahn">Allen-Cahn</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>allen-cahn
 </span></code></pre></div>
-<p>Stiff reaction-diffusion PDE with sharp interfaces. Forward problem demonstrating adaptive sampling
-and periodic boundary conditions.</p>
-<h2 id="problem">Problem</h2>
+<p>Stiff reaction-diffusion PDE with sharp interfaces. Forward problem demonstrating adaptive
+sampling and periodic boundary conditions.</p>
+<h2 id="background">Background</h2>
+<p>The Allen-Cahn equation, introduced by Allen and Cahn (1979), models phase separation and
+interface motion in binary alloys and other materials. The solution <span class="arithmatex">\(u\)</span> represents a
+non-conserved order parameter that evolves under a double-well potential (<span class="arithmatex">\(u - u^3\)</span> term),
+driving it toward the two stable phases <span class="arithmatex">\(u \approx \pm 1\)</span>. The diffusion coefficient <span class="arithmatex">\(\varepsilon\)</span>
+controls the interface width; small <span class="arithmatex">\(\varepsilon\)</span> produces sharp transition layers between
+phases, creating stiff dynamics that challenge standard PDE solvers and require adaptive
+sampling to resolve accurately.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
-\frac{\partial u}{\partial t} = \varepsilon^2 \frac{\partial^2 u}{\partial x^2} + u - u^3
+\frac{\partial u}{\partial t} = \varepsilon\,\frac{\partial^2 u}{\partial x^2} + u - u^3
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(u(x, t)\)</span>: order parameter (phase field)</li>
+<li><span class="arithmatex">\(\varepsilon\)</span>: diffusion coefficient controlling interface width (known)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Known constants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\varepsilon\)</span></td>
+<td><code>TRUE_EPSILON</code></td>
+<td><span class="arithmatex">\(0.01\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial condition:</strong> <span class="arithmatex">\(u(x, 0) = -\tanh\!\left(\dfrac{x}{\sqrt{2\varepsilon}}\right)\)</span>, the
+stationary kink profile centered at <span class="arithmatex">\(x = 0\)</span>.</p>
+<p><strong>Boundary conditions:</strong> periodic (<span class="arithmatex">\(u(-1, t) = u(1, t)\)</span>).</p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(x \in [-1, 1], \quad t \in [0, 1]\)</span></p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li><code>AdaptiveSampler</code> for resolving sharp interfaces</li>
 <li>Periodic boundary conditions</li>
-<li>Stiff PDE dynamics (small ε)</li>
+<li>Stiff PDE dynamics (small <span class="arithmatex">\(\varepsilon\)</span>)</li>
 <li>Forward problem (no parameter recovery)</li>
 </ul>
 <h2 id="results">Results</h2>

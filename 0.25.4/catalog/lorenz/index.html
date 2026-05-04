@@ -1450,10 +1450,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,14 +2532,65 @@
 <h1 id="lorenz-system">Lorenz System</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>lorenz
 </span></code></pre></div>
-<p>Chaotic 3-field ODE. Recovers σ, ρ, and β simultaneously from trajectory observations.</p>
-<h2 id="problem">Problem</h2>
-<p>Three fields (x, y, z), three learnable parameters:</p>
+<p>Chaotic 3-field ODE. Recovers <span class="arithmatex">\(\sigma\)</span>, <span class="arithmatex">\(\rho\)</span>, and <span class="arithmatex">\(\beta\)</span> simultaneously from trajectory
+observations.</p>
+<h2 id="background">Background</h2>
+<p>The Lorenz system, derived by Edward Lorenz (1963) as a simplified model of atmospheric
+convection, is one of the earliest and most studied examples of deterministic chaos. For the
+classical parameter values (<span class="arithmatex">\(\sigma = 10\)</span>, <span class="arithmatex">\(\rho = 28\)</span>, <span class="arithmatex">\(\beta = 8/3\)</span>) the system exhibits
+extreme sensitivity to initial conditions (the "butterfly effect"). Trajectories settle
+onto a fractal <strong>strange attractor</strong> that never repeats. Recovering all three parameters
+simultaneously from a noisy, chaotic trajectory tests the robustness of the inverse solver;
+Huber loss is used to mitigate the effect of outlier residuals.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
-\dot{x} = \sigma(y - x), \qquad
-\dot{y} = x(\rho - z) - y, \qquad
-\dot{z} = xy - \beta z
+\begin{cases}
+\dot{x} = \sigma\,(y - x) \\[6pt]
+\dot{y} = x\,(\rho - z) - y \\[6pt]
+\dot{z} = x\,y - \beta\,z
+\end{cases}
 \]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(x(t)\)</span>: proportional to convective circulation intensity</li>
+<li><span class="arithmatex">\(y(t)\)</span>: proportional to temperature difference between ascending and descending currents</li>
+<li><span class="arithmatex">\(z(t)\)</span>: proportional to deviation from linear vertical temperature profile</li>
+<li><span class="arithmatex">\(\sigma\)</span>: Prandtl number (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(\rho\)</span>: normalized Rayleigh number (<strong>to recover</strong>)</li>
+<li><span class="arithmatex">\(\beta\)</span>: geometric factor (<strong>to recover</strong>)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\sigma\)</span></td>
+<td><code>TRUE_SIGMA</code></td>
+<td><span class="arithmatex">\(10.0\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\rho\)</span></td>
+<td><code>TRUE_RHO</code></td>
+<td><span class="arithmatex">\(28.0\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\beta\)</span></td>
+<td><code>TRUE_BETA</code></td>
+<td><span class="arithmatex">\(8/3 \approx 2.667\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(x(0) = -8, \quad y(0) = 7, \quad z(0) = 27\)</span></p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(t \in [0, 3]\)</span></p>
+<p><strong>Scaling:</strong> state variables are divided by <span class="arithmatex">\(S = 20\)</span> in the training ODE.</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>Multi-parameter recovery (3 simultaneous parameters)</li>

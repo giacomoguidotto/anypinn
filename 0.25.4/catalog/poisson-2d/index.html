@@ -1613,10 +1613,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2490,11 +2534,33 @@
 </span></code></pre></div>
 <p>2D elliptic PDE forward problem. Solves for the solution field given a known source term and
 boundary conditions.</p>
-<h2 id="problem">Problem</h2>
+<h2 id="background">Background</h2>
+<p>The Poisson equation is one of the most fundamental elliptic PDEs in mathematical physics. It
+arises in electrostatics (computing the electric potential from a charge distribution),
+gravitational theory, and steady-state heat conduction. As a time-independent equation it
+describes equilibrium states, making it the simplest setting for demonstrating PDE residual
+and boundary condition constraints. The template uses a manufactured solution with an
+analytically known source term, so the forward solve can be verified exactly.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
 -\nabla^2 u = f(x, y)
 \]</div>
-<p>with Dirichlet boundary conditions on the domain boundary.</p>
+<p>with source term:</p>
+<div class="arithmatex">\[
+f(x, y) = -2\pi^2 \sin(\pi x)\,\sin(\pi y)
+\]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(u(x, y)\)</span>: solution field</li>
+<li><span class="arithmatex">\(\nabla^2 = \dfrac{\partial^2}{\partial x^2} + \dfrac{\partial^2}{\partial y^2}\)</span>: 2D Laplacian</li>
+<li><span class="arithmatex">\(f(x, y)\)</span>: prescribed source (code: <code>source_fn</code>)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Boundary conditions:</strong> <span class="arithmatex">\(u = 0\)</span> on <span class="arithmatex">\(\partial\Omega\)</span> (homogeneous Dirichlet on all four edges).</p>
+<p><strong>Domain:</strong> <span class="arithmatex">\((x, y) \in [0, 1]^2\)</span></p>
+<p>In the <strong>inverse</strong> variant (<code>--direction inverse</code>), a scaling parameter <span class="arithmatex">\(k\)</span> is introduced as
+<span class="arithmatex">\(-k\,\nabla^2 u = f\)</span> with true value <span class="arithmatex">\(k = 1\)</span> (code: <code>TRUE_K</code>).</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li><code>PDEResidualConstraint</code> for interior residual enforcement</li>

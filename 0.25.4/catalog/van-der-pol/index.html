@@ -1422,10 +1422,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2384,10 +2406,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governing-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governing Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Configuration
       
     </span>
   </a>
@@ -2488,11 +2532,53 @@
 <h1 id="van-der-pol-oscillator">Van der Pol Oscillator</h1>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>van-der-pol
 </span></code></pre></div>
-<p>Second-order nonlinear oscillator. Recovers nonlinearity parameter μ.</p>
-<h2 id="problem">Problem</h2>
+<p>Second-order nonlinear oscillator. Recovers nonlinearity parameter <span class="arithmatex">\(\mu\)</span>.</p>
+<h2 id="background">Background</h2>
+<p>The Van der Pol oscillator, proposed by Balthasar van der Pol (1926) to model oscillations in
+vacuum tube circuits, is a canonical example of a self-excited oscillator. When <span class="arithmatex">\(\mu &gt; 0\)</span> the
+system has negative damping for small amplitudes (energy injection) and positive damping for large
+amplitudes (energy dissipation), producing a stable <strong>limit cycle</strong>, a self-sustaining periodic
+orbit whose shape and amplitude are independent of initial conditions. For small <span class="arithmatex">\(\mu\)</span> the
+waveform is nearly sinusoidal; for large <span class="arithmatex">\(\mu\)</span> it becomes a <strong>relaxation oscillation</strong> with
+alternating slow drifts and rapid jumps.</p>
+<h2 id="governing-equations">Governing Equations</h2>
 <div class="arithmatex">\[
-\ddot{x} - \mu(1 - x^2)\dot{x} + x = 0
+\ddot{x} - \mu\,(1 - x^2)\,\dot{x} + x = 0
 \]</div>
+<p>Equivalently, with <span class="arithmatex">\(v = \dot{x}\)</span>:</p>
+<div class="arithmatex">\[
+\begin{cases}
+\dfrac{dx}{dt} = v \\[8pt]
+\dfrac{dv}{dt} = \mu\,(1 - x^2)\,v - x
+\end{cases}
+\]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(x(t)\)</span>: displacement (state variable)</li>
+<li><span class="arithmatex">\(v(t)\)</span>: velocity</li>
+<li><span class="arithmatex">\(\mu\)</span>: nonlinearity / damping strength (<strong>to recover</strong>)</li>
+</ul>
+<h2 id="default-configuration">Default Configuration</h2>
+<p>The generated template uses the following values.</p>
+<p><strong>Parameters to recover:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Code constant</th>
+<th>True value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\mu\)</span></td>
+<td><code>TRUE_MU</code></td>
+<td><span class="arithmatex">\(1.0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initial conditions:</strong> <span class="arithmatex">\(x(0) = 2.0, \quad \dot{x}(0) = 0.0\)</span></p>
+<p><strong>Domain:</strong> <span class="arithmatex">\(t \in [0, 20]\)</span> s</p>
 <h2 id="features-demonstrated">Features Demonstrated</h2>
 <ul>
 <li>Second-order ODE support via <code>ODEProperties.order</code></li>
