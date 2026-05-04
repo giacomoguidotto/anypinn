@@ -33,6 +33,12 @@ The `<experiment>` name comes from `EXPERIMENT_NAME` in `config.py`, and
 
 ### TensorBoard
 
+!!! tip "What is TensorBoard?"
+
+    TensorBoard is a dashboard that opens in your browser and shows how
+    training is progressing. You'll see loss curves (lower is better) and
+    parameter recovery metrics updating in real time.
+
 Launch TensorBoard to visualize training curves:
 
 ```bash

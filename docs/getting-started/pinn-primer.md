@@ -1,7 +1,33 @@
 # PINN Primer
 
-A short conceptual introduction to Physics-Informed Neural Networks for readers
+A conceptual introduction to Physics-Informed Neural Networks for readers
 who haven't encountered them before.
+
+---
+
+## Background
+
+**Differential equations** describe how quantities change. A population
+grows proportionally to its size; a vibrating string accelerates toward its
+resting position. In each case the governing law relates a quantity to its
+own rate of change, producing an equation involving derivatives.
+
+When the unknown depends on a single variable (e.g. time), the equation is
+an **ordinary differential equation (ODE)**. When it depends on several
+variables (e.g. space and time), it is a **partial differential equation
+(PDE)**.
+
+To pin down a unique solution, you need extra information:
+
+- **Initial conditions** fix the state at a starting point
+  (e.g. "the population at $t = 0$ is 1000").
+- **Boundary conditions** fix the state at the edges of a spatial domain
+  (e.g. "the temperature at both ends of the rod is 0 °C").
+
+Finally, an **inverse problem** flips the usual question: instead of
+"given the equation and its parameters, find the solution," you ask "given
+partial observations of the solution, recover the unknown parameters."
+For example, estimating infection rates from case-count data.
 
 ---
 

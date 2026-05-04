@@ -3,6 +3,12 @@
 This section walks you through everything you need to go from zero to a trained
 Physics-Informed Neural Network. Follow the pages in order.
 
+!!! tip "New to PINNs?"
+
+    If you've never worked with Physics-Informed Neural Networks before, start
+    with the [PINN Primer](pinn-primer.md) for a conceptual introduction to
+    differential equations, inverse problems, and how PINNs solve them.
+
 <div class="grid cards" markdown>
 
 - :material-download: **Installation**
@@ -39,10 +45,3 @@ Physics-Informed Neural Network. Follow the pages in order.
 
 </div>
 
----
-
-## New to PINNs?
-
-If you've never worked with Physics-Informed Neural Networks before, start with
-the [PINN Primer](pinn-primer.md) for a short conceptual introduction before
-diving into the tutorial.
