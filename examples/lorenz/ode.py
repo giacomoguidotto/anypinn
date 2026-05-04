@@ -155,6 +155,10 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 # ============================================================================
 
 
+_DARK = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+_LIGHT = ["#aec7e8", "#ffbb78", "#98df8a"]
+
+
 def plot_and_save(
     predictions: Predictions,
     results_dir: Path,
@@ -178,66 +182,65 @@ def plot_and_save(
     beta_true = trues[BETA_KEY] if trues else None
 
     sns.set_theme(style="darkgrid")
-    fig, axes = plt.subplots(1, 3, figsize=(20, 6))
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Lorenz System", fontsize=14)
 
-    # Subplot 1: x, y, z predictions vs data
     ax = axes[0]
-    sns.lineplot(x=t_data, y=x_pred, label="$x_{pred}$", ax=ax, color="C0")
-    sns.lineplot(x=t_data, y=y_pred, label="$y_{pred}$", ax=ax, color="C1")
-    sns.lineplot(x=t_data, y=z_pred, label="$z_{pred}$", ax=ax, color="C2")
-    sns.scatterplot(x=t_data, y=x_obs, label="$x_{obs}$", ax=ax, color="C0", s=10, alpha=0.3)
-    sns.scatterplot(x=t_data, y=y_obs, label="$y_{obs}$", ax=ax, color="C1", s=10, alpha=0.3)
-    sns.scatterplot(x=t_data, y=z_obs, label="$z_{obs}$", ax=ax, color="C2", s=10, alpha=0.3)
-    ax.set_title("Lorenz System Predictions")
-    ax.set_xlabel("Time")
+    sns.lineplot(x=t_data, y=x_pred, label=r"$x_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.lineplot(x=t_data, y=y_pred, label=r"$y_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
+    sns.lineplot(x=t_data, y=z_pred, label=r"$z_{\mathrm{pred}}$", ax=ax, color=_DARK[2])
+    sns.scatterplot(
+        x=t_data, y=x_obs, label=r"$x_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
+    )
+    sns.scatterplot(
+        x=t_data, y=y_obs, label=r"$y_{\mathrm{obs}}$", ax=ax, color=_LIGHT[1], s=10, alpha=0.4
+    )
+    sns.scatterplot(
+        x=t_data, y=z_obs, label=r"$z_{\mathrm{obs}}$", ax=ax, color=_LIGHT[2], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$")
     ax.set_ylabel("State")
     ax.legend()
 
-    # Subplot 2: sigma prediction
     ax = axes[1]
     if sigma_true is not None:
-        sns.lineplot(x=t_data, y=sigma_true, label=r"$\sigma_{true}$", ax=ax, color="C0")
+        sns.lineplot(
+            x=t_data, y=sigma_true, label=r"$\sigma_{\mathrm{true}}$", ax=ax, color=_DARK[0]
+        )
     sns.lineplot(
         x=t_data,
         y=sigma_pred,
-        label=r"$\sigma_{pred}$",
+        label=r"$\sigma_{\mathrm{pred}}$",
         linestyle="--" if sigma_true is not None else "-",
         ax=ax,
-        color="C3" if sigma_true is not None else "C0",
+        color=_LIGHT[0] if sigma_true is not None else _DARK[0],
     )
-    ax.set_title(r"$\sigma$ Prediction")
-    ax.set_xlabel("Time")
-    ax.set_ylabel(r"$\sigma$")
-    top = ax.get_ylim()[1]
-    pad = top * 0.10
-    ax.set_ylim(-pad, top + pad)
-    ax.legend()
-
-    # Subplot 3: rho and beta predictions
-    ax = axes[2]
     if rho_true is not None:
-        sns.lineplot(x=t_data, y=rho_true, label=r"$\rho_{true}$", ax=ax, color="C0")
+        sns.lineplot(x=t_data, y=rho_true, label=r"$\rho_{\mathrm{true}}$", ax=ax, color=_DARK[1])
     sns.lineplot(
         x=t_data,
         y=rho_pred,
-        label=r"$\rho_{pred}$",
+        label=r"$\rho_{\mathrm{pred}}$",
         linestyle="--" if rho_true is not None else "-",
         ax=ax,
-        color="C3" if rho_true is not None else "C0",
+        color=_LIGHT[1] if rho_true is not None else _DARK[1],
     )
     if beta_true is not None:
-        sns.lineplot(x=t_data, y=beta_true, label=r"$\beta_{true}$", ax=ax, color="C1")
+        sns.lineplot(
+            x=t_data, y=beta_true, label=r"$\beta_{\mathrm{true}}$", ax=ax, color=_DARK[2]
+        )
     sns.lineplot(
         x=t_data,
         y=beta_pred,
-        label=r"$\beta_{pred}$",
+        label=r"$\beta_{\mathrm{pred}}$",
         linestyle="--" if beta_true is not None else "-",
         ax=ax,
-        color="C4" if beta_true is not None else "C1",
+        color=_LIGHT[2] if beta_true is not None else _DARK[2],
     )
-    ax.set_title(r"$\rho$, $\beta$ Predictions")
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Parameter value")
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
