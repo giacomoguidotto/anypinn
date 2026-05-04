@@ -29,7 +29,7 @@ class TestPromptTemplate:
     def test_exit_on_none(self, mock_menu_cls: MagicMock) -> None:
         mock_menu_cls.return_value.show.return_value = None
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(KeyboardInterrupt):
             prompt_template()
 
 
