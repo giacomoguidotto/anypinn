@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -15,6 +20,7 @@ from anypinn.core import (
     FieldsRegistry,
     Parameter,
     ParamsRegistry,
+    Predictions,
     ValidationRegistry,
 )
 from anypinn.lightning.callbacks import DataScaling
@@ -179,3 +185,75 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
         params=params,
         predict_data=predict_data,
     )
+
+
+# ============================================================================
+# Plotting and Saving
+# ============================================================================
+
+
+_DARK = ["#1f77b4", "#ff7f0e"]
+_LIGHT = ["#aec7e8", "#ffbb78"]
+
+
+def plot_and_save(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, trues = predictions
+    t_data, u_data = batch
+    u_data = u_data.squeeze(-1)
+
+    u_pred = preds[U_KEY]
+
+    mu_pred = preds[MU_KEY]
+    mu_true = trues[MU_KEY] if trues else None
+
+    sns.set_theme(style="darkgrid")
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Van der Pol Oscillator", fontsize=14)
+
+    ax = axes[0]
+    sns.lineplot(x=t_data, y=u_pred, label=r"$u_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.scatterplot(
+        x=t_data, y=u_data, label=r"$u_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Amplitude")
+    ax.legend()
+
+    ax = axes[1]
+    if mu_true is not None:
+        sns.lineplot(x=t_data, y=mu_true, label=r"$\mu_{\mathrm{true}}$", ax=ax, color=_DARK[0])
+    sns.lineplot(
+        x=t_data,
+        y=mu_pred,
+        label=r"$\mu_{\mathrm{pred}}$",
+        linestyle="--" if mu_true is not None else "-",
+        ax=ax,
+        color=_LIGHT[0] if mu_true is not None else _DARK[0],
+    )
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Value")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
+    ax.legend()
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame(
+        {
+            "t": t_data,
+            "u_observed": u_data,
+            "u_pred": u_pred,
+            "mu_pred": mu_pred,
+            "mu_true": mu_true,
+        }
+    )
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")
