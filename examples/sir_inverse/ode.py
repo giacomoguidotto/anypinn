@@ -31,6 +31,8 @@ C = 1e6
 T = 90
 N_POP = 56e6
 DELTA = 1 / 5
+START_DATE = "2020-02-04"
+N_DAYS = 85
 
 
 # ============================================================================
@@ -126,6 +128,8 @@ def plot_and_save(
     t_data, I_data = batch
     I_data = I_data.squeeze(-1)
 
+    dates = pd.to_datetime(START_DATE) + pd.to_timedelta(t_data * N_DAYS, unit="D")
+
     N = props.args[N_KEY](t_data)
 
     S_pred = C * preds[S_KEY]
@@ -144,21 +148,19 @@ def plot_and_save(
     ax1 = axes[0]
     ax2 = ax1.twinx()
 
-    sns.lineplot(x=t_data, y=S_pred, label=r"$S_{\mathrm{pred}}$", ax=ax1, color=_DARK[0])
+    ax1.plot(dates, S_pred, label=r"$S_{\mathrm{pred}}$", color=_DARK[0])
     ax1.set_ylabel("$S$ (Population)", color=_DARK[0])
     ax1.tick_params(axis="y", labelcolor=_DARK[0])
 
-    sns.lineplot(x=t_data, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax2, color=_DARK[1])
-    sns.lineplot(x=t_data, y=R_pred, label=r"$R_{\mathrm{pred}}$", ax=ax2, color=_DARK[2])
-    sns.scatterplot(
-        x=t_data, y=I_data, label=r"$I_{\mathrm{obs}}$", ax=ax2, color=_LIGHT[1], s=10, alpha=0.4
-    )
+    ax2.plot(dates, I_pred, label=r"$I_{\mathrm{pred}}$", color=_DARK[1])
+    ax2.plot(dates, R_pred, label=r"$R_{\mathrm{pred}}$", color=_DARK[2])
+    ax2.scatter(dates, I_data, label=r"$I_{\mathrm{obs}}$", color=_LIGHT[1], s=10, alpha=0.4)
     ax2.set_ylabel("$I$, $R$ (Population)", color=_DARK[1])
     ax2.tick_params(axis="y", labelcolor=_DARK[1])
     ax2.grid(False)
 
     ax1.set_title("State Predictions")
-    ax1.set_xlabel(r"$t$ (days)")
+    fig.autofmt_xdate(rotation=30)
 
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
@@ -167,19 +169,15 @@ def plot_and_save(
 
     ax = axes[1]
     if beta_true is not None:
-        sns.lineplot(
-            x=t_data, y=beta_true, label=r"$\beta_{\mathrm{true}}$", ax=ax, color=_DARK[0]
-        )
-    sns.lineplot(
-        x=t_data,
-        y=beta_pred,
+        ax.plot(dates, beta_true, label=r"$\beta_{\mathrm{true}}$", color=_DARK[0])
+    ax.plot(
+        dates,
+        beta_pred,
         label=r"$\beta_{\mathrm{pred}}$",
         linestyle="--" if beta_true is not None else "-",
-        ax=ax,
         color=_LIGHT[0] if beta_true is not None else _DARK[0],
     )
     ax.set_title("Parameter Recovery")
-    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Value")
     ax.legend()
 

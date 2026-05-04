@@ -167,6 +167,8 @@ def plot_and_save(
     t_data, I_data = batch
     I_data = I_data.squeeze(-1)
 
+    t_days = t_data * T_DAYS
+
     S_pred = preds[S_KEY]
     E_pred = preds[E_KEY]
     I_pred = preds[I_KEY]
@@ -179,11 +181,11 @@ def plot_and_save(
     fig.suptitle("SEIR Model", fontsize=14)
 
     ax = axes[0]
-    sns.lineplot(x=t_data, y=S_pred, label=r"$S_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
-    sns.lineplot(x=t_data, y=E_pred, label=r"$E_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
-    sns.lineplot(x=t_data, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax, color=_DARK[2])
+    sns.lineplot(x=t_days, y=S_pred, label=r"$S_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.lineplot(x=t_days, y=E_pred, label=r"$E_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
+    sns.lineplot(x=t_days, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax, color=_DARK[2])
     sns.scatterplot(
-        x=t_data, y=I_data, label=r"$I_{\mathrm{obs}}$", ax=ax, color=_LIGHT[2], s=10, alpha=0.4
+        x=t_days, y=I_data, label=r"$I_{\mathrm{obs}}$", ax=ax, color=_LIGHT[2], s=10, alpha=0.4
     )
     ax.set_title("State Predictions")
     ax.set_xlabel(r"$t$ (days)")
@@ -193,10 +195,10 @@ def plot_and_save(
     ax = axes[1]
     if beta_true is not None:
         sns.lineplot(
-            x=t_data, y=beta_true, label=r"$\beta_{\mathrm{true}}$", ax=ax, color=_DARK[0]
+            x=t_days, y=beta_true, label=r"$\beta_{\mathrm{true}}$", ax=ax, color=_DARK[0]
         )
     sns.lineplot(
-        x=t_data,
+        x=t_days,
         y=beta_pred,
         label=r"$\beta_{\mathrm{pred}}$",
         linestyle="--" if beta_true is not None else "-",

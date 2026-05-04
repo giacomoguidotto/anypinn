@@ -29,6 +29,8 @@ from anypinn.problems import ODEHyperparameters, ODEInverseProblem, ODEPropertie
 
 C = 1e6
 T = 120
+START_DATE = "2020-02-01"
+N_DAYS = 118
 
 
 # ============================================================================
@@ -119,6 +121,8 @@ def plot_and_save(
     t_data, I_data = batch
     I_data = I_data.squeeze(-1)
 
+    dates = pd.to_datetime(START_DATE) + pd.to_timedelta(t_data * N_DAYS, unit="D")
+
     Rt_pred = preds[Rt_KEY]
     Rt_true = trues[Rt_KEY] if trues else None
 
@@ -130,33 +134,30 @@ def plot_and_save(
     fig.suptitle("Reduced SIR Model", fontsize=14)
 
     ax = axes[0]
-    sns.lineplot(x=t_data, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
-    sns.scatterplot(
-        x=t_data, y=I_data, label=r"$I_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
-    )
+    ax.plot(dates, I_pred, label=r"$I_{\mathrm{pred}}$", color=_DARK[0])
+    ax.scatter(dates, I_data, label=r"$I_{\mathrm{obs}}$", color=_LIGHT[0], s=10, alpha=0.4)
     ax.set_title("State Predictions")
-    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Population")
     ax.legend()
 
     ax = axes[1]
     if Rt_true is not None:
-        sns.lineplot(x=t_data, y=Rt_true, label=r"$R_{t,\mathrm{true}}$", ax=ax, color=_DARK[0])
-    sns.lineplot(
-        x=t_data,
-        y=Rt_pred,
+        ax.plot(dates, Rt_true, label=r"$R_{t,\mathrm{true}}$", color=_DARK[0])
+    ax.plot(
+        dates,
+        Rt_pred,
         label=r"$R_{t,\mathrm{pred}}$",
         linestyle="--" if Rt_true is not None else "-",
-        ax=ax,
         color=_LIGHT[0] if Rt_true is not None else _DARK[0],
     )
     ax.set_title("Parameter Recovery")
-    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
     ax.legend()
+
+    fig.autofmt_xdate(rotation=30)
 
     plt.tight_layout()
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
