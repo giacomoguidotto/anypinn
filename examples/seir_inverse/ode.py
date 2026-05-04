@@ -154,6 +154,10 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 # ============================================================================
 
 
+_DARK = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+_LIGHT = ["#aec7e8", "#ffbb78", "#98df8a"]
+
+
 def plot_and_save(
     predictions: Predictions,
     results_dir: Path,
@@ -170,47 +174,47 @@ def plot_and_save(
     beta_pred = preds[BETA_KEY]
     beta_true = trues[BETA_KEY] if trues else None
 
-    # plot
     sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("SEIR Model", fontsize=14)
 
-    # Subplot 1: S, E, I curves + observed I data
     ax = axes[0]
-    sns.lineplot(x=t_data, y=S_pred, label="$S_{pred}$", ax=ax, color="C0")
-    sns.lineplot(x=t_data, y=E_pred, label="$E_{pred}$", ax=ax, color="C2")
-    sns.lineplot(x=t_data, y=I_pred, label="$I_{pred}$", ax=ax, color="C3")
-    sns.scatterplot(x=t_data, y=I_data, label="$I_{observed}$", ax=ax, color="C1", s=10, alpha=0.5)
-    ax.set_title("SEIR Model Predictions")
-    ax.set_xlabel("Time (scaled)")
+    sns.lineplot(x=t_data, y=S_pred, label=r"$S_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.lineplot(x=t_data, y=E_pred, label=r"$E_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
+    sns.lineplot(x=t_data, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax, color=_DARK[2])
+    sns.scatterplot(
+        x=t_data, y=I_data, label=r"$I_{\mathrm{obs}}$", ax=ax, color=_LIGHT[2], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Fraction")
     ax.legend()
 
-    # Subplot 2: beta predicted vs true
     ax = axes[1]
     if beta_true is not None:
-        sns.lineplot(x=t_data, y=beta_true, label=r"$\beta_{true}$", ax=ax, color="C0")
+        sns.lineplot(
+            x=t_data, y=beta_true, label=r"$\beta_{\mathrm{true}}$", ax=ax, color=_DARK[0]
+        )
     sns.lineplot(
         x=t_data,
         y=beta_pred,
-        label=r"$\beta_{pred}$",
+        label=r"$\beta_{\mathrm{pred}}$",
         linestyle="--" if beta_true is not None else "-",
         ax=ax,
-        color="C3" if beta_true is not None else "C0",
+        color=_LIGHT[0] if beta_true is not None else _DARK[0],
     )
-    ax.set_title(r"$\beta$ Parameter Prediction")
-    ax.set_xlabel("Time (scaled)")
-    ax.set_ylabel(r"$\beta$")
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$ (days)")
+    ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     plt.tight_layout()
-
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
     plt.close(fig)
 
-    # save
     df = pd.DataFrame(
         {
             "t": t_data,
@@ -222,5 +226,4 @@ def plot_and_save(
             "beta_true": beta_true,
         }
     )
-
     df.to_csv(results_dir / f"{experiment_name}.csv", index=False, float_format="%.6e")
