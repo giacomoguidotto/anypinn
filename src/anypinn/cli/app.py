@@ -98,38 +98,78 @@ def create(
         Option(
             "--template",
             "-t",
-            help="Project template. Run with --list-templates / -l to see all options.",
+            help="Model template (see -l for all)",
             show_default=False,
+            rich_help_panel="Template",
         ),
     ] = None,
     data_source: Annotated[
-        DataSource | None, Option("--data", "-d", help="Training data source")
+        DataSource | None,
+        Option(
+            "--data",
+            "-d",
+            help="Training data source",
+            rich_help_panel="Model Options",
+        ),
     ] = None,
     direction_str: Annotated[
         str | None,
-        Option("--direction", help="Problem direction (forward or inverse). Only for PDE models."),
+        Option(
+            "--direction",
+            help="forward or inverse (PDE only)",
+            rich_help_panel="Model Options",
+        ),
     ] = None,
     lightning: Annotated[
         bool | None,
-        Option("--lightning/--no-lightning", "-L/-NL", help="Include Lightning wrapper"),
+        Option(
+            "--lightning/--no-lightning",
+            "-L/-NL",
+            help="Use PyTorch Lightning trainer",
+            rich_help_panel="Model Options",
+        ),
     ] = None,
     run: Annotated[
         bool,
-        Option("--run/--no-run", help="Install dependencies and run training after scaffolding"),
+        Option(
+            "--run/--no-run",
+            help="Run training after scaffolding",
+            rich_help_panel="After Scaffolding",
+        ),
     ] = True,
     list_templates: Annotated[
         bool,
         Option(
             "--list-templates",
             "-l",
-            help="List all available templates and exit.",
+            help="List all available templates and exit",
             callback=_list_templates_callback,
             is_eager=True,
             expose_value=False,
+            rich_help_panel="Template",
         ),
     ] = False,
 ) -> None:
-    """Scaffold a PINN project from 16 ready-made templates."""
+    """Scaffold a PINN project from 16 ready-made templates.
+
+    Options omitted from the command line are asked interactively.
+
+    \b
+    Examples:
+      anypinn create                        interactive wizard
+      anypinn create my-project             named project, guided
+      anypinn create -t sir -d synthetic .  ODE, current directory
+      anypinn create -t heat-1d --direction inverse -d csv -L .
+                                            PDE inverse, CSV + Lightning
+
+    Available templates (anypinn create -l):
+      ODE:   sir, seir, damped-oscillator, lotka-volterra,
+             van-der-pol, lorenz, fitzhugh-nagumo
+      PDE:   gray-scott-2d, poisson-2d, heat-1d, burgers-1d,
+             wave-1d, inverse-diffusivity, allen-cahn
+      Other: custom, blank
+
+    Docs: https://anypinn.guidotto.dev/getting-started/"""
     project_dir = Path(project_name).resolve()
     display_name = project_dir.name
     use_cwd = project_name == "."
