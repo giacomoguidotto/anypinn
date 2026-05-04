@@ -6,7 +6,7 @@ authors:
     affiliation: 1
   - name: Damiano Pasetto
     orcid: 0000-0001-6892-9826
-    affiliaion: 1
+    affiliation: 1
   - name: Caterina Millevoi
     orcid: 0000-0002-9743-4547
     affiliation: 2
@@ -27,7 +27,7 @@ AnyPINN is a PyTorch-native library for Physics-Informed Neural Networks (PINNs)
 
 Physics-Informed Neural Networks encode differential equation residuals as loss terms, enabling mesh-free, automatic-differentiation-based solutions to both forward and inverse problems [@lagaris1998artificial; @raissi2019physics; @karniadakis2021physics; @cuomo2022scientific].
 
-Despite a growing ecosystem of PINN libraries [@lu2021deepxde; @chen2021neurodiffe; @cuomo2022scientific], two pain points persist. First, every major library couples physics definition to its own training loop, preventing researchers from using the full PyTorch potential. Second, inverse problems remain second-class: unknown parameters are configuration flags rather than typed objects, and ground-truth tracking during training requires user-written callbacks.
+Despite a growing ecosystem of PINN libraries [@lu2021deepxde; @chen2021neurodiffeq; @cuomo2022scientific], two pain points persist. First, every major library couples physics definition to its own training loop, preventing researchers from using the full PyTorch potential. Second, inverse problems remain second-class: unknown parameters are configuration flags rather than typed objects, and ground-truth tracking during training requires user-written callbacks.
 
 AnyPINN addresses both gaps. The core abstraction, `Problem`, is a standard `nn.Module` whose `training_loss()` returns a scalar tensor, compatible with any optimizer, scheduler, or distributed strategy without library-specific wrappers. For inverse problems specifically, `Parameter` is a first-class type with the same `forward(x)` interface whether it wraps a fixed scalar or a time-varying MLP; switching from fixed to learnable requires changing one configuration line. `ValidationRegistry` binds ground-truth references to parameter names and logs MSE automatically at every training step. `ArgsRegistry` unifies fixed and learnable arguments so that the differential equation callable cannot distinguish between the two, enabling transparent composability.
 
