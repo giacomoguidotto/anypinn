@@ -136,6 +136,10 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 # ============================================================================
 
 
+_DARK = ["#1f77b4", "#ff7f0e"]
+_LIGHT = ["#aec7e8", "#ffbb78"]
+
+
 def plot_and_save(
     predictions: Predictions,
     results_dir: Path,
@@ -150,41 +154,40 @@ def plot_and_save(
     mu_pred = preds[MU_KEY]
     mu_true = trues[MU_KEY] if trues else None
 
-    # plot
     sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Van der Pol Oscillator", fontsize=14)
 
-    # Subplot 1: u prediction + data
     ax = axes[0]
-    sns.lineplot(x=t_data, y=u_pred, label="$u_{pred}$", ax=ax, color="C0")
-    sns.scatterplot(x=t_data, y=u_data, label="$u_{observed}$", ax=ax, color="C1", s=10, alpha=0.5)
-    ax.set_title("Van der Pol Oscillator Predictions")
-    ax.set_xlabel("Time (scaled)")
+    sns.lineplot(x=t_data, y=u_pred, label=r"$u_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.scatterplot(
+        x=t_data, y=u_data, label=r"$u_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$")
     ax.set_ylabel("Amplitude")
     ax.legend()
 
-    # Subplot 2: mu predicted vs true
     ax = axes[1]
     if mu_true is not None:
-        sns.lineplot(x=t_data, y=mu_true, label=r"$\mu_{true}$", ax=ax, color="C0")
+        sns.lineplot(x=t_data, y=mu_true, label=r"$\mu_{\mathrm{true}}$", ax=ax, color=_DARK[0])
     sns.lineplot(
         x=t_data,
         y=mu_pred,
-        label=r"$\mu_{pred}$",
+        label=r"$\mu_{\mathrm{pred}}$",
         linestyle="--" if mu_true is not None else "-",
         ax=ax,
-        color="C3" if mu_true is not None else "C0",
+        color=_LIGHT[0] if mu_true is not None else _DARK[0],
     )
-    ax.set_title(r"$\mu$ Prediction")
-    ax.set_xlabel("Time (scaled)")
-    ax.set_ylabel(r"$\mu$")
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     plt.tight_layout()
-
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
     plt.close(fig)
 
