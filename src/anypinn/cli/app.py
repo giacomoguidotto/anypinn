@@ -140,74 +140,87 @@ def create(
     _console.print("[dim]│[/]")
 
     # Handle existing directory
-    if project_dir.exists():
-        contents = list(project_dir.iterdir())
-        if contents:
-            if not _confirm(
-                f"Directory '{display_name}' is not empty. Delete all contents?",
-                default=False,
-            ):
-                _console.print()
-                raise Exit(code=1)
-            if not _confirm(
-                "Are you sure? This cannot be undone",
-                default=False,
-            ):
-                _console.print()
-                raise Exit(code=1)
-            for item in contents:
-                if item.is_dir():
-                    shutil.rmtree(item)
-                else:
-                    item.unlink()
+    needs_cleanup = False
+    try:
+        if project_dir.exists():
+            contents = list(project_dir.iterdir())
+            if contents:
+                if not _confirm(
+                    f"Directory '{display_name}' is not empty. Delete all contents?",
+                    default=False,
+                ):
+                    _console.print()
+                    _console.print("[bold red]●[/]  No changes made, exiting.")
+                    raise Exit(code=1)
+                if not _confirm(
+                    "Are you sure? This cannot be undone",
+                    default=False,
+                ):
+                    _console.print()
+                    _console.print("[bold red]●[/]  No changes made, exiting.")
+                    raise Exit(code=1)
+                needs_cleanup = True
 
-    _console.print(f"[bold green]◇[/]  Generating project in '{display_name}'...")
-    _console.print("[dim]│[/]")
-
-    # Interactive prompts for missing options
-    if template is None:
-        template = prompt_template()
-    else:
-        _console.print("[bold green]◇[/]  Choose a starting point")
-        _console.print(f"[dim]│[/]  {template.label}")
+        _console.print(f"[bold green]◇[/]  Generating project in '{display_name}'...")
         _console.print("[dim]│[/]")
 
-    # Direction prompt (only for PDE templates that support both)
-    direction: Direction | None = None
-    if template in TEMPLATES_WITH_DIRECTION:
-        if direction_str is not None:
-            try:
-                direction = Direction(direction_str)
-            except ValueError:
-                valid = ", ".join(f"'{d.value}'" for d in Direction)
-                _console.print(
-                    f"[bold red]Error:[/] [bold]{direction_str!r}[/] is not a valid direction."
-                )
-                _console.print(f"[dim]Valid values:[/] {valid}")
-                raise Exit(code=2) from None
-            _console.print("[bold green]◇[/]  Problem direction")
-            _console.print(f"[dim]│[/]  {direction.label}")
-            _console.print("[dim]│[/]")
+        # Interactive prompts for missing options
+        if template is None:
+            template = prompt_template()
         else:
-            direction = prompt_direction()
+            _console.print("[bold green]◇[/]  Choose a starting point")
+            _console.print(f"[dim]│[/]  {template.label}")
+            _console.print("[dim]│[/]")
 
-    if data_source is None:
-        data_source = prompt_data_source()
-    else:
-        _console.print("[bold green]◇[/]  Select training data source")
-        _console.print(f"[dim]│[/]  {data_source.label}")
-        _console.print("[dim]│[/]")
+        # Direction prompt (only for PDE templates that support both)
+        direction: Direction | None = None
+        if template in TEMPLATES_WITH_DIRECTION:
+            if direction_str is not None:
+                try:
+                    direction = Direction(direction_str)
+                except ValueError:
+                    valid = ", ".join(f"'{d.value}'" for d in Direction)
+                    _console.print(
+                        f"[bold red]Error:[/] [bold]{direction_str!r}[/] is not a valid direction."
+                    )
+                    _console.print(f"[dim]Valid values:[/] {valid}")
+                    raise Exit(code=2) from None
+                _console.print("[bold green]◇[/]  Problem direction")
+                _console.print(f"[dim]│[/]  {direction.label}")
+                _console.print("[dim]│[/]")
+            else:
+                direction = prompt_direction()
 
-    if lightning is None:
-        lightning = prompt_lightning()
-    else:
-        display = "Yes" if lightning else "No"
-        _console.print("[bold green]◇[/]  Include Lightning training wrapper?")
-        _console.print(f"[dim]│[/]  {display}")
-        _console.print("[dim]│[/]")
+        if data_source is None:
+            data_source = prompt_data_source()
+        else:
+            _console.print("[bold green]◇[/]  Select training data source")
+            _console.print(f"[dim]│[/]  {data_source.label}")
+            _console.print("[dim]│[/]")
+
+        if lightning is None:
+            lightning = prompt_lightning()
+        else:
+            display = "Yes" if lightning else "No"
+            _console.print("[bold green]◇[/]  Include Lightning training wrapper?")
+            _console.print(f"[dim]│[/]  {display}")
+            _console.print("[dim]│[/]")
+    except KeyboardInterrupt:
+        _console.print()
+        _console.print("[bold red]●[/]  No changes made, exiting.")
+        raise Exit(code=1) from None
 
     # Render
-    _console.print(f"[bold green]◇[/]  Creating '{display_name}/'")
+    if needs_cleanup:
+        _console.print(f"[bold green]◇[/]  Cleaning up '{display_name}/'...")
+        _console.print("[dim]│[/]")
+        for item in project_dir.iterdir():
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
+    _console.print("[bold green]◇[/]  Scaffolding project...")
+    _console.print(f"[dim]│[/]  {display_name}/")
 
     created = render_project(project_dir, template, data_source, lightning, direction)
 

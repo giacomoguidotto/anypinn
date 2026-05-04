@@ -38,7 +38,7 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     raw_index = menu.show()
 
     if raw_index is None or isinstance(raw_index, tuple):
-        raise SystemExit(1)
+        raise KeyboardInterrupt
 
     index: int = int(raw_index)
     selected = options[index]
@@ -60,18 +60,17 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
 def _confirm(question: str, default: bool = True) -> bool:
     """Display a clack-style yes/no prompt."""
     _console.print(f"[bold cyan]◆[/]  {question}")
-    _print_bar()
 
     suffix = " [Y/n] " if default else " [y/N] "
-    _console.print("[dim]│[/]  ", end="")
+    _console.print("   ", end="")
     answer = input(suffix).strip().lower()
 
     result = default if answer == "" else answer in ("y", "yes")
 
     display = "Yes" if result else "No"
 
-    # Overwrite the ◆ question + │ bar + │ [Y/n] input line
-    _clear_lines(3)
+    # Overwrite the ◆ question + │ [Y/n] input line
+    _clear_lines(2)
 
     _console.print(f"[bold green]◇[/]  {question}")
     _console.print(f"[dim]│[/]  {display}")
