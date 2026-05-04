@@ -103,7 +103,7 @@ The generated project contains five items:
 ```
 my-project/
 ├── pyproject.toml    # Dependencies (anypinn, torch, numpy, scipy, pandas, ...)
-├── ode.py            # ODE definition, fields, parameters, validation
+├── ode.py            # ODE/PDE definition, fields, parameters, validation
 ├── config.py         # All hyperparameters in a single frozen dataclass
 ├── train.py          # Training script (Lightning or plain PyTorch)
 └── data/             # Empty (for CSV data or saved predictions)
@@ -113,13 +113,13 @@ my-project/
 
 This is the file you will modify most. It contains:
 
-- **The ODE callable**: a function `f(x, y, args) -> Tensor` that returns
+- **The equation callable**: a function `f(x, y, args) -> Tensor` that returns
   derivatives. `x` is the independent variable (e.g. time), `y` is the state
   vector, and `args` is an `ArgsRegistry` holding both fixed constants and
   learnable parameters.
 - **`create_problem(hp)`**: a factory that wires up `Field`s (neural network
-  solution approximations), `Parameter`s (quantities to recover), and the ODE
-  into an `ODEInverseProblem`.
+  solution approximations), `Parameter`s (quantities to recover), and the
+  equation into a `Problem`.
 - **`validation`**: a `ValidationRegistry` mapping parameter names to
   ground-truth callables. The library logs MSE against these at every training
   step.

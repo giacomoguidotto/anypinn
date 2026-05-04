@@ -8,7 +8,7 @@ value into something the network recovers, in a single line.
 
 ## The pattern
 
-In every ODE callable, arguments are accessed the same way regardless of
+In every equation callable, arguments are accessed the same way regardless of
 whether they're fixed or learnable:
 
 ```python
@@ -18,7 +18,7 @@ def my_ode(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     ...
 ```
 
-This uniformity means the ODE function never needs to change when you switch
+This uniformity means the equation never needs to change when you switch
 a constant to a learnable parameter.
 
 ---

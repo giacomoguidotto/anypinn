@@ -7,7 +7,7 @@ depending on what you want to do.
 
 ## Modify the physics
 
-Edit the ODE callable in `ode.py` to change the dynamics. Add or remove fields
+Edit the equation in `ode.py` to change the dynamics. Add or remove fields
 and parameters in `create_problem`. The `ArgsRegistry` pattern means promoting
 a fixed constant to a learnable parameter is a one-line change: replace
 `Argument(value)` with `Parameter(config=hp.params_config)`.
@@ -33,14 +33,14 @@ loading in `ode.py` to match your column names.
 
 Each template demonstrates different AnyPINN features: Fourier encodings
 (Lotka-Volterra), Huber loss (Lorenz), boundary conditions (Poisson 2D),
-adaptive collocation (Burgers 1D). Scaffold several and compare how the ODE
-definition and config differ.
+adaptive collocation (Burgers 1D). Scaffold several and compare how the physics
+and config differ.
 
 [:octicons-arrow-right-24: Browse the catalog](../catalog/index.md)
 
-## Define your own ODE
+## Define your own ODE/PDE
 
-Start from the Custom or Blank template and write your own ODE callable,
+Start from the Custom or Blank template and write your own equation,
 fields, and parameters from scratch.
 
 [:octicons-arrow-right-24: Guide: Define a custom problem](../guides/custom.md)

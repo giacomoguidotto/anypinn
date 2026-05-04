@@ -32,7 +32,7 @@ This is AnyPINN's primary use case. The key abstraction is the
 `Argument` / `Parameter` split:
 
 ```python
-# Everything the ODE needs is in args
+# Everything the equation needs is in args
 props = ODEProperties(
     ode=my_ode,
     y0=torch.tensor([...]),
@@ -47,7 +47,7 @@ params = ParamsRegistry({
 })
 ```
 
-The ODE callable accesses both the same way:
+The callable accesses both the same way:
 
 ```python
 def my_ode(x, y, args):
@@ -58,7 +58,7 @@ def my_ode(x, y, args):
 
 The `ODEInverseProblem` class composes three constraints:
 
-1. **Residual loss**: enforces the ODE on collocation points
+1. **Residual loss**: enforces the differential equation on collocation points
 2. **Initial condition loss**: enforces the initial state
 3. **Data loss**: fits the predicted fields to observations
 

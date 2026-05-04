@@ -63,7 +63,7 @@ The `examples/` directory has ready-made, self-contained scripts covering epidem
 
 If you want to go beyond the built-in templates, here is the full workflow for defining a custom inverse problem.
 
-### 1: Define the ODE
+### 1: Define the ODE/PDE
 
 Implement a function matching the `ODECallable` protocol:
 
@@ -188,9 +188,9 @@ A thin wrapper plugging a `Problem` into PyTorch Lightning:
 - **`PINNDataModule`**: abstract data module managing loading, config-driven collocation sampling, and context creation. Collocation strategy is selected via `TrainingDataConfig.collocation_sampler` (`"random"`, `"uniform"`, `"latin_hypercube"`, `"log_uniform_1d"`, or `"adaptive"`).
 - **Callbacks**: SMMA-based early stopping, formatted progress bars, data scaling, prediction writers.
 
-### `anypinn.problems`: ODE Building Blocks
+### `anypinn.problems`: ODE/PDE Building Blocks
 
-Ready-made constraints for ODE inverse problems:
+Ready-made constraints for ODE/PDE problems:
 
 - **`ResidualsConstraint`**: `‖dy/dt − f(t, y)‖²` via autograd
 - **`ICConstraint`**: `‖y(t₀) − y₀‖²`
@@ -199,7 +199,7 @@ Ready-made constraints for ODE inverse problems:
 
 ### `anypinn.catalog`: Problem-Specific Building Blocks
 
-Drop-in ODE functions and `DataModule`s for specific systems. See `anypinn/catalog/` for the full list.
+Drop-in ODE/PDE functions and `DataModule`s for specific systems. See `anypinn/catalog/` for the full list.
 
 ## 🤝 Contributing
 
