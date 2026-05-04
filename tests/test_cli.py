@@ -335,9 +335,7 @@ class TestCreateCommand:
         assert result.exit_code == 0
 
         pyproject = (project_dir / "pyproject.toml").read_text()
-        assert '"anypinn"' in pyproject
-        assert '"torch"' in pyproject
-        assert '"lightning"' not in pyproject
+        assert '"anypinn[lib]"' in pyproject
         assert '"tensorboard"' not in pyproject
 
     def test_synthetic_data_source_references_generation(self, project_dir: Path) -> None:
@@ -363,7 +361,7 @@ class TestCreateCommand:
         assert "linspace" in config_content
 
     def test_pyproject_includes_ml_deps(self, project_dir: Path) -> None:
-        """Scaffold pyproject lists ML deps directly for robust resolution."""
+        """Scaffold pyproject pulls ML deps via anypinn[lib] extra."""
         result = runner.invoke(
             app,
             [
@@ -381,10 +379,8 @@ class TestCreateCommand:
         assert result.exit_code == 0
 
         pyproject = (project_dir / "pyproject.toml").read_text()
-        assert '"torch"' in pyproject
-        assert '"torchdiffeq"' in pyproject
-        assert '"pandas"' in pyproject
-        assert '"lightning"' in pyproject
+        assert '"anypinn[lib]"' in pyproject
+        assert '"tensorboard"' in pyproject
 
     def test_auto_run_syncs_and_execs(
         self, project_dir: Path, monkeypatch: pytest.MonkeyPatch

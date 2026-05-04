@@ -47,16 +47,12 @@ _EXPERIMENT_NAMES: dict[Template, str] = {
 }
 
 _BASE_DEPS: list[str] = [
-    "anypinn",
-    "torch",
-    "torchdiffeq",
-    "pandas",
+    "anypinn[lib]",
     "numpy",
     "scipy",
 ]
 
 _LIGHTNING_DEPS: list[str] = [
-    "lightning",
     "tensorboard",
 ]
 
