@@ -93,7 +93,7 @@ def extract_variants(source: str, selections: dict[str, str]) -> str:
 
 
 # Patterns for import statements
-_IMPORT_SIMPLE = re.compile(r"^import (\w+)")
+_IMPORT_SIMPLE = re.compile(r"^import ([\w.]+)(?:\s+as\s+(\w+))?")
 _IMPORT_FROM = re.compile(r"^from [\w.]+ import (.+)$")
 
 
@@ -108,7 +108,7 @@ def _remove_unused_imports(source: str) -> str:
     for line in lines:
         m_simple = _IMPORT_SIMPLE.match(line)
         if m_simple:
-            name = m_simple.group(1)
+            name = m_simple.group(2) or m_simple.group(1)
             if name not in ("__future__",) and name not in non_import_text:
                 continue
             result.append(line)
