@@ -54,6 +54,9 @@ _BASE_DEPS: list[str] = [
 
 _LIGHTNING_DEPS: list[str] = [
     "tensorboard",
+    "matplotlib",
+    "seaborn",
+    "pandas",
 ]
 
 _SYNTHETIC_DEPS: list[str] = []
