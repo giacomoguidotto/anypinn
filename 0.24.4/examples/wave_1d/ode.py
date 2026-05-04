@@ -16,6 +16,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -225,29 +226,30 @@ def plot_and_save(
     c_str = ""
     if c_recovered is not None:
         c_val = c_recovered.mean().item()
-        c_str = f" | Recovered c={c_val:.4f} (true={TRUE_C})"
+        c_str = rf" | $c_{{\mathrm{{pred}}}} = {c_val:.4f}$, $c_{{\mathrm{{true}}}} = {TRUE_C}$"
 
+    sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     fig.suptitle(f"Wave Equation 1D{c_str}", fontsize=14)
 
     im0 = axes[0].pcolormesh(X, T, U_pred, shading="auto", cmap="viridis")
-    axes[0].set_title("Predicted $u(x,t)$")
-    axes[0].set_xlabel("$x$")
-    axes[0].set_ylabel("$t$")
+    axes[0].set_title(r"Predicted $u(x,t)$")
+    axes[0].set_xlabel(r"$x$")
+    axes[0].set_ylabel(r"$t$")
     axes[0].set_aspect("equal")
     fig.colorbar(im0, ax=axes[0])
 
     im1 = axes[1].pcolormesh(X, T, U_true, shading="auto", cmap="viridis")
-    axes[1].set_title("Analytic $u(x,t)$")
-    axes[1].set_xlabel("$x$")
-    axes[1].set_ylabel("$t$")
+    axes[1].set_title(r"True $u(x,t)$")
+    axes[1].set_xlabel(r"$x$")
+    axes[1].set_ylabel(r"$t$")
     axes[1].set_aspect("equal")
     fig.colorbar(im1, ax=axes[1])
 
     im2 = axes[2].pcolormesh(X, T, error, shading="auto", cmap="hot")
-    axes[2].set_title("Pointwise Error $|u_{pred} - u_{true}|$")
-    axes[2].set_xlabel("$x$")
-    axes[2].set_ylabel("$t$")
+    axes[2].set_title(r"Pointwise Error $|u_{\mathrm{pred}} - u_{\mathrm{true}}|$")
+    axes[2].set_xlabel(r"$x$")
+    axes[2].set_ylabel(r"$t$")
     axes[2].set_aspect("equal")
     fig.colorbar(im2, ax=axes[2])
 

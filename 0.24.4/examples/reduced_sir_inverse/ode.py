@@ -104,6 +104,10 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 # ============================================================================
 
 
+_DARK = ["#1f77b4", "#ff7f0e"]
+_LIGHT = ["#aec7e8", "#ffbb78"]
+
+
 def plot_and_save(
     predictions: Predictions,
     results_dir: Path,
@@ -121,33 +125,43 @@ def plot_and_save(
     I_pred = C * preds[I_KEY]
     I_data = C * I_data
 
-    # plot
     sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Reduced SIR Model", fontsize=14)
 
-    sns.lineplot(x=t_data, y=I_pred, label="$I_{pred}$", ax=axes[0])
-    sns.lineplot(x=t_data, y=I_data, label="$I_{observed}$", linestyle="--", ax=axes[0])
-    axes[0].set_title("Reduced SIR Model Predictions")
-    axes[0].set_xlabel("Time (days)")
-    axes[0].set_ylabel("I (Population)")
-    axes[0].legend()
+    ax = axes[0]
+    sns.lineplot(x=t_data, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.scatterplot(
+        x=t_data, y=I_data, label=r"$I_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$ (days)")
+    ax.set_ylabel("Population")
+    ax.legend()
 
-    sns.lineplot(x=t_data, y=Rt_true, label=r"$R_{t, true}$", ax=axes[1])
-    sns.lineplot(x=t_data, y=Rt_pred, label=r"$R_{t, pred}$", linestyle="--", ax=axes[1])
-
-    axes[1].set_title(r"$R_t$ Parameter Prediction")
-    axes[1].set_xlabel("Time (days)")
-    axes[1].set_ylabel(r"$R_t$")
-    top = axes[1].get_ylim()[1]
+    ax = axes[1]
+    if Rt_true is not None:
+        sns.lineplot(x=t_data, y=Rt_true, label=r"$R_{t,\mathrm{true}}$", ax=ax, color=_DARK[0])
+    sns.lineplot(
+        x=t_data,
+        y=Rt_pred,
+        label=r"$R_{t,\mathrm{pred}}$",
+        linestyle="--" if Rt_true is not None else "-",
+        ax=ax,
+        color=_LIGHT[0] if Rt_true is not None else _DARK[0],
+    )
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$ (days)")
+    ax.set_ylabel("Value")
+    top = ax.get_ylim()[1]
     pad = top * 0.10
-    axes[1].set_ylim(-pad, top + pad)
-    axes[1].legend()
+    ax.set_ylim(-pad, top + pad)
+    ax.legend()
 
     plt.tight_layout()
-
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
+    plt.close(fig)
 
-    # save
     df = pd.DataFrame(
         {
             "t": t_data,
@@ -157,5 +171,4 @@ def plot_and_save(
             "Rt_true": Rt_true,
         }
     )
-
     df.to_csv(results_dir / f"{experiment_name}.csv", index=False, float_format="%.6e")

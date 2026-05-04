@@ -15,6 +15,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -244,29 +245,33 @@ def plot_and_save(
     nu_str = ""
     if nu_recovered is not None:
         nu_val = nu_recovered.mean().item()
-        nu_str = f" | Recovered nu={nu_val:.6f} (true={TRUE_NU:.6f})"
+        nu_str = (
+            rf" | $\nu_{{\mathrm{{pred}}}} = {nu_val:.6f}$,"
+            rf" $\nu_{{\mathrm{{true}}}} = {TRUE_NU:.6f}$"
+        )
 
+    sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     fig.suptitle(f"Burgers Equation 1D{nu_str}", fontsize=14)
 
     im0 = axes[0].pcolormesh(X, T, U_pred, shading="auto", cmap="viridis")
-    axes[0].set_title("Predicted $u(x,t)$")
-    axes[0].set_xlabel("$x$")
-    axes[0].set_ylabel("$t$")
+    axes[0].set_title(r"Predicted $u(x,t)$")
+    axes[0].set_xlabel(r"$x$")
+    axes[0].set_ylabel(r"$t$")
     axes[0].set_aspect("equal")
     fig.colorbar(im0, ax=axes[0])
 
     im1 = axes[1].pcolormesh(X, T, U_true, shading="auto", cmap="viridis")
-    axes[1].set_title("Reference $u(x,t)$")
-    axes[1].set_xlabel("$x$")
-    axes[1].set_ylabel("$t$")
+    axes[1].set_title(r"True $u(x,t)$")
+    axes[1].set_xlabel(r"$x$")
+    axes[1].set_ylabel(r"$t$")
     axes[1].set_aspect("equal")
     fig.colorbar(im1, ax=axes[1])
 
     im2 = axes[2].pcolormesh(X, T, error, shading="auto", cmap="hot")
-    axes[2].set_title("Pointwise Error $|u_{pred} - u_{true}|$")
-    axes[2].set_xlabel("$x$")
-    axes[2].set_ylabel("$t$")
+    axes[2].set_title(r"Pointwise Error $|u_{\mathrm{pred}} - u_{\mathrm{true}}|$")
+    axes[2].set_xlabel(r"$x$")
+    axes[2].set_ylabel(r"$t$")
     axes[2].set_aspect("equal")
     fig.colorbar(im2, ax=axes[2])
 
