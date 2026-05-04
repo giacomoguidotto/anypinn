@@ -2594,12 +2594,12 @@ gradient checkpointing work without library-level support.</p>
 </tr>
 <tr>
 <td>PINA</td>
-<td>Own <code>Trainer</code> wrapping <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr></td>
+<td>Own <code>Trainer</code> wrapping <abbr title="PyTorch Lightning, a framework that automates repetitive training tasks: logging, checkpointing, GPU management">Lightning</abbr></td>
 </tr>
 </tbody>
 </table>
 <p>AnyPINN's <code>Problem</code> is an <code>nn.Module</code>. Call <code>problem.training_loss(batch, log)</code>,
-get a scalar tensor, call <code>.backward()</code>. PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> is available as an
+get a scalar tensor, call <code>.backward()</code>. PyTorch <abbr title="PyTorch Lightning, a framework that automates repetitive training tasks: logging, checkpointing, GPU management">Lightning</abbr> is available as an
 optional layer for users who want batteries-included training, but it is never
 required.</p>
 <h3 id="inverse-problems-first">Inverse problems first</h3>

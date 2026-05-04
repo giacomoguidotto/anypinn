@@ -2681,11 +2681,11 @@ it with:</p>
 <abbr title="A snapshot of the model's state saved to disk so training can be resumed or results reproduced">checkpoint</abbr>.</p>
 <hr />
 <h2 id="checkpoints">Checkpoints</h2>
-<p>The <code>model.ckpt</code> file is a standard PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> <abbr title="A snapshot of the model's state saved to disk so training can be resumed or results reproduced">checkpoint</abbr>. It contains
+<p>The <code>model.ckpt</code> file is a standard PyTorch <abbr title="PyTorch Lightning, a framework that automates repetitive training tasks: logging, checkpointing, GPU management">Lightning</abbr> <abbr title="A snapshot of the model's state saved to disk so training can be resumed or results reproduced">checkpoint</abbr>. It contains
 the full model state (fields, parameters, <abbr title="The algorithm that updates model parameters to minimize the loss (e.g. Adam)">optimizer</abbr>, scheduler) and can be
 loaded for:</p>
 <ul>
-<li><strong>Resuming training</strong>: <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>'s <code>Trainer</code> handles this automatically</li>
+<li><strong>Resuming training</strong>: <abbr title="PyTorch Lightning, a framework that automates repetitive training tasks: logging, checkpointing, GPU management">Lightning</abbr>'s <code>Trainer</code> handles this automatically</li>
 <li><strong>Transfer learning</strong>: load fields from a trained model into a new problem</li>
 <li><strong>Inspection</strong>: examine recovered parameter values directly</li>
 </ul>

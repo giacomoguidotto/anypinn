@@ -2677,9 +2677,9 @@ provision the pinned <code>python</code>, <code>uv</code>, and <code>just</code>
 <h2 id="good-to-know">Good to Know</h2>
 <ul>
 <li>The <code>examples/</code> directory has ready-to-run problems you can use to exercise the library end-to-end while developing. Each example has a <code>train.py</code> entry-point (<code>uv run python train.py</code>).</li>
-<li><code>exponential_decay</code> is a minimal, core-only example (no <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>).</li>
+<li><code>exponential_decay</code> is a minimal, core-only example (no <abbr title="PyTorch Lightning, a framework that automates repetitive training tasks: logging, checkpointing, GPU management">Lightning</abbr>).</li>
 <li><code>uv run anypinn create --list-templates</code> lists all <abbr title="Generating a starter project with all the files and configuration you need to begin">scaffold</abbr> templates.</li>
-<li>Keep the layer separation: <code>anypinn.core</code> stays pure PyTorch, <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> stays optional. <code>anypinn.core</code> must not import from <code>anypinn.lightning</code>, <code>anypinn.problems</code>, or <code>anypinn.catalog</code>.</li>
+<li>Keep the layer separation: <code>anypinn.core</code> stays pure PyTorch, <abbr title="PyTorch Lightning, a framework that automates repetitive training tasks: logging, checkpointing, GPU management">Lightning</abbr> stays optional. <code>anypinn.core</code> must not import from <code>anypinn.lightning</code>, <code>anypinn.problems</code>, or <code>anypinn.catalog</code>.</li>
 <li>If you change the architecture or data flow, update both <code>CLAUDE.md</code> and <code>README.md</code>.</li>
 </ul>
 <h2 id="documentation">Documentation</h2>
@@ -2716,7 +2716,7 @@ provision the pinned <code>python</code>, <code>uv</code>, and <code>just</code>
 <tr>
 <td>API reference</td>
 <td><code>docs/reference/</code></td>
-<td>Core, Problems, <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr></td>
+<td>Core, Problems, <abbr title="PyTorch Lightning, a framework that automates repetitive training tasks: logging, checkpointing, GPU management">Lightning</abbr></td>
 </tr>
 </tbody>
 </table>
