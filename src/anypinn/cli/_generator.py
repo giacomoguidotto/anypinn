@@ -79,9 +79,10 @@ def extract_variants(source: str, selections: dict[str, str]) -> str:
     output = "".join(result)
 
     # Strip suffixes: for each selected value, remove the _<value> suffix
-    # from identifiers. We match word boundaries to avoid false replacements.
+    # from identifiers. The negative lookbehind protects dotted method calls
+    # (e.g. .to_csv) and string literals (e.g. "data.csv") from stripping.
     for value in selections.values():
-        output = re.sub(rf"(\w)_{value}\b", r"\1", output)
+        output = re.sub(rf"(?<!\.)(\b\w+)_{value}\b", r"\1", output)
 
     # Collapse runs of 3+ newlines down to 2 (one blank line).
     output = re.sub(r"\n{3,}", "\n\n", output)
