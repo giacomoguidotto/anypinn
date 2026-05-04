@@ -2651,7 +2651,7 @@
 <h2 id="setup">Setup</h2>
 <ol>
 <li>
-<p>Fork and clone the repo, then install dependencies:</p>
+<p>Fork and clone the repo, then install <abbr title="External packages your project needs to run">dependencies</abbr>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>sync
 </span></code></pre></div>
 <blockquote>
@@ -2663,7 +2663,7 @@ provision the pinned <code>python</code>, <code>uv</code>, and <code>just</code>
 <p>Before pushing, run the full CI check locally:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>just<span class="w"> </span>ci
 </span></code></pre></div>
-<p>This runs lint, typecheck, and tests — the same pipeline as CI.</p>
+<p>This runs lint, typecheck, and tests, the same pipeline as CI.</p>
 </li>
 </ol>
 <h2 id="tooling">Tooling</h2>
@@ -2677,9 +2677,9 @@ provision the pinned <code>python</code>, <code>uv</code>, and <code>just</code>
 <h2 id="good-to-know">Good to Know</h2>
 <ul>
 <li>The <code>examples/</code> directory has ready-to-run problems you can use to exercise the library end-to-end while developing. Each example has a <code>train.py</code> entry-point (<code>uv run python train.py</code>).</li>
-<li><code>exponential_decay</code> is a minimal, core-only example (no Lightning).</li>
-<li><code>uv run anypinn create --list-templates</code> lists all scaffold templates.</li>
-<li>Keep the layer separation: <code>anypinn.core</code> stays pure PyTorch, Lightning stays optional. <code>anypinn.core</code> must not import from <code>anypinn.lightning</code>, <code>anypinn.problems</code>, or <code>anypinn.catalog</code>.</li>
+<li><code>exponential_decay</code> is a minimal, core-only example (no <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>).</li>
+<li><code>uv run anypinn create --list-templates</code> lists all <abbr title="Generating a starter project with all the files and configuration you need to begin">scaffold</abbr> templates.</li>
+<li>Keep the layer separation: <code>anypinn.core</code> stays pure PyTorch, <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> stays optional. <code>anypinn.core</code> must not import from <code>anypinn.lightning</code>, <code>anypinn.problems</code>, or <code>anypinn.catalog</code>.</li>
 <li>If you change the architecture or data flow, update both <code>CLAUDE.md</code> and <code>README.md</code>.</li>
 </ul>
 <h2 id="documentation">Documentation</h2>
@@ -2716,14 +2716,14 @@ provision the pinned <code>python</code>, <code>uv</code>, and <code>just</code>
 <tr>
 <td>API reference</td>
 <td><code>docs/reference/</code></td>
-<td>Core, Problems, Lightning</td>
+<td>Core, Problems, <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr></td>
 </tr>
 </tbody>
 </table>
 <p>New pages must also be added to:</p>
 <ol>
-<li><strong><code>mkdocs.yml</code></strong> — the <code>nav:</code> section, or the page won't appear in navigation.</li>
-<li><strong><code>docs/hooks/page_icons.py</code></strong> — the <code>PAGE_ICONS</code> dict, for sidebar icons.</li>
+<li><strong><code>mkdocs.yml</code></strong>: the <code>nav:</code> section, or the page won't appear in navigation.</li>
+<li><strong><code>docs/hooks/page_icons.py</code></strong>: the <code>PAGE_ICONS</code> dict, for sidebar icons.</li>
 </ol>
 <h3 id="api-reference">API reference</h3>
 <p>The API reference is <strong>hand-curated</strong>, not auto-generated. Each public class is rendered using an explicit <a href="https://mkdocstrings.github.io/">mkdocstrings</a> directive:</p>
@@ -2753,7 +2753,7 @@ to the page's YAML front matter:</p>
 <p>This shows a badge next to the page title in the sidebar. Use <code>new</code> for recently
 added pages and <code>deprecated</code> for pages scheduled for removal.</p>
 <h3 id="verify-the-build">Verify the build</h3>
-<p>Always build before pushing docs changes — the build runs in strict mode and will catch broken links and missing references:</p>
+<p>Always build before pushing docs changes. The build runs in strict mode and will catch broken links and missing references:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>just<span class="w"> </span>docs
 </span></code></pre></div>
 <h2 id="conventions">Conventions</h2>
@@ -2764,7 +2764,7 @@ added pages and <code>deprecated</code> for pages scheduled for removal.</p>
 <li><code>feat!:</code> or <code>BREAKING CHANGE:</code> triggers a <strong>major</strong> release (e.g. 0.2.0 → 1.0.0)</li>
 <li>Branch names: <code>feat/</code>, <code>fix/</code>, <code>docs/</code>, etc.</li>
 <li>Line length: 99</li>
-<li>Absolute imports only — no relative imports</li>
+<li>Absolute imports only (no relative imports)</li>
 <li>All config dataclasses: <code>@dataclass(frozen=True, kw_only=True)</code></li>
 </ul>
 

@@ -2591,14 +2591,14 @@ observed quantities. Make sure the output order matches <code>y_columns</code>:<
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">S_pred</span><span class="p">,</span> <span class="n">I_pred</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (n_points, 2, 1)</span>
 </span></code></pre></div>
 <hr />
-<h2 id="data-callbacks">Data callbacks</h2>
+<h2 id="data-callbacks">Data <abbr title="Functions the training framework calls automatically at specific points (e.g. end of each epoch)">callbacks</abbr></h2>
 <p>Use <code>DataCallback</code> subclasses to transform data before training. Common use
 cases:</p>
 <ul>
 <li><strong>Normalization</strong>: scale observations to a manageable range</li>
 <li><strong>Time rescaling</strong>: map the time domain to <code>[0, 1]</code></li>
 </ul>
-<p>The built-in <code>DataScaling</code> callback handles common scaling:</p>
+<p>The built-in <code>DataScaling</code> <abbr title="A function the training framework calls automatically at specific points (e.g. end of each epoch)">callback</abbr> handles common scaling:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">anypinn.lightning.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataScaling</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">data_module</span> <span class="o">=</span> <span class="n">MyDataModule</span><span class="p">(</span>

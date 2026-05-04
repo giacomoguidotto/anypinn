@@ -2436,8 +2436,8 @@
 <h1 id="installation">Installation</h1>
 <p>AnyPINN requires <strong>Python 3.10 or later</strong>.</p>
 <hr />
-<h2 id="install-the-cli">Install the CLI</h2>
-<p>The <code>anypinn</code> CLI is the main entry point. Install it globally so it's available
+<h2 id="install-the-cli">Install the <abbr title="Command-line interface, a program you run in the terminal instead of clicking through a GUI">CLI</abbr></h2>
+<p>The <code>anypinn</code> <abbr title="Command-line interface, a program you run in the terminal instead of clicking through a GUI">CLI</abbr> is the main entry point. Install it globally so it's available
 from any directory:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="uv" name="__tabbed_1" type="radio" /><input id="pip" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="uv">uv</label><label for="pip">pip</label></div>
 <div class="tabbed-content">
@@ -2456,21 +2456,21 @@ from any directory:</p>
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Use <code>uvx</code> for one-off runs</p>
-<p>If you don't want to install globally, you can run the CLI directly with
-<a href="https://docs.astral.sh/uv/guides/tools/">uvx</a>:</p>
+<p>If you don't want to install globally, you can run the <abbr title="Command-line interface, a program you run in the terminal instead of clicking through a GUI">CLI</abbr> directly with
+<a href="https://docs.astral.sh/uv/guides/tools/"><abbr title="A tool that runs Python packages directly without installing them permanently">uvx</abbr></a>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uvx<span class="w"> </span>anypinn<span class="w"> </span>create<span class="w"> </span>my-project
 </span></code></pre></div>
 </div>
 <hr />
 <h2 id="dependencies">Dependencies</h2>
 <p>Each project scaffolded by <code>anypinn create</code> includes its own <code>pyproject.toml</code>
-with pinned dependencies. Running <code>uv sync</code> inside the project directory
+with pinned <abbr title="External packages your project needs to run">dependencies</abbr>. Running <code>uv sync</code> inside the project directory
 installs everything you need:</p>
 <ul>
 <li><strong>PyTorch</strong>: tensor computation and automatic differentiation</li>
 <li><strong>NumPy / SciPy</strong>: numerical utilities</li>
 <li><strong>torchdiffeq</strong>: ODE integration for synthetic data generation</li>
-<li><strong>PyTorch Lightning</strong>: optional, included when <code>--lightning</code> is selected</li>
+<li><strong>PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr></strong>: optional, included when <code>--lightning</code> is selected</li>
 <li><strong>Pandas</strong>: CSV data loading</li>
 <li><strong>Matplotlib / Seaborn</strong>: result visualization</li>
 </ul>
@@ -2481,7 +2481,7 @@ installs everything you need:</p>
 the appropriate PyTorch build for your system. See the
 <a href="https://pytorch.org/get-started/locally/">PyTorch installation guide</a> for
 platform-specific instructions.</p>
-<p>When using Lightning, GPU training is automatic: the <code>Trainer</code> detects
+<p>When using <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>, GPU training is automatic: the <code>Trainer</code> detects
 available hardware and uses it.</p>
 
 

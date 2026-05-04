@@ -2703,7 +2703,7 @@ right is often the difference between convergence and failure.</p>
 <h3 id="start-with-equal-weights">Start with equal weights</h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">pde_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ic_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_weight</span><span class="o">=</span><span class="mi">1</span>
 </span></code></pre></div>
-<p>This is a reasonable starting point for most problems. Check TensorBoard to see
+<p>This is a reasonable starting point for most problems. Check <abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr> to see
 which loss term dominates.</p>
 <h3 id="scale-by-magnitude">Scale by magnitude</h3>
 <p>If the loss terms have very different magnitudes (e.g. residual loss is 1e-3
@@ -2726,7 +2726,7 @@ condition, increase <code>ic_weight</code>:</p>
 <hr />
 <h2 id="diagnostic-workflow">Diagnostic workflow</h2>
 <ol>
-<li><strong>Train with equal weights</strong> and check TensorBoard</li>
+<li><strong>Train with equal weights</strong> and check <abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr></li>
 <li><strong>Compare loss magnitudes</strong>: if one term is orders of magnitude larger, it's
    dominating the optimization</li>
 <li><strong>Check parameter validation</strong>: if <code>val/*_mse</code> isn't decreasing, the physics

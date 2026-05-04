@@ -2555,24 +2555,33 @@
   
 
 
-<h1 id="lightning-vs-core-training">Lightning vs Core Training</h1>
+<h1 id="lightning-vs-core-training"><abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> vs Core Training</h1>
 <p>AnyPINN's <code>Problem</code> is a plain <code>nn.Module</code>. You can train it with PyTorch
-Lightning or with a raw PyTorch loop. This guide helps you choose and shows
+<abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> or with a raw PyTorch loop. This guide helps you choose and shows
 both approaches.</p>
+<div class="admonition info">
+<p class="admonition-title">What is PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>?</p>
+<p>Training a neural network involves a loop: compute predictions, measure
+error, update parameters, repeat. PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> is a framework that
+wraps this loop and adds common functionality on top: saving progress to
+disk, logging metrics, distributing work across GPUs, and stopping early
+when the model stops improving. The alternative ("core") is writing that
+loop yourself, which gives you full control at the cost of more code.</p>
+</div>
 <hr />
 <h2 id="when-to-use-which">When to use which</h2>
 <table>
 <thead>
 <tr>
 <th></th>
-<th>Lightning</th>
+<th><abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr></th>
 <th>Core</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Best for</strong></td>
-<td>Standard training with logging and callbacks</td>
+<td>Standard training with logging and <abbr title="Functions the training framework calls automatically at specific points (e.g. end of each epoch)">callbacks</abbr></td>
 <td>Custom training procedures</td>
 </tr>
 <tr>
@@ -2582,7 +2591,7 @@ both approaches.</p>
 </tr>
 <tr>
 <td><strong>Logging</strong></td>
-<td>TensorBoard + CSV out of the box</td>
+<td><abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr> + CSV out of the box</td>
 <td>You call <code>log()</code> yourself</td>
 </tr>
 <tr>
@@ -2592,12 +2601,12 @@ both approaches.</p>
 </tr>
 <tr>
 <td><strong>Early stopping</strong></td>
-<td>Built-in callback</td>
+<td>Built-in <abbr title="A function the training framework calls automatically at specific points (e.g. end of each epoch)">callback</abbr></td>
 <td>You implement the logic</td>
 </tr>
 <tr>
 <td><strong>Multi-GPU</strong></td>
-<td>Lightning handles it</td>
+<td><abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> handles it</td>
 <td>You set up DDP</td>
 </tr>
 <tr>
@@ -2607,10 +2616,10 @@ both approaches.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Default recommendation:</strong> Start with Lightning. Drop to core only when you
-need something Lightning doesn't support.</p>
+<p><strong>Default recommendation:</strong> Start with <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>. Drop to core only when you
+need something <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> doesn't support.</p>
 <hr />
-<h2 id="lightning-training">Lightning training</h2>
+<h2 id="lightning-training"><abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> training</h2>
 <p>Scaffold with <code>--lightning</code> (the default):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>sir<span class="w"> </span>--data<span class="w"> </span>synthetic<span class="w"> </span>--lightning
 </span></code></pre></div>
@@ -2631,9 +2640,9 @@ need something Lightning doesn't support.</p>
 <p><code>PINNModule</code> handles:</p>
 <ul>
 <li>Forwarding <code>training_loss()</code> to the <code>Problem</code></li>
-<li>Configuring the optimizer and scheduler from <code>hp</code></li>
+<li>Configuring the <abbr title="The algorithm that updates model parameters to minimize the loss (e.g. Adam)">optimizer</abbr> and scheduler from <code>hp</code></li>
 <li>Injecting <code>InferredContext</code> (domain bounds, data statistics) at fit start</li>
-<li>Formatting predictions for the <code>PredictionsWriter</code> callback</li>
+<li>Formatting predictions for the <code>PredictionsWriter</code> <abbr title="A function the training framework calls automatically at specific points (e.g. end of each epoch)">callback</abbr></li>
 </ul>
 <hr />
 <h2 id="core-training">Core training</h2>
@@ -2654,7 +2663,7 @@ need something Lightning doesn't support.</p>
 from PyTorch.</p>
 <hr />
 <h2 id="mixing-approaches">Mixing approaches</h2>
-<p>You can use core-level primitives inside a Lightning training setup:</p>
+<p>You can use core-level primitives inside a <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> training setup:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">CustomModule</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">,</span> <span class="n">hp</span><span class="p">):</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -2669,7 +2678,7 @@ from PyTorch.</p>
 </span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
 </span></code></pre></div>
-<p>Or use the built-in <code>PINNModule</code> and add behavior through Lightning callbacks:</p>
+<p>Or use the built-in <code>PINNModule</code> and add behavior through <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> <abbr title="Functions the training framework calls automatically at specific points (e.g. end of each epoch)">callbacks</abbr>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyCallback</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_train_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>        <span class="c1"># Custom logic after each epoch</span>
@@ -2680,7 +2689,7 @@ from PyTorch.</p>
 <hr />
 <h2 id="key-differences-in-practice">Key differences in practice</h2>
 <h3 id="logging">Logging</h3>
-<p><strong>Lightning:</strong> Metrics are logged automatically. Access them in TensorBoard.</p>
+<p><strong><abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>:</strong> Metrics are logged automatically. Access them in <abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr>.</p>
 <p><strong>Core:</strong> Pass a logging function to <code>training_loss</code>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_logger</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -2688,7 +2697,7 @@ from PyTorch.</p>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">loss</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">training_loss</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">my_logger</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="context-injection">Context injection</h3>
-<p><strong>Lightning:</strong> <code>PINNModule.on_fit_start()</code> automatically injects domain bounds
+<p><strong><abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>:</strong> <code>PINNModule.on_fit_start()</code> automatically injects domain bounds
 and data statistics into the problem.</p>
 <p><strong>Core:</strong> You must set context manually:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">anypinn.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferredContext</span>
@@ -2697,7 +2706,7 @@ and data statistics into the problem.</p>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">problem</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="predictions">Predictions</h3>
-<p><strong>Lightning:</strong> Use <code>trainer.predict()</code> with the <code>PredictionsWriter</code> callback.</p>
+<p><strong><abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>:</strong> Use <code>trainer.predict()</code> with the <code>PredictionsWriter</code> <abbr title="A function the training framework calls automatically at specific points (e.g. end of each epoch)">callback</abbr>.</p>
 <p><strong>Core:</strong> Call the fields and parameters directly:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">field</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>

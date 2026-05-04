@@ -2591,11 +2591,17 @@ This page explains what each one is and how to use it.</p>
 <code>&lt;run&gt;</code> defaults to <code>v0</code> (incremented automatically on subsequent runs).</p>
 <hr />
 <h2 id="training-logs">Training logs</h2>
-<h3 id="tensorboard">TensorBoard</h3>
-<p>Launch TensorBoard to visualize training curves:</p>
+<h3 id="tensorboard"><abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr></h3>
+<div class="admonition tip">
+<p class="admonition-title">What is <abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr>?</p>
+<p><abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr> is a dashboard that opens in your browser and shows how
+training is progressing. You'll see loss curves (lower is better) and
+parameter recovery metrics updating in real time.</p>
+</div>
+<p>Launch <abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr> to visualize training curves:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>run<span class="w"> </span>tensorboard<span class="w"> </span>--logdir<span class="w"> </span>logs/tensorboard
 </span></code></pre></div>
-<p>Key metrics logged every epoch:</p>
+<p>Key metrics logged every <abbr title="One full pass through the training data">epoch</abbr>:</p>
 <table>
 <thead>
 <tr>
@@ -2668,18 +2674,18 @@ it with:</p>
 </tbody>
 </table>
 <h3 id="re-running-predictions">Re-running predictions</h3>
-<p>To reload a trained checkpoint and produce predictions without retraining:</p>
+<p>To reload a trained <abbr title="A snapshot of the model's state saved to disk so training can be resumed or results reproduced">checkpoint</abbr> and produce predictions without retraining:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uv<span class="w"> </span>run<span class="w"> </span>train.py<span class="w"> </span>--predict
 </span></code></pre></div>
 <p>This skips training entirely and runs the prediction step on the saved
-checkpoint.</p>
+<abbr title="A snapshot of the model's state saved to disk so training can be resumed or results reproduced">checkpoint</abbr>.</p>
 <hr />
 <h2 id="checkpoints">Checkpoints</h2>
-<p>The <code>model.ckpt</code> file is a standard PyTorch Lightning checkpoint. It contains
-the full model state (fields, parameters, optimizer, scheduler) and can be
+<p>The <code>model.ckpt</code> file is a standard PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> <abbr title="A snapshot of the model's state saved to disk so training can be resumed or results reproduced">checkpoint</abbr>. It contains
+the full model state (fields, parameters, <abbr title="The algorithm that updates model parameters to minimize the loss (e.g. Adam)">optimizer</abbr>, scheduler) and can be
 loaded for:</p>
 <ul>
-<li><strong>Resuming training</strong>: Lightning's <code>Trainer</code> handles this automatically</li>
+<li><strong>Resuming training</strong>: <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>'s <code>Trainer</code> handles this automatically</li>
 <li><strong>Transfer learning</strong>: load fields from a trained model into a new problem</li>
 <li><strong>Inspection</strong>: examine recovered parameter values directly</li>
 </ul>

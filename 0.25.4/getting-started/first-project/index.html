@@ -2639,10 +2639,10 @@ that recovers the transmission rate of an epidemic from synthetic observations.
 It takes about 5 minutes.</p>
 <hr />
 <h2 id="create-the-project">Create the project</h2>
-<p>The <code>anypinn create</code> command scaffolds a complete, runnable project:</p>
+<p>The <code>anypinn create</code> command <abbr title="Generating a starter project with all the files and configuration you need to begin">scaffolds</abbr> a complete, runnable project:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project
 </span></code></pre></div>
-<p>The CLI walks through three choices interactively:</p>
+<p>The <abbr title="Command-line interface, a program you run in the terminal instead of clicking through a GUI">CLI</abbr> walks through three choices interactively:</p>
 <h3 id="1-choose-a-template">1. Choose a template</h3>
 <p>The first prompt selects a physics model. There are 16 built-in templates
 spanning ODE and PDE problems:</p>
@@ -2696,14 +2696,14 @@ initial conditions, known parameters, and validation ground truths. Run
 <li><strong>CSV</strong> loads observations from a file in the <code>data/</code> directory. Use this
   when you have real experimental measurements.</li>
 </ul>
-<h3 id="3-include-lightning-wrapper">3. Include Lightning wrapper</h3>
+<h3 id="3-include-lightning-wrapper">3. Include <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> wrapper</h3>
 <p>Choose whether the generated training script uses
-<a href="https://lightning.ai/docs/pytorch/stable/">PyTorch Lightning</a> or a plain
+<a href="https://lightning.ai/docs/pytorch/stable/">PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr></a> or a plain
 PyTorch loop:</p>
 <ul>
-<li><strong>Yes</strong> (default) generates a full Lightning <code>Trainer</code> setup with TensorBoard
+<li><strong>Yes</strong> (default) generates a full <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> <code>Trainer</code> setup with <abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr>
   logging, CSV logging, model checkpointing, learning rate monitoring, early
-  stopping, and a <code>--predict</code> flag for inference.</li>
+  stopping, and a <code>--predict</code> flag for <abbr title="Running a trained model to produce predictions, without further training">inference</abbr>.</li>
 <li><strong>No</strong> generates a minimal loop with <code>torch.optim.Adam</code> and manual
   <code>loss.backward()</code> / <code>optimizer.step()</code>. You own the training loop entirely.</li>
 </ul>
@@ -2712,7 +2712,7 @@ PyTorch loop:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>anypinn<span class="w"> </span>create<span class="w"> </span>my-project<span class="w"> </span>--template<span class="w"> </span>sir<span class="w"> </span>--data<span class="w"> </span>synthetic<span class="w"> </span>--lightning
 </span></code></pre></div>
 <details class="example">
-<summary>Full CLI output</summary>
+<summary>Full <abbr title="Command-line interface, a program you run in the terminal instead of clicking through a GUI">CLI</abbr> output</summary>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>● anypinn v0.x.x
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>│
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>◇ Generating project in &#39;my-project&#39;...
@@ -2777,7 +2777,7 @@ PyTorch loop:</p>
 The PINN recovers <code>beta</code> by minimizing the residual of the ODE against observed
 data.</p>
 <h3 id="configpy-hyperparameters"><code>config.py</code>: hyperparameters</h3>
-<p>All training hyperparameters live in a single <code>ODEHyperparameters</code> dataclass:</p>
+<p>All training hyperparameters live in a single <code>ODEHyperparameters</code> <abbr title="A Python class that mainly holds data fields, with automatic initialization and comparison">dataclass</abbr>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">hp</span> <span class="o">=</span> <span class="n">ODEHyperparameters</span><span class="p">(</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">lr</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
@@ -2791,12 +2791,12 @@ data.</p>
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">data_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 </span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">)</span>
 </span></code></pre></div>
-<p>The config is frozen and keyword-only. Changing a hyperparameter means changing
+<p>The config is <abbr title="A dataclass that cannot be modified after creation; typos in field names raise errors instead of silently passing">frozen</abbr> and keyword-only. Changing a hyperparameter means changing
 one value here, and the rest of the project picks it up automatically.</p>
 <h3 id="trainpy-execution"><code>train.py</code>: execution</h3>
-<p>With the Lightning wrapper, <code>train.py</code> sets up loggers, callbacks, and a
+<p>With the <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> wrapper, <code>train.py</code> sets up loggers, <abbr title="Functions the training framework calls automatically at specific points (e.g. end of each epoch)">callbacks</abbr>, and a
 <code>Trainer</code>. With the core loop, it is a standard PyTorch training script. Both
-support <code>--predict</code> to load a saved checkpoint and run inference without
+support <code>--predict</code> to load a saved <abbr title="A snapshot of the model's state saved to disk so training can be resumed or results reproduced">checkpoint</abbr> and run <abbr title="Running a trained model to produce predictions, without further training">inference</abbr> without
 retraining.</p>
 <hr />
 <h2 id="train-the-model">Train the model</h2>
@@ -2804,10 +2804,10 @@ retraining.</p>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>uv<span class="w"> </span>sync
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>uv<span class="w"> </span>run<span class="w"> </span>train.py
 </span></code></pre></div>
-<p><code>uv sync</code> resolves and installs all dependencies from <code>pyproject.toml</code>.
-<code>uv run train.py</code> starts training. With the Lightning wrapper, you will see a
+<p><code>uv sync</code> resolves and installs all <abbr title="External packages your project needs to run">dependencies</abbr> from <code>pyproject.toml</code>.
+<code>uv run train.py</code> starts training. With the <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> wrapper, you will see a
 progress bar with live loss values.</p>
-<p>Monitor training in TensorBoard:</p>
+<p>Monitor training in <abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uv<span class="w"> </span>run<span class="w"> </span>tensorboard<span class="w"> </span>--logdir<span class="w"> </span>logs/tensorboard
 </span></code></pre></div>
 <hr />

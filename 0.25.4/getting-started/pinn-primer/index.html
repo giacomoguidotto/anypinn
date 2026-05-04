@@ -645,6 +645,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-idea" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2408,6 +2419,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Background
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-idea" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2500,8 +2522,29 @@
 
 
 <h1 id="pinn-primer">PINN Primer</h1>
-<p>A short conceptual introduction to Physics-Informed Neural Networks for readers
+<p>A conceptual introduction to Physics-Informed Neural Networks for readers
 who haven't encountered them before.</p>
+<hr />
+<h2 id="background">Background</h2>
+<p><strong>Differential equations</strong> describe how quantities change. A population
+grows proportionally to its size; a vibrating string accelerates toward its
+resting position. In each case the governing law relates a quantity to its
+own rate of change, producing an equation involving derivatives.</p>
+<p>When the unknown depends on a single variable (e.g. time), the equation is
+an <strong>ordinary differential equation (ODE)</strong>. When it depends on several
+variables (e.g. space and time), it is a <strong>partial differential equation
+(PDE)</strong>.</p>
+<p>To pin down a unique solution, you need extra information:</p>
+<ul>
+<li><strong>Initial conditions</strong> fix the state at a starting point
+  (e.g. "the population at <span class="arithmatex">\(t = 0\)</span> is 1000").</li>
+<li><strong>Boundary conditions</strong> fix the state at the edges of a spatial domain
+  (e.g. "the temperature at both ends of the rod is 0 °C").</li>
+</ul>
+<p>Finally, an <strong>inverse problem</strong> flips the usual question: instead of
+"given the equation and its parameters, find the solution," you ask "given
+partial observations of the solution, recover the unknown parameters."
+For example, estimating infection rates from case-count data.</p>
 <hr />
 <h2 id="the-idea">The idea</h2>
 <p>A Physics-Informed Neural Network (PINN) is a neural network trained to
@@ -2596,7 +2639,7 @@ training step.</p>
 (the mathematical definition of your problem), and AnyPINN constructs the
 composite loss, manages fields and parameters, handles collocation sampling,
 and provides validation against ground truth. Training is delegated to
-PyTorch or PyTorch Lightning.</p>
+PyTorch or PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr>.</p>
 <p><a href="../installation/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Continue to Installation</a></p>
 
 

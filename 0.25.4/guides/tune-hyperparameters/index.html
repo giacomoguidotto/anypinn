@@ -2578,8 +2578,17 @@
 
 
 <h1 id="tune-hyperparameters">Tune Hyperparameters</h1>
-<p>All training hyperparameters live in a single frozen dataclass in <code>config.py</code>.
+<p>All training hyperparameters live in a single <abbr title="A dataclass that cannot be modified after creation; typos in field names raise errors instead of silently passing">frozen</abbr> <abbr title="A Python class that mainly holds data fields, with automatic initialization and comparison">dataclass</abbr> in <code>config.py</code>.
 This guide covers the most impactful knobs and when to turn them.</p>
+<div class="admonition info">
+<p class="admonition-title">What are hyperparameters?</p>
+<p>Training a PINN is an optimization process: the network's parameters are
+adjusted iteratively to minimize a loss function. Hyperparameters are the
+settings that control <em>how</em> this optimization runs: how fast parameters
+change per step (learning rate), how many steps to take (<abbr title="Full passes through the training data">epochs</abbr>), and how
+to balance competing objectives (loss weights). They are not learned
+automatically; you choose them.</p>
+</div>
 <hr />
 <h2 id="the-hyperparameter-hierarchy">The hyperparameter hierarchy</h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">hp</span> <span class="o">=</span> <span class="n">ODEHyperparameters</span><span class="p">(</span>

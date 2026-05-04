@@ -7679,7 +7679,7 @@ solving physics-informed neural network problems.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Configuration for the MLP backing this field.</p>
+                <p>Configuration for the <abbr title="Multi-layer perceptron, a simple neural network of stacked fully connected layers">MLP</abbr> backing this field.</p>
               </div>
             </td>
             <td>
@@ -8063,7 +8063,7 @@ variant.</p>
 
         <p>A learnable parameter that participates in gradient optimization.</p>
 <p>Supports scalar parameters (a single trainable value) or
-function-valued parameters (e.g. beta(t)) backed by a small MLP.
+function-valued parameters (e.g. beta(t)) backed by a small <abbr title="Multi-layer perceptron, a simple neural network of stacked fully connected layers">MLP</abbr>.
 Because <code>Parameter</code> is a subclass of <code>Argument</code>, it can be
 used anywhere an <code>Argument</code> is expected.</p>
 
@@ -8546,7 +8546,7 @@ data used to compute the loss.</p>
         <p>Aggregates constraints into a total training loss.</p>
 <p>Manages fields (neural networks), learnable parameters, and the loss
 criterion. Call <code>training_loss()</code> during each training step and
-<code>predict()</code> for inference.</p>
+<code>predict()</code> for <abbr title="Running a trained model to produce predictions, without further training">inference</abbr>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9006,7 +9006,7 @@ Returns None if no validation source is configured.</p>
 
 
 
-        <p>Configuration for a Multi-Layer Perceptron (MLP).</p>
+        <p>Configuration for a Multi-Layer Perceptron (<abbr title="Multi-layer perceptron, a simple neural network of stacked fully connected layers">MLP</abbr>).</p>
 
 
 <p><span class="doc-section-title">Attributes:</span></p>
@@ -9107,7 +9107,7 @@ Returns None if no validation source is configured.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Optional function to encode inputs before passing to MLP.</p>
+                <p>Optional function to encode inputs before passing to <abbr title="Multi-layer perceptron, a simple neural network of stacked fully connected layers">MLP</abbr>.</p>
               </div>
             </td>
           </tr>
@@ -9453,7 +9453,7 @@ config is provided).</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>MLP architecture for the neural field(s).</p>
+                <p><abbr title="Multi-layer perceptron, a simple neural network of stacked fully connected layers">MLP</abbr> architecture for the neural field(s).</p>
               </div>
             </td>
           </tr>
@@ -9469,7 +9469,7 @@ config is provided).</p>
             <td>
               <div class="doc-md-description">
                 <p>Configuration for learnable parameters (scalar
-or MLP-backed).</p>
+or <abbr title="Multi-layer perceptron, a simple neural network of stacked fully connected layers">MLP</abbr>-backed).</p>
               </div>
             </td>
           </tr>
@@ -9485,7 +9485,7 @@ or MLP-backed).</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Maximum number of training epochs.</p>
+                <p>Maximum number of training <abbr title="Full passes through the training data">epochs</abbr>.</p>
               </div>
             </td>
           </tr>
@@ -10558,7 +10558,7 @@ integer index is used.</p>
 
 
 
-        <p>Configuration for the Adam optimizer.</p>
+        <p>Configuration for the Adam <abbr title="The algorithm that updates model parameters to minimize the loss (e.g. Adam)">optimizer</abbr>.</p>
 
 
 <p><span class="doc-section-title">Attributes:</span></p>
@@ -10756,7 +10756,7 @@ and its square. Both must be in (0, 1).</p>
 
 
 
-        <p>Configuration for the L-BFGS optimizer.</p>
+        <p>Configuration for the L-BFGS <abbr title="The algorithm that updates model parameters to minimize the loss (e.g. Adam)">optimizer</abbr>.</p>
 
 
 <p><span class="doc-section-title">Attributes:</span></p>
@@ -11086,7 +11086,7 @@ in (0, 1)).</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Number of epochs with no improvement before the LR
+                <p>Number of <abbr title="Full passes through the training data">epochs</abbr> with no improvement before the LR
 is reduced.</p>
               </div>
             </td>
@@ -11454,7 +11454,7 @@ is reduced.</p>
 
 
 
-        <p>Configuration for Early Stopping callback.</p>
+        <p>Configuration for Early Stopping <abbr title="A function the training framework calls automatically at specific points (e.g. end of each epoch)">callback</abbr>.</p>
 
 
 <p><span class="doc-section-title">Attributes:</span></p>
@@ -11478,7 +11478,7 @@ is reduced.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Number of epochs with no improvement before stopping.</p>
+                <p>Number of <abbr title="Full passes through the training data">epochs</abbr> with no improvement before stopping.</p>
               </div>
             </td>
           </tr>
@@ -11611,7 +11611,7 @@ is reduced.</p>
 
 
 
-        <p>Configuration for Smoothed Moving Average (SMMA) Stopping callback.</p>
+        <p>Configuration for Smoothed Moving Average (SMMA) Stopping <abbr title="A function the training framework calls automatically at specific points (e.g. end of each epoch)">callback</abbr>.</p>
 <p>Training stops when the relative improvement of the SMMA over the
 <code>lookback</code> window falls below <code>threshold</code>.</p>
 
@@ -11637,7 +11637,7 @@ is reduced.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Number of epochs used to compute the smoothed moving
+                <p>Number of <abbr title="Full passes through the training data">epochs</abbr> used to compute the smoothed moving
 average.</p>
               </div>
             </td>
@@ -12735,7 +12735,7 @@ per sample.  Given a data_ratio, the amount of data points <code>K</code> is det
 either by applying <code>data_ratio * batch_size</code> if ratio is a float between 0
 and 1 or by an absolute count if ratio is an integer. The remaining <code>C</code>
 points are used for collocation.  The data points are sampled without
-replacement per epoch i.e. cycles through all data points and at the last
+replacement per <abbr title="One full pass through the training data">epoch</abbr> i.e. cycles through all data points and at the last
 batch, wraps around to the first indices to ensure batch size. The collocation
 points are sampled with replacement from the pool.
 The dataset produces a batch of shape ((x_data[K,d], y_data[K,...]), x_coll[C,d]).</p>
@@ -13062,7 +13062,7 @@ count [0,batch_size].</p>
 
     <div class="doc doc-contents ">
 
-        <p>Number of steps per epoch to see all data points once. Ceiling division.</p>
+        <p>Number of steps per <abbr title="One full pass through the training data">epoch</abbr> to see all data points once. Ceiling division.</p>
 
 
     </div>
@@ -13128,7 +13128,7 @@ handled by the sampler resolved from the hyperparameters.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Sequence of DataCallback callbacks applied after data loading.</p>
+                <p>Sequence of DataCallback <abbr title="Functions the training framework calls automatically at specific points (e.g. end of each epoch)">callbacks</abbr> applied after data loading.</p>
               </div>
             </td>
           </tr>
@@ -13436,7 +13436,7 @@ and returns tensors shaped for PINN training.</p>
     <div class="doc doc-contents ">
 
         <p>Load raw data from IngestionConfig, or generate synthetic data from GenerationConfig.
-Apply registered callbacks, create InferredContext and datasets.</p>
+Apply registered <abbr title="Functions the training framework calls automatically at specific points (e.g. end of each epoch)">callbacks</abbr>, create InferredContext and datasets.</p>
 
 
     </div>
@@ -13479,7 +13479,7 @@ Apply registered callbacks, create InferredContext and datasets.</p>
 
 
 
-        <p>Base class for callbacks that transform data during setup.</p>
+        <p>Base class for <abbr title="Functions the training framework calls automatically at specific points (e.g. end of each epoch)">callbacks</abbr> that transform data during setup.</p>
 <p>Subclass this to apply custom preprocessing (e.g. scaling,
 normalization) to training data and collocation points before the
 dataset is constructed.</p>
@@ -13570,7 +13570,7 @@ to account for earlier scaling transforms).</p>
 
         <p>Transform training data and collocation points.</p>
 <p>Called during <code>PINNDataModule.setup()</code> after data is loaded
-but before the <code>PINNDataset</code> is created. Multiple callbacks
+but before the <code>PINNDataset</code> is created. Multiple <abbr title="Functions the training framework calls automatically at specific points (e.g. end of each epoch)">callbacks</abbr>
 are applied in registration order.</p>
 
 
@@ -14665,7 +14665,7 @@ of shape <span class="arithmatex">\((d_{\text{in}},\, m)\)</span> and maps
 <tr>
 <td><code>LogFn</code></td>
 <td><code>Protocol</code></td>
-<td>Logging callback <code>(key, value, progress_bar?)</code></td>
+<td>Logging <abbr title="A function the training framework calls automatically at specific points (e.g. end of each epoch)">callback</abbr> <code>(key, value, progress_bar?)</code></td>
 </tr>
 <tr>
 <td><code>ValidationRegistry</code></td>

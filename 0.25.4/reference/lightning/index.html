@@ -3263,8 +3263,8 @@
   
 
 
-<h1 id="lightning-api">Lightning API</h1>
-<p><code>anypinn.lightning</code> wraps core abstractions into PyTorch Lightning components
+<h1 id="lightning-api"><abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> API</h1>
+<p><code>anypinn.lightning</code> wraps core abstractions into PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> components
 for batteries-included training.</p>
 <hr />
 <h2 id="training-module">Training Module</h2>
@@ -3284,7 +3284,7 @@ for batteries-included training.</p>
 
         <p>LightningModule wrapper for a <code>Problem</code> instance.</p>
 <p>Delegates physics computation to the <code>Problem</code> and handles
-optimizer/scheduler configuration, context injection, and
+<abbr title="The algorithm that updates model parameters to minimize the loss (e.g. Adam)">optimizer</abbr>/scheduler configuration, context injection, and
 prediction formatting. You rarely need to subclass this.</p>
 
 
@@ -3430,7 +3430,7 @@ prediction formatting. You rarely need to subclass this.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Configures the optimizer and learning rate scheduler.</p>
+        <p>Configures the <abbr title="The algorithm that updates model parameters to minimize the loss (e.g. Adam)">optimizer</abbr> and learning rate scheduler.</p>
 
 
     </div>
@@ -3532,7 +3532,7 @@ Calculates total loss from the problem.</p>
 
 
 
-        <p>Early stopping callback based on the Smoothed Moving Average (SMMA) of the loss.
+        <p>Early stopping <abbr title="A function the training framework calls automatically at specific points (e.g. end of each epoch)">callback</abbr> based on the Smoothed Moving Average (SMMA) of the loss.
 Stops training if the relative improvement of the SMMA drops below a threshold.</p>
 
 
@@ -3746,7 +3746,7 @@ Stops training if the relative improvement of the SMMA drops below a threshold.<
 
     <div class="doc doc-contents ">
 
-        <p>Called when the train epoch ends. Updates SMMA and checks stopping condition.</p>
+        <p>Called when the train <abbr title="One full pass through the training data">epoch</abbr> ends. Updates SMMA and checks stopping condition.</p>
 
 
     </div>
@@ -3962,7 +3962,7 @@ training metrics, particularly for the total loss and beta values.</p>
 
 
 
-        <p>Callback to write predictions to disk at the end of an epoch.</p>
+        <p>Callback to write predictions to disk at the end of an <abbr title="One full pass through the training data">epoch</abbr>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -4033,7 +4033,7 @@ training metrics, particularly for the total loss and beta values.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Interval to write predictions ("batch", "epoch", "batch_and_epoch").</p>
+                <p>Interval to write predictions ("batch", "<abbr title="One full pass through the training data">epoch</abbr>", "batch_and_epoch").</p>
               </div>
             </td>
             <td>
@@ -4151,7 +4151,7 @@ training metrics, particularly for the total loss and beta values.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Writes predictions to disk or calls the hook at the end of the epoch.</p>
+        <p>Writes predictions to disk or calls the hook at the end of the <abbr title="One full pass through the training data">epoch</abbr>.</p>
 
 
     </div>
@@ -4178,7 +4178,7 @@ training metrics, particularly for the total loss and beta values.</p>
 
 
 
-        <p>Refreshes the collocation pool every N epochs using AdaptiveSampler.</p>
+        <p>Refreshes the collocation pool every N <abbr title="Full passes through the training data">epochs</abbr> using AdaptiveSampler.</p>
 <p>Requires the DataModule to be configured with <code>collocation_sampler="adaptive"</code>
 and a <code>ResidualScorer</code> passed to <code>PINNDataModule(residual_scorer=...)</code>.</p>
 <p>Because the scorer typically closes over the <code>Problem</code>, it automatically uses
@@ -4205,7 +4205,7 @@ the model's current weights on every call — no additional injection step neede
             </td>
             <td>
               <div class="doc-md-description">
-                <p>How often (in epochs) to resample. Default: 1.</p>
+                <p>How often (in <abbr title="Full passes through the training data">epochs</abbr>) to resample. Default: 1.</p>
               </div>
             </td>
             <td>

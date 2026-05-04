@@ -2594,19 +2594,19 @@ gradient checkpointing work without library-level support.</p>
 </tr>
 <tr>
 <td>PINA</td>
-<td>Own <code>Trainer</code> wrapping Lightning</td>
+<td>Own <code>Trainer</code> wrapping <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr></td>
 </tr>
 </tbody>
 </table>
 <p>AnyPINN's <code>Problem</code> is an <code>nn.Module</code>. Call <code>problem.training_loss(batch, log)</code>,
-get a scalar tensor, call <code>.backward()</code>. PyTorch Lightning is available as an
+get a scalar tensor, call <code>.backward()</code>. PyTorch <abbr title="PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management">Lightning</abbr> is available as an
 optional layer for users who want batteries-included training, but it is never
 required.</p>
 <h3 id="inverse-problems-first">Inverse problems first</h3>
 <p>Most PINN libraries target forward problems. AnyPINN treats inverse problems
 as the primary use case:</p>
 <ul>
-<li><strong><code>Parameter</code></strong> can be a learned scalar or a function-valued MLP. It shares
+<li><strong><code>Parameter</code></strong> can be a learned scalar or a function-valued <abbr title="Multi-layer perceptron, a simple neural network of stacked fully connected layers">MLP</abbr>. It shares
   the same <code>forward(x)</code> interface as a fixed <code>Argument</code>, so the ODE callable
   is agnostic to which parameters are learnable. Promoting a constant to a
   learnable parameter is a
@@ -2657,15 +2657,15 @@ as the primary use case:</p>
 <hr />
 <h2 id="developer-experience">Developer experience</h2>
 <ul>
-<li><strong>Typed frozen dataclasses</strong>: <code>@dataclass(frozen=True, kw_only=True)</code> for
+<li><strong>Typed <abbr title="A dataclass that cannot be modified after creation; typos in field names raise errors instead of silently passing">frozen</abbr> dataclasses</strong>: <code>@dataclass(frozen=True, kw_only=True)</code> for
   all configuration. Typos are caught at construction time.</li>
 <li><strong>Static type checking</strong>: <code>ty</code> in CI ensures type correctness.</li>
 <li><strong>Semantic versioning</strong>: Conventional Commits drive automated releases.</li>
 <li><strong>Modern tooling</strong>: <code>uv</code> + <code>hatchling</code> + Ruff.</li>
 </ul>
 <hr />
-<h2 id="bootstrap-cli">Bootstrap CLI</h2>
-<p>No library in the comparison set ships a scaffolding tool. <code>anypinn create</code>
+<h2 id="bootstrap-cli">Bootstrap <abbr title="Command-line interface, a program you run in the terminal instead of clicking through a GUI">CLI</abbr></h2>
+<p>No library in the comparison set ships a <abbr title="Generating a starter project with all the files and configuration you need to begin">scaffolding</abbr> tool. <code>anypinn create</code>
 generates a fully runnable project from 16 built-in templates. The researcher's
 first action is editing <code>ode.py</code>, not reading API docs.</p>
 <hr />

@@ -2658,7 +2658,7 @@ ground-truth values:</p>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>The library logs MSE between recovered and ground-truth parameters at every
-epoch.</p>
+<abbr title="One full pass through the training data">epoch</abbr>.</p>
 <p>For time-varying parameters, provide a callable:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">validation</span><span class="p">:</span> <span class="n">ValidationRegistry</span> <span class="o">=</span> <span class="p">{</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="s2">&quot;lambda&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
@@ -2688,7 +2688,7 @@ epoch.</p>
 </span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="p">)</span>
 </span></code></pre></div>
 <div class="admonition note">
-<p class="admonition-title">Scalar vs MLP parameters</p>
+<p class="admonition-title">Scalar vs <abbr title="Multi-layer perceptron, a simple neural network of stacked fully connected layers">MLP</abbr> parameters</p>
 <p>Use <code>ScalarConfig</code> when the parameter is a constant (e.g. a rate
 coefficient). Use <code>MLPConfig</code> when the parameter is a function of the
 independent variable (e.g. a time-varying transmission rate).</p>
@@ -2697,7 +2697,7 @@ independent variable (e.g. a time-varying transmission rate).</p>
 <h2 id="train-and-inspect">Train and inspect</h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uv<span class="w"> </span>sync<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>train.py
 </span></code></pre></div>
-<p>Check the validation metrics in TensorBoard to see how the recovered parameter
+<p>Check the validation metrics in <abbr title="A dashboard for monitoring training metrics like loss curves in real time">TensorBoard</abbr> to see how the recovered parameter
 converges to the true value.</p>
 <hr />
 <h2 id="higher-order-odes">Higher-order ODEs</h2>
