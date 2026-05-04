@@ -44,6 +44,8 @@ lib = [
     "torch",
     "lightning",
     "pandas",
+    "matplotlib",
+    "seaborn",
     "torchdiffeq",
 ]
 
