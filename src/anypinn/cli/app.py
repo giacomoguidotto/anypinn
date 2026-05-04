@@ -22,7 +22,10 @@ from anypinn.cli._prompts import (
 from anypinn.cli._renderer import render_project
 from anypinn.cli._types import TEMPLATES_WITH_DIRECTION, DataSource, Direction, Template
 
-app = Typer(add_completion=False, context_settings={"help_option_names": ["-h", "--help"]})
+app = Typer(
+    add_completion=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 _console = Console(highlight=False)
 
 
@@ -46,7 +49,19 @@ def main(
         ),
     ] = False,
 ) -> None:
-    """anypinn - scaffolding tool for Physics-Informed Neural Network projects."""
+    """Scaffold Physics-Informed Neural Network projects from a catalog
+    of 16 ready-made models, from SIR epidemics to 2D Gray-Scott
+    reaction-diffusion.
+
+    Run interactively or specify everything with flags.
+
+    \b
+    Quick start:
+      anypinn create                       interactive wizard
+      anypinn create -t sir my-project     named project, skip
+                                           template prompt
+
+    Docs: https://anypinn.guidotto.dev/"""
 
 
 _FILE_DESCRIPTIONS: dict[str, str] = {
@@ -114,7 +129,7 @@ def create(
         ),
     ] = False,
 ) -> None:
-    """Create a new PINN project."""
+    """Scaffold a PINN project from 16 ready-made templates."""
     project_dir = Path(project_name).resolve()
     display_name = project_dir.name
     use_cwd = project_name == "."
