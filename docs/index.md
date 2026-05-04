@@ -91,11 +91,37 @@ template, data source, and training framework.
 
 <div class="grid" markdown>
 
+![Lotka-Volterra system](examples/lotka_volterra/results/lotka-volterra.png){ loading=lazy }
+
+![Heat 1D equation](examples/heat_1d/results/heat-1d.png){ loading=lazy }
+
+![SIR inverse problem](examples/sir_inverse/results/sir-inverse.png){ loading=lazy }
+
+![Gray-Scott 2D system](examples/gray_scott_2d/results/gray-scott-2d.png){ loading=lazy }
+
 ![Allen-Cahn equation](examples/allen_cahn/results/allen-cahn.png){ loading=lazy }
+
+![Van der Pol oscillator](examples/van_der_pol/results/van-der-pol.png){ loading=lazy }
+
+![SEIR inverse problem](examples/seir_inverse/results/seir-inverse.png){ loading=lazy }
+
+![Poisson 2D equation](examples/poisson_2d/results/poisson-2d.png){ loading=lazy }
 
 ![Lorenz system](examples/lorenz/results/lorenz.png){ loading=lazy }
 
-![SIR inverse problem](examples/sir_inverse/results/sir-inverse.png){ loading=lazy }
+![Damped oscillator](examples/damped_oscillator/results/damped-oscillator.png){ loading=lazy }
+
+![Burgers 1D equation](examples/burgers_1d/results/burgers-1d.png){ loading=lazy }
+
+![Hospitalized SIR inverse problem](examples/hospitalized_sir_inverse/results/hospitalized-sir-inverse.png){ loading=lazy }
+
+![FitzHugh-Nagumo model](examples/fitzhugh_nagumo/results/fitzhugh-nagumo.png){ loading=lazy }
+
+![Wave 1D equation](examples/wave_1d/results/wave-1d.png){ loading=lazy }
+
+![Reduced SIR inverse problem](examples/reduced_sir_inverse/results/reduced-sir-inverse.png){ loading=lazy }
+
+![Inverse diffusivity problem](examples/inverse_diffusivity/results/inverse-diffusivity.png){ loading=lazy }
 
 </div>
 
