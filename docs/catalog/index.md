@@ -142,7 +142,7 @@ anypinn create --list-templates
 
     ---
 
-    Stub skeleton for user-defined ODE.
+    Stub skeleton for a user-defined ODE/PDE.
 
     `--template custom`
 

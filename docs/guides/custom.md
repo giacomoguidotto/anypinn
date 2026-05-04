@@ -1,6 +1,6 @@
 # Define a Custom Problem
 
-This guide walks through defining your own ODE problem from scratch, starting
+This guide walks through defining your own ODE/PDE problem from scratch, starting
 from the **Custom** or **Blank** template.
 
 ---
@@ -17,9 +17,9 @@ This generates a skeleton with placeholder functions that you'll fill in.
 
 ---
 
-## Write the ODE callable
+## Write the equation callable
 
-The ODE callable is a function with this signature:
+The equation callable is a function with this signature:
 
 ```python
 def my_ode(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
