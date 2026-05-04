@@ -6,7 +6,7 @@
 *[pipx]: A tool that runs Python command-line tools without a permanent install
 *[pyproject.toml]: The configuration file that declares a Python project's dependencies and settings
 *[dependencies]: External packages your project needs to run
-*[Lightning]: PyTorch Lightning, a framework that handles training boilerplate: logging, checkpointing, GPU management
+*[Lightning]: PyTorch Lightning, a framework that automates repetitive training tasks: logging, checkpointing, GPU management
 *[dataclass]: A Python class that mainly holds data fields, with automatic initialization and comparison
 *[frozen]: A dataclass that cannot be modified after creation; typos in field names raise errors instead of silently passing
 *[callback]: A function the training framework calls automatically at specific points (e.g. end of each epoch)
@@ -21,4 +21,5 @@
 *[matplotlib]: A Python library for creating plots and figures
 *[seaborn]: A Python library built on matplotlib for statistical visualizations
 *[MLP]: Multi-layer perceptron, a simple neural network of stacked fully connected layers
+*[boilerplate]: Repetitive setup code that is the same across projects
 *[inference]: Running a trained model to produce predictions, without further training
