@@ -2,6 +2,12 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -32,6 +38,7 @@ from anypinn.core import (
     # --- END VARIANT ---
     ParamsRegistry,
     PINNHyperparameters,
+    Predictions,
     Problem,
     # --- VARIANT: direction/inverse ---
     ScalarConfig,
@@ -459,6 +466,212 @@ def create_problem_inverse(hp: PINNHyperparameters) -> Problem:
         fields=fields,
         params=params,
     )
+
+
+# --- END VARIANT ---
+
+
+# ============================================================================
+# Plotting and Saving
+# ============================================================================
+
+
+# --- VARIANT: source/synthetic ---
+def plot_and_save_synthetic(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, _trues = predictions
+    xyt_data, uv_data = batch
+
+    if xyt_data.ndim == 1:
+        xyt_data = xyt_data.reshape(-1, 3)
+
+    x_np = xyt_data[:, 0].numpy()
+    y_np = xyt_data[:, 1].numpy()
+    t_np = xyt_data[:, 2].numpy()
+    u_pred = preds[U_KEY].numpy()
+    v_pred = preds[V_KEY].numpy()
+    u_true = uv_data[:, 0].squeeze(-1).numpy()
+    v_true = uv_data[:, 1].squeeze(-1).numpy()
+
+    # Recover parameters (apply softplus to match PDE usage)
+    params_str = ""
+    du_rec = preds.get(DU_KEY)
+    dv_rec = preds.get(DV_KEY)
+    f_rec = preds.get(F_KEY)
+    k_rec = preds.get(K_KEY)
+    if du_rec is not None:
+        du_val = torch.nn.functional.softplus(torch.tensor(du_rec.mean())).item()
+        dv_val = torch.nn.functional.softplus(torch.tensor(dv_rec.mean())).item()
+        f_val = torch.nn.functional.softplus(torch.tensor(f_rec.mean())).item()
+        k_val = torch.nn.functional.softplus(torch.tensor(k_rec.mean())).item()
+        params_str = (
+            rf" | $D_{{u,\mathrm{{pred}}}} = {du_val:.4e}$"
+            rf", $D_{{v,\mathrm{{pred}}}} = {dv_val:.4e}$"
+            rf", $F_{{\mathrm{{pred}}}} = {f_val:.4e}$"
+            rf", $k_{{\mathrm{{pred}}}} = {k_val:.4e}$"
+        )
+
+    # Plot final time snapshot
+    t_max = t_np.max()
+    mask = np.isclose(t_np, t_max)
+    x_final = x_np[mask]
+    y_final = y_np[mask]
+    u_p_final = u_pred[mask]
+    u_t_final = u_true[mask]
+    v_p_final = v_pred[mask]
+    v_t_final = v_true[mask]
+
+    n_side = int(np.sqrt(len(x_final)))
+    X = x_final.reshape(n_side, n_side)
+    Y = y_final.reshape(n_side, n_side)
+
+    sns.set_theme(style="darkgrid")
+    fig, axes = plt.subplots(2, 3, figsize=(18, 11))
+    fig.suptitle(f"Gray--Scott 2D ($t = {t_max:.2f}$){params_str}", fontsize=13)
+
+    u_grid = u_p_final.reshape(n_side, n_side)
+    im00 = axes[0, 0].pcolormesh(X, Y, u_grid, shading="auto", cmap="viridis")
+    axes[0, 0].set_title(r"Predicted $u$")
+    axes[0, 0].set_xlabel(r"$x$")
+    axes[0, 0].set_ylabel(r"$y$")
+    axes[0, 0].set_aspect("equal")
+    fig.colorbar(im00, ax=axes[0, 0])
+
+    u_true_grid = u_t_final.reshape(n_side, n_side)
+    im01 = axes[0, 1].pcolormesh(X, Y, u_true_grid, shading="auto", cmap="viridis")
+    axes[0, 1].set_title(r"True $u$")
+    axes[0, 1].set_xlabel(r"$x$")
+    axes[0, 1].set_ylabel(r"$y$")
+    axes[0, 1].set_aspect("equal")
+    fig.colorbar(im01, ax=axes[0, 1])
+
+    u_err = np.abs(u_p_final - u_t_final).reshape(n_side, n_side)
+    im02 = axes[0, 2].pcolormesh(X, Y, u_err, shading="auto", cmap="hot")
+    axes[0, 2].set_title(r"$|u_{\mathrm{pred}} - u_{\mathrm{true}}|$")
+    axes[0, 2].set_xlabel(r"$x$")
+    axes[0, 2].set_ylabel(r"$y$")
+    axes[0, 2].set_aspect("equal")
+    fig.colorbar(im02, ax=axes[0, 2])
+
+    v_grid = v_p_final.reshape(n_side, n_side)
+    im10 = axes[1, 0].pcolormesh(X, Y, v_grid, shading="auto", cmap="viridis")
+    axes[1, 0].set_title(r"Predicted $v$")
+    axes[1, 0].set_xlabel(r"$x$")
+    axes[1, 0].set_ylabel(r"$y$")
+    axes[1, 0].set_aspect("equal")
+    fig.colorbar(im10, ax=axes[1, 0])
+
+    v_true_grid = v_t_final.reshape(n_side, n_side)
+    im11 = axes[1, 1].pcolormesh(X, Y, v_true_grid, shading="auto", cmap="viridis")
+    axes[1, 1].set_title(r"True $v$")
+    axes[1, 1].set_xlabel(r"$x$")
+    axes[1, 1].set_ylabel(r"$y$")
+    axes[1, 1].set_aspect("equal")
+    fig.colorbar(im11, ax=axes[1, 1])
+
+    v_err = np.abs(v_p_final - v_t_final).reshape(n_side, n_side)
+    im12 = axes[1, 2].pcolormesh(X, Y, v_err, shading="auto", cmap="hot")
+    axes[1, 2].set_title(r"$|v_{\mathrm{pred}} - v_{\mathrm{true}}|$")
+    axes[1, 2].set_xlabel(r"$x$")
+    axes[1, 2].set_ylabel(r"$y$")
+    axes[1, 2].set_aspect("equal")
+    fig.colorbar(im12, ax=axes[1, 2])
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame(
+        {
+            "x": x_np,
+            "y": y_np,
+            "t": t_np,
+            "u_pred": u_pred,
+            "u_true": u_true,
+            "v_pred": v_pred,
+            "v_true": v_true,
+        }
+    )
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")
+
+
+# --- VARIANT: source/csv ---
+def plot_and_save_csv(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, _trues = predictions
+    xyt_data, _uv_data = batch
+
+    if xyt_data.ndim == 1:
+        xyt_data = xyt_data.reshape(-1, 3)
+
+    x_np = xyt_data[:, 0].numpy()
+    y_np = xyt_data[:, 1].numpy()
+    t_np = xyt_data[:, 2].numpy()
+    u_pred = preds[U_KEY].numpy()
+    v_pred = preds[V_KEY].numpy()
+
+    # Recover parameters (apply softplus to match PDE usage)
+    params_str = ""
+    du_rec = preds.get(DU_KEY)
+    dv_rec = preds.get(DV_KEY)
+    f_rec = preds.get(F_KEY)
+    k_rec = preds.get(K_KEY)
+    if du_rec is not None:
+        du_val = torch.nn.functional.softplus(torch.tensor(du_rec.mean())).item()
+        dv_val = torch.nn.functional.softplus(torch.tensor(dv_rec.mean())).item()
+        f_val = torch.nn.functional.softplus(torch.tensor(f_rec.mean())).item()
+        k_val = torch.nn.functional.softplus(torch.tensor(k_rec.mean())).item()
+        params_str = (
+            rf" | $D_{{u,\mathrm{{pred}}}} = {du_val:.4e}$"
+            rf", $D_{{v,\mathrm{{pred}}}} = {dv_val:.4e}$"
+            rf", $F_{{\mathrm{{pred}}}} = {f_val:.4e}$"
+            rf", $k_{{\mathrm{{pred}}}} = {k_val:.4e}$"
+        )
+
+    # Plot final time snapshot
+    t_max = t_np.max()
+    mask = np.isclose(t_np, t_max)
+    x_final = x_np[mask]
+    y_final = y_np[mask]
+    u_p_final = u_pred[mask]
+    v_p_final = v_pred[mask]
+
+    n_side = int(np.sqrt(len(x_final)))
+    X = x_final.reshape(n_side, n_side)
+    Y = y_final.reshape(n_side, n_side)
+
+    sns.set_theme(style="darkgrid")
+    fig, axes = plt.subplots(2, 1, figsize=(8, 11))
+    fig.suptitle(f"Gray--Scott 2D ($t = {t_max:.2f}$){params_str}", fontsize=13)
+
+    u_grid = u_p_final.reshape(n_side, n_side)
+    im0 = axes[0].pcolormesh(X, Y, u_grid, shading="auto", cmap="viridis")
+    axes[0].set_title(r"Predicted $u$")
+    axes[0].set_xlabel(r"$x$")
+    axes[0].set_ylabel(r"$y$")
+    axes[0].set_aspect("equal")
+    fig.colorbar(im0, ax=axes[0])
+
+    v_grid = v_p_final.reshape(n_side, n_side)
+    im1 = axes[1].pcolormesh(X, Y, v_grid, shading="auto", cmap="viridis")
+    axes[1].set_title(r"Predicted $v$")
+    axes[1].set_xlabel(r"$x$")
+    axes[1].set_ylabel(r"$y$")
+    axes[1].set_aspect("equal")
+    fig.colorbar(im1, ax=axes[1])
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame({"x": x_np, "y": y_np, "t": t_np, "u_pred": u_pred, "v_pred": v_pred})
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")
 
 
 # --- END VARIANT ---
