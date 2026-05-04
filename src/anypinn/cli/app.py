@@ -204,14 +204,12 @@ def create(
                     f"Directory '{display_name}' is not empty. Delete all contents?",
                     default=False,
                 ):
-                    _console.print()
                     _console.print("[bold red]●[/]  No changes made, exiting.")
                     raise Exit(code=1)
                 if not _confirm(
                     "Are you sure? This cannot be undone",
                     default=False,
                 ):
-                    _console.print()
                     _console.print("[bold red]●[/]  No changes made, exiting.")
                     raise Exit(code=1)
                 needs_cleanup = True
@@ -253,7 +251,6 @@ def create(
             _console.print(f"[dim]│[/]  {display}")
             _console.print("[dim]│[/]")
     except KeyboardInterrupt:
-        _console.print()
         _console.print("[bold red]●[/]  No changes made, exiting.")
         raise Exit(code=1) from None
 
