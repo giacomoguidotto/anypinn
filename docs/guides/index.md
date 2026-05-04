@@ -10,7 +10,7 @@ problem and assumes you've completed the
 
 <div class="grid cards" markdown>
 
-- :material-function-variant: **[Define a Custom ODE](custom-ode.md)**
+- :material-function-variant: **[Define a Custom Problem](custom.md)**
 
     Write your own ODE callable, fields, and parameters from scratch.
 

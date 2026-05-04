@@ -1,4 +1,4 @@
-# Define a Custom ODE
+# Define a Custom Problem
 
 This guide walks through defining your own ODE problem from scratch, starting
 from the **Custom** or **Blank** template.

@@ -42,13 +42,14 @@ _EXPERIMENT_NAMES: dict[Template, str] = {
     Template.WAVE_1D: "wave-1d",
     Template.INVERSE_DIFFUSIVITY: "inverse-diffusivity",
     Template.ALLEN_CAHN: "allen-cahn",
-    Template.CUSTOM: "custom-ode",
+    Template.CUSTOM: "custom",
     Template.BLANK: "my-project",
 }
 
 _BASE_DEPS: list[str] = [
     "anypinn",
     "torch",
+    "lightning",
     "torchdiffeq",
     "pandas",
     "numpy",
@@ -56,7 +57,6 @@ _BASE_DEPS: list[str] = [
 ]
 
 _LIGHTNING_DEPS: list[str] = [
-    "lightning",
     "tensorboard",
 ]
 

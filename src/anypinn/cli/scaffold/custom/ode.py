@@ -1,4 +1,4 @@
-"""Custom ODE — mathematical definition."""
+"""Custom — mathematical definition."""
 
 from __future__ import annotations
 

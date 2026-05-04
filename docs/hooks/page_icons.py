@@ -16,7 +16,7 @@ PAGE_ICONS: dict[str, str] = {
     "getting-started/understanding-the-output.md": "material/chart-line",
     "getting-started/next-steps.md": "material/lightbulb",
     "guides/index.md": "material/book-open-variant",
-    "guides/custom-ode.md": "material/function-variant",
+    "guides/custom.md": "material/function-variant",
     "guides/promote-constant-to-parameter.md": "material/swap-horizontal",
     "guides/inverse-vs-forward.md": "material/arrow-split-vertical",
     "guides/pde-forward-problems.md": "material/grid",

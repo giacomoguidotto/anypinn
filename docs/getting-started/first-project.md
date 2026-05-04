@@ -29,7 +29,7 @@ spanning ODE and PDE problems:
 | Chaotic systems | Lorenz |
 | Neuroscience | FitzHugh-Nagumo |
 | PDEs | Gray-Scott 2D, Poisson 2D, Heat 1D, Burgers 1D, Wave 1D, Inverse Diffusivity, Allen-Cahn |
-| Custom | Custom ODE (stub), Blank (empty) |
+| Custom | Custom (stub), Blank (empty) |
 
 Each template ships a complete mathematical definition with ODE/PDE callables,
 initial conditions, known parameters, and validation ground truths. Run
