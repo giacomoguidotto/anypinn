@@ -111,6 +111,10 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 # ============================================================================
 
 
+_DARK = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+_LIGHT = ["#aec7e8", "#ffbb78", "#98df8a"]
+
+
 def plot_and_save(
     predictions: Predictions,
     results_dir: Path,
@@ -133,46 +137,56 @@ def plot_and_save(
     beta_pred = preds[BETA_KEY]
     beta_true = trues[BETA_KEY] if trues else None
 
-    # plot
     sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("SIR Model", fontsize=14)
 
     ax1 = axes[0]
     ax2 = ax1.twinx()
 
-    sns.lineplot(x=t_data, y=S_pred, label="$S_{pred}$", ax=ax1, color="C0")
-    ax1.set_ylabel("S (Population)", color="C0")
-    ax1.tick_params(axis="y", labelcolor="C0")
+    sns.lineplot(x=t_data, y=S_pred, label=r"$S_{\mathrm{pred}}$", ax=ax1, color=_DARK[0])
+    ax1.set_ylabel("$S$ (Population)", color=_DARK[0])
+    ax1.tick_params(axis="y", labelcolor=_DARK[0])
 
-    sns.lineplot(x=t_data, y=I_pred, label="$I_{pred}$", ax=ax2, color="C3")
-    sns.lineplot(x=t_data, y=R_pred, label="$R_{pred}$", ax=ax2, color="C3")
-    sns.lineplot(x=t_data, y=I_data, label="$I_{observed}$", linestyle="--", ax=ax2, color="C1")
-    ax2.set_ylabel("I, R (Population)", color="C3")
-    ax2.tick_params(axis="y", labelcolor="C3")
-    ax2.grid(False)  # disable grid on secondary axis to avoid overlap with legend
+    sns.lineplot(x=t_data, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax2, color=_DARK[1])
+    sns.lineplot(x=t_data, y=R_pred, label=r"$R_{\mathrm{pred}}$", ax=ax2, color=_DARK[2])
+    sns.scatterplot(
+        x=t_data, y=I_data, label=r"$I_{\mathrm{obs}}$", ax=ax2, color=_LIGHT[1], s=10, alpha=0.4
+    )
+    ax2.set_ylabel("$I$, $R$ (Population)", color=_DARK[1])
+    ax2.tick_params(axis="y", labelcolor=_DARK[1])
+    ax2.grid(False)
 
-    ax1.set_title("SIR Model Predictions")
-    ax1.set_xlabel("Time (days)")
+    ax1.set_title("State Predictions")
+    ax1.set_xlabel(r"$t$ (days)")
 
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, loc="upper center")
     ax2.legend().remove()
 
+    ax = axes[1]
     if beta_true is not None:
-        sns.lineplot(x=t_data, y=beta_true, label=r"$\beta_{true}$", ax=axes[1])
-    sns.lineplot(x=t_data, y=beta_pred, label=r"$\beta_{pred}$", linestyle="--", ax=axes[1])
-
-    axes[1].set_title(r"$\beta$ Parameter Prediction")
-    axes[1].set_xlabel("Time (days)")
-    axes[1].set_ylabel(r"$\beta$")
-    axes[1].legend()
+        sns.lineplot(
+            x=t_data, y=beta_true, label=r"$\beta_{\mathrm{true}}$", ax=ax, color=_DARK[0]
+        )
+    sns.lineplot(
+        x=t_data,
+        y=beta_pred,
+        label=r"$\beta_{\mathrm{pred}}$",
+        linestyle="--" if beta_true is not None else "-",
+        ax=ax,
+        color=_LIGHT[0] if beta_true is not None else _DARK[0],
+    )
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$ (days)")
+    ax.set_ylabel("Value")
+    ax.legend()
 
     plt.tight_layout()
-
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
+    plt.close(fig)
 
-    # save
     df = pd.DataFrame(
         {
             "t": t_data,
@@ -184,5 +198,4 @@ def plot_and_save(
             "beta_true": beta_true,
         }
     )
-
     df.to_csv(results_dir / f"{experiment_name}.csv", index=False, float_format="%.6e")

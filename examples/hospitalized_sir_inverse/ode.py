@@ -126,6 +126,10 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 # ============================================================================
 
 
+_DARK = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+_LIGHT = ["#aec7e8", "#ffbb78", "#98df8a"]
+
+
 def plot_and_save(
     predictions: Predictions,
     results_dir: Path,
@@ -151,43 +155,57 @@ def plot_and_save(
     Rt_true = trues[Rt_KEY] if trues and Rt_KEY in trues else None
     sigma_true = trues[SIGMA_KEY] if trues and SIGMA_KEY in trues else None
 
-    # plot
     sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    fig.suptitle("Hospitalized SIR Model", fontsize=14)
 
     ax = axes[0, 0]
-    sns.lineplot(x=t_data, y=H_pred, label=r"$\Delta H_{pred}$", ax=ax, color="C0")
+    sns.lineplot(x=t_data, y=H_pred, label=r"$\Delta H_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
     sns.scatterplot(
-        x=t_data, y=H_obs, label=r"$\Delta H_{obs}$", ax=ax, color="C1", s=20, alpha=0.6
+        x=t_data,
+        y=H_obs,
+        label=r"$\Delta H_{\mathrm{obs}}$",
+        ax=ax,
+        color=_LIGHT[0],
+        s=10,
+        alpha=0.4,
     )
-    ax.set_title("Daily Hospitalizations")
-    ax.set_xlabel("Time (days)")
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$ (days)")
     ax.set_ylabel("Daily Hospitalizations")
     ax.legend()
 
     ax = axes[0, 1]
-    sns.lineplot(x=t_data, y=I_pred, label="$I_{pred}$", ax=ax, color="C2")
-    sns.scatterplot(x=t_data, y=I_obs, label="$I_{obs}$", ax=ax, color="C1", s=20, alpha=0.6)
-    ax.set_title("Predicted Infected Population")
-    ax.set_xlabel("Time (days)")
-    ax.set_ylabel("I (Population)")
+    sns.lineplot(x=t_data, y=I_pred, label=r"$I_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
+    sns.scatterplot(
+        x=t_data,
+        y=I_obs,
+        label=r"$I_{\mathrm{obs}}$",
+        ax=ax,
+        color=_LIGHT[1],
+        s=10,
+        alpha=0.4,
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$ (days)")
+    ax.set_ylabel("Population")
     ax.legend()
 
     ax = axes[1, 0]
     if Rt_true is not None:
-        sns.lineplot(x=t_data, y=Rt_true, label=r"$R_{t, true}$", ax=ax, color="C3")
+        sns.lineplot(x=t_data, y=Rt_true, label=r"$R_{t,\mathrm{true}}$", ax=ax, color=_DARK[0])
     sns.lineplot(
         x=t_data,
         y=Rt_pred,
-        label=r"$R_{t, pred}$",
+        label=r"$R_{t,\mathrm{pred}}$",
         ax=ax,
         linestyle="--" if Rt_true is not None else "-",
-        color="C4" if Rt_true is not None else "C3",
+        color=_LIGHT[0] if Rt_true is not None else _DARK[0],
     )
     ax.axhline(y=1, color="red", linestyle=":", alpha=0.5, label="$R_t = 1$")
-    ax.set_title(r"$R_t$ (Reproduction Number)")
-    ax.set_xlabel("Time (days)")
-    ax.set_ylabel(r"$R_t$")
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$ (days)")
+    ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
@@ -195,25 +213,26 @@ def plot_and_save(
 
     ax = axes[1, 1]
     if sigma_true is not None:
-        sns.lineplot(x=t_data, y=sigma_true, label=r"$\sigma_{true}$", ax=ax, color="C5")
+        sns.lineplot(
+            x=t_data, y=sigma_true, label=r"$\sigma_{\mathrm{true}}$", ax=ax, color=_DARK[1]
+        )
     sns.lineplot(
         x=t_data,
         y=sigma_pred,
-        label=r"$\sigma_{pred}$",
+        label=r"$\sigma_{\mathrm{pred}}$",
         ax=ax,
         linestyle="--" if sigma_true is not None else "-",
-        color="C6" if sigma_true is not None else "C5",
+        color=_LIGHT[1] if sigma_true is not None else _DARK[1],
     )
-    ax.set_title(r"$\sigma$ (Hospitalization Rate)")
-    ax.set_xlabel("Time (days)")
-    ax.set_ylabel(r"$\sigma$ (fraction)")
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$ (days)")
+    ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     plt.tight_layout()
-
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
     plt.close(fig)
 
