@@ -128,7 +128,7 @@ watch:
   - src
 site_url: https://anypinn.guidotto.dev/
 site_name: AnyPINN
-copyright: Copyright &copy; 2025 Giacomo Guidotto
+copyright: Copyright &copy; 2025-2026 Giacomo Guidotto
 # GitHub Specific Configuration.
 repo_name: anypinn
 repo_url: https://github.com/giacomoguidotto/anypinn
