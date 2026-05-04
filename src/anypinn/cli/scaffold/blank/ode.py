@@ -17,3 +17,7 @@ def create_data_module(hp: ODEHyperparameters):
 
 def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
     raise NotImplementedError("TODO: implement create_problem")
+
+
+def plot_and_save(*_args) -> None:
+    pass

@@ -124,3 +124,7 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
     #     predict_data=predict_data,
     # )
     raise NotImplementedError("TODO: implement create_problem")
+
+
+def plot_and_save(*_args) -> None:
+    pass
