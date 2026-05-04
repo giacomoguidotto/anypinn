@@ -170,6 +170,10 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 # ============================================================================
 
 
+_DARK = ["#1f77b4", "#ff7f0e"]
+_LIGHT = ["#aec7e8", "#ffbb78"]
+
+
 def plot_and_save(
     predictions: Predictions,
     results_dir: Path,
@@ -178,56 +182,55 @@ def plot_and_save(
     batch, preds, trues = predictions
     t_data, y_data = batch
 
-    # Unscale predictions back to original population scale
     x_pred = POP_SCALE * preds[X_KEY]
     y_pred = POP_SCALE * preds[Y_KEY]
 
-    # Unscale observed data
     x_obs = POP_SCALE * y_data[:, 0]
     y_obs = POP_SCALE * y_data[:, 1]
 
     beta_pred = preds[BETA_KEY]
     beta_true = trues[BETA_KEY] if trues else None
 
-    # plot
     sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Lotka--Volterra System", fontsize=14)
 
-    # Subplot 1: prey and predator curves + observed data
     ax = axes[0]
-    sns.lineplot(x=t_data, y=x_pred, label="Prey $x_{pred}$", ax=ax, color="C0")
-    sns.lineplot(x=t_data, y=y_pred, label="Predator $y_{pred}$", ax=ax, color="C3")
-    sns.scatterplot(x=t_data, y=x_obs, label="Prey $x_{obs}$", ax=ax, color="C0", s=10, alpha=0.4)
+    sns.lineplot(x=t_data, y=x_pred, label=r"$x_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.lineplot(x=t_data, y=y_pred, label=r"$y_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
     sns.scatterplot(
-        x=t_data, y=y_obs, label="Predator $y_{obs}$", ax=ax, color="C3", s=10, alpha=0.4
+        x=t_data, y=x_obs, label=r"$x_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
     )
-    ax.set_title("Lotka-Volterra Predictions")
-    ax.set_xlabel("Time (scaled)")
+    sns.scatterplot(
+        x=t_data, y=y_obs, label=r"$y_{\mathrm{obs}}$", ax=ax, color=_LIGHT[1], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$")
     ax.set_ylabel("Population")
     ax.legend()
 
-    # Subplot 2: beta predicted vs true
     ax = axes[1]
     if beta_true is not None:
-        sns.lineplot(x=t_data, y=beta_true, label=r"$\beta_{true}$", ax=ax, color="C0")
+        sns.lineplot(
+            x=t_data, y=beta_true, label=r"$\beta_{\mathrm{true}}$", ax=ax, color=_DARK[0]
+        )
     sns.lineplot(
         x=t_data,
         y=beta_pred,
-        label=r"$\beta_{pred}$",
+        label=r"$\beta_{\mathrm{pred}}$",
         linestyle="--" if beta_true is not None else "-",
         ax=ax,
-        color="C3" if beta_true is not None else "C0",
+        color=_LIGHT[0] if beta_true is not None else _DARK[0],
     )
-    ax.set_title(r"$\beta$ Parameter Prediction")
-    ax.set_xlabel("Time (scaled)")
-    ax.set_ylabel(r"$\beta$")
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
     ax.legend()
 
     plt.tight_layout()
-
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
     plt.close(fig)
 

@@ -136,6 +136,10 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
 # ============================================================================
 
 
+_DARK = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+_LIGHT = ["#aec7e8", "#ffbb78", "#98df8a"]
+
+
 def plot_and_save(
     predictions: Predictions,
     results_dir: Path,
@@ -155,49 +159,51 @@ def plot_and_save(
 
     sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 3, figsize=(20, 6))
+    fig.suptitle(r"FitzHugh--Nagumo Model", fontsize=14)
 
-    # Panel 1: v(t) predicted vs observed
     ax = axes[0]
-    sns.lineplot(x=t_data, y=v_pred, label="$v_{pred}$", ax=ax, color="C0")
-    sns.scatterplot(x=t_data, y=v_obs, label="$v_{obs}$", ax=ax, color="C0", s=10, alpha=0.3)
-    ax.set_title("Membrane Potential $v(t)$")
-    ax.set_xlabel("Time")
+    sns.lineplot(x=t_data, y=v_pred, label=r"$v_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.scatterplot(
+        x=t_data, y=v_obs, label=r"$v_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$")
     ax.set_ylabel("$v$")
     ax.legend()
 
-    # Panel 2: w(t) predicted only (unobserved)
     ax = axes[1]
-    sns.lineplot(x=t_data, y=w_pred, label="$w_{pred}$", ax=ax, color="C1")
-    ax.set_title("Recovery Variable $w(t)$ (unobserved)")
-    ax.set_xlabel("Time")
+    sns.lineplot(x=t_data, y=w_pred, label=r"$w_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
+    ax.set_title("Latent State")
+    ax.set_xlabel(r"$t$")
     ax.set_ylabel("$w$")
     ax.legend()
 
-    # Panel 3: epsilon and a predictions
     ax = axes[2]
     if eps_true is not None:
-        sns.lineplot(x=t_data, y=eps_true, label=r"$\varepsilon_{true}$", ax=ax, color="C0")
+        sns.lineplot(
+            x=t_data, y=eps_true, label=r"$\varepsilon_{\mathrm{true}}$", ax=ax, color=_DARK[0]
+        )
     sns.lineplot(
         x=t_data,
         y=eps_pred,
-        label=r"$\varepsilon_{pred}$",
+        label=r"$\varepsilon_{\mathrm{pred}}$",
         linestyle="--" if eps_true is not None else "-",
         ax=ax,
-        color="C3" if eps_true is not None else "C0",
+        color=_LIGHT[0] if eps_true is not None else _DARK[0],
     )
     if a_true is not None:
-        sns.lineplot(x=t_data, y=a_true, label="$a_{true}$", ax=ax, color="C1")
+        sns.lineplot(x=t_data, y=a_true, label=r"$a_{\mathrm{true}}$", ax=ax, color=_DARK[1])
     sns.lineplot(
         x=t_data,
         y=a_pred,
-        label="$a_{pred}$",
+        label=r"$a_{\mathrm{pred}}$",
         linestyle="--" if a_true is not None else "-",
         ax=ax,
-        color="C4" if a_true is not None else "C1",
+        color=_LIGHT[1] if a_true is not None else _DARK[1],
     )
-    ax.set_title(r"$\varepsilon$, $a$ Predictions")
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Parameter value")
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Value")
     top = ax.get_ylim()[1]
     pad = top * 0.10
     ax.set_ylim(-pad, top + pad)
