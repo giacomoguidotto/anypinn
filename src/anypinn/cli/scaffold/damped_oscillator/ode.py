@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -17,6 +21,7 @@ from anypinn.core import (
     FieldsRegistry,
     Parameter,
     ParamsRegistry,
+    Predictions,
     ValidationRegistry,
 )
 from anypinn.lightning.callbacks import DataScaling
@@ -187,3 +192,80 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
         params=params,
         predict_data=predict_data,
     )
+
+
+# ============================================================================
+# Plotting and Saving
+# ============================================================================
+
+
+_DARK = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+_LIGHT = ["#aec7e8", "#ffbb78", "#98df8a"]
+
+
+def plot_and_save(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, trues = predictions
+    t_data, x_data = batch
+    x_data = x_data.squeeze(-1)
+
+    x_pred = preds[X_KEY]
+    v_pred = preds[V_KEY]
+
+    zeta_pred = preds[ZETA_KEY]
+    zeta_true = trues[ZETA_KEY] if trues else None
+
+    sns.set_theme(style="darkgrid")
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Damped Harmonic Oscillator", fontsize=14)
+
+    ax = axes[0]
+    sns.lineplot(x=t_data, y=x_pred, label=r"$x_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.lineplot(x=t_data, y=v_pred, label=r"$v_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
+    sns.scatterplot(
+        x=t_data, y=x_data, label=r"$x_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Amplitude")
+    ax.legend()
+
+    ax = axes[1]
+    if zeta_true is not None:
+        sns.lineplot(
+            x=t_data, y=zeta_true, label=r"$\zeta_{\mathrm{true}}$", ax=ax, color=_DARK[0]
+        )
+    sns.lineplot(
+        x=t_data,
+        y=zeta_pred,
+        label=r"$\zeta_{\mathrm{pred}}$",
+        linestyle="--" if zeta_true is not None else "-",
+        ax=ax,
+        color=_LIGHT[0] if zeta_true is not None else _DARK[0],
+    )
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Value")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
+    ax.legend()
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame(
+        {
+            "t": t_data,
+            "x_observed": x_data,
+            "x_pred": x_pred,
+            "v_pred": v_pred,
+            "zeta_pred": zeta_pred,
+            "zeta_true": zeta_true,
+        }
+    )
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")

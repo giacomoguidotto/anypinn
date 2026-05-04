@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -15,6 +20,7 @@ from anypinn.core import (
     FieldsRegistry,
     Parameter,
     ParamsRegistry,
+    Predictions,
     ValidationRegistry,
 )
 from anypinn.lightning.callbacks import DataScaling
@@ -194,3 +200,86 @@ def create_problem(hp: ODEHyperparameters) -> ODEInverseProblem:
         params=params,
         predict_data=predict_data,
     )
+
+
+# ============================================================================
+# Plotting and Saving
+# ============================================================================
+
+
+_DARK = ["#1f77b4", "#ff7f0e"]
+_LIGHT = ["#aec7e8", "#ffbb78"]
+
+
+def plot_and_save(
+    predictions: Predictions,
+    results_dir: Path,
+    experiment_name: str,
+) -> None:
+    batch, preds, trues = predictions
+    t_data, y_data = batch
+
+    x_pred = POP_SCALE * preds[X_KEY]
+    y_pred = POP_SCALE * preds[Y_KEY]
+
+    x_obs = POP_SCALE * y_data[:, 0]
+    y_obs = POP_SCALE * y_data[:, 1]
+
+    beta_pred = preds[BETA_KEY]
+    beta_true = trues[BETA_KEY] if trues else None
+
+    sns.set_theme(style="darkgrid")
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Lotka--Volterra System", fontsize=14)
+
+    ax = axes[0]
+    sns.lineplot(x=t_data, y=x_pred, label=r"$x_{\mathrm{pred}}$", ax=ax, color=_DARK[0])
+    sns.lineplot(x=t_data, y=y_pred, label=r"$y_{\mathrm{pred}}$", ax=ax, color=_DARK[1])
+    sns.scatterplot(
+        x=t_data, y=x_obs, label=r"$x_{\mathrm{obs}}$", ax=ax, color=_LIGHT[0], s=10, alpha=0.4
+    )
+    sns.scatterplot(
+        x=t_data, y=y_obs, label=r"$y_{\mathrm{obs}}$", ax=ax, color=_LIGHT[1], s=10, alpha=0.4
+    )
+    ax.set_title("State Predictions")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Population")
+    ax.legend()
+
+    ax = axes[1]
+    if beta_true is not None:
+        sns.lineplot(
+            x=t_data, y=beta_true, label=r"$\beta_{\mathrm{true}}$", ax=ax, color=_DARK[0]
+        )
+    sns.lineplot(
+        x=t_data,
+        y=beta_pred,
+        label=r"$\beta_{\mathrm{pred}}$",
+        linestyle="--" if beta_true is not None else "-",
+        ax=ax,
+        color=_LIGHT[0] if beta_true is not None else _DARK[0],
+    )
+    ax.set_title("Parameter Recovery")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel("Value")
+    top = ax.get_ylim()[1]
+    pad = top * 0.10
+    ax.set_ylim(-pad, top + pad)
+    ax.legend()
+
+    plt.tight_layout()
+    fig.savefig(results_dir / "plot.png", dpi=300)
+    plt.close(fig)
+
+    df = pd.DataFrame(
+        {
+            "t": t_data,
+            "x_obs": x_obs,
+            "y_obs": y_obs,
+            "x_pred": x_pred,
+            "y_pred": y_pred,
+            "beta_pred": beta_pred,
+            "beta_true": beta_true,
+        }
+    )
+    df.to_csv(results_dir / "data.csv", index=False, float_format="%.6e")
