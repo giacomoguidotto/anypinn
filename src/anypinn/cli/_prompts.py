@@ -38,6 +38,11 @@ def _select(question: str, options: list[T], labels: list[str]) -> T:
     raw_index = menu.show()
 
     if raw_index is None or isinstance(raw_index, tuple):
+        _clear_lines(1)
+        _console.print(f"[bold green]◇[/]  {question}")
+        for lbl in labels:
+            _console.print(f"[dim]│[/]    [dim]{lbl}[/]")
+        _print_bar()
         raise KeyboardInterrupt
 
     index: int = int(raw_index)
@@ -63,7 +68,14 @@ def _confirm(question: str, default: bool = True) -> bool:
 
     suffix = " [Y/n] " if default else " [y/N] "
     _console.print("   ", end="")
-    answer = input(suffix).strip().lower()
+    try:
+        answer = input(suffix).strip().lower()
+    except KeyboardInterrupt:
+        print()
+        _clear_lines(2)
+        _console.print(f"[bold green]◇[/]  {question}")
+        _print_bar()
+        raise
 
     result = default if answer == "" else answer in ("y", "yes")
 
