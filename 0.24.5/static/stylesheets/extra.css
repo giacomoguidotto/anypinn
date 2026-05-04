@@ -83,6 +83,36 @@
     text-align: initial;
 }
 
+/* --- Masonry Gallery ---------------------------------------------- */
+
+.gallery-masonry {
+    columns: 3;
+    column-gap: 1rem;
+}
+
+.gallery-masonry p {
+    break-inside: avoid;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.gallery-masonry img {
+    display: block;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .gallery-masonry {
+        columns: 2;
+    }
+}
+
+@media (max-width: 500px) {
+    .gallery-masonry {
+        columns: 1;
+    }
+}
+
 /* --- Landing Page ------------------------------------------------- */
 
 .md-typeset .hero {
