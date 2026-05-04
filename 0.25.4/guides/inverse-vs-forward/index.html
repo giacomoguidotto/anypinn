@@ -2533,7 +2533,7 @@ observations.</p>
 <h2 id="inverse-problems-in-anypinn">Inverse problems in AnyPINN</h2>
 <p>This is AnyPINN's primary use case. The key abstraction is the
 <code>Argument</code> / <code>Parameter</code> split:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Everything the ODE needs is in args</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Everything the equation needs is in args</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">props</span> <span class="o">=</span> <span class="n">ODEProperties</span><span class="p">(</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">ode</span><span class="o">=</span><span class="n">my_ode</span><span class="p">,</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">y0</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">...</span><span class="p">]),</span>
@@ -2547,7 +2547,7 @@ observations.</p>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">hp</span><span class="o">.</span><span class="n">params_config</span><span class="p">),</span>  <span class="c1"># Unknown, learned</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">})</span>
 </span></code></pre></div>
-<p>The ODE callable accesses both the same way:</p>
+<p>The callable accesses both the same way:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_ode</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">beta</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>   <span class="c1"># Works for both Argument and Parameter</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">gamma</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;gamma&quot;</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
@@ -2555,7 +2555,7 @@ observations.</p>
 </span></code></pre></div>
 <p>The <code>ODEInverseProblem</code> class composes three constraints:</p>
 <ol>
-<li><strong>Residual loss</strong>: enforces the ODE on collocation points</li>
+<li><strong>Residual loss</strong>: enforces the differential equation on collocation points</li>
 <li><strong>Initial condition loss</strong>: enforces the initial state</li>
 <li><strong>Data loss</strong>: fits the predicted fields to observations</li>
 </ol>

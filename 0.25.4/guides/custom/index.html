@@ -900,15 +900,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#write-the-ode-callable" class="md-nav__link">
+  <a href="#write-the-equation-callable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Write the ODE callable
+        Write the equation callable
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Write the ODE callable">
+    <nav class="md-nav" aria-label="Write the equation callable">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2447,15 +2447,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#write-the-ode-callable" class="md-nav__link">
+  <a href="#write-the-equation-callable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Write the ODE callable
+        Write the equation callable
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Write the ODE callable">
+    <nav class="md-nav" aria-label="Write the equation callable">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2556,7 +2556,7 @@
 
 
 <h1 id="define-a-custom-problem">Define a Custom Problem</h1>
-<p>This guide walks through defining your own ODE problem from scratch, starting
+<p>This guide walks through defining your own ODE/PDE problem from scratch, starting
 from the <strong>Custom</strong> or <strong>Blank</strong> template.</p>
 <hr />
 <h2 id="start-from-a-template">Start from a template</h2>
@@ -2565,8 +2565,8 @@ from the <strong>Custom</strong> or <strong>Blank</strong> template.</p>
 </span></code></pre></div>
 <p>This generates a skeleton with placeholder functions that you'll fill in.</p>
 <hr />
-<h2 id="write-the-ode-callable">Write the ODE callable</h2>
-<p>The ODE callable is a function with this signature:</p>
+<h2 id="write-the-equation-callable">Write the equation callable</h2>
+<p>The equation callable is a function with this signature:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_ode</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">ArgsRegistry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="o">...</span>
 </span></code></pre></div>

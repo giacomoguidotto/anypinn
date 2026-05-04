@@ -2483,14 +2483,14 @@ parameters share the same interface. This guide shows how to turn a known
 value into something the network recovers, in a single line.</p>
 <hr />
 <h2 id="the-pattern">The pattern</h2>
-<p>In every ODE callable, arguments are accessed the same way regardless of
+<p>In every equation callable, arguments are accessed the same way regardless of
 whether they're fixed or learnable:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_ode</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">ArgsRegistry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">beta</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span>    <span class="c1"># Could be Argument or Parameter</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">value</span> <span class="o">=</span> <span class="n">beta</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>        <span class="c1"># Both are callable: Argument(v)(x) returns v</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">...</span>
 </span></code></pre></div>
-<p>This uniformity means the ODE function never needs to change when you switch
+<p>This uniformity means the equation never needs to change when you switch
 a constant to a learnable parameter.</p>
 <hr />
 <h2 id="before-fixed-constant">Before: fixed constant</h2>

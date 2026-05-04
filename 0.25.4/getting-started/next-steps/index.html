@@ -809,10 +809,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#define-your-own-ode" class="md-nav__link">
+  <a href="#define-your-own-odepde" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Define your own ODE
+        Define your own ODE/PDE
       
     </span>
   </a>
@@ -2463,10 +2463,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#define-your-own-ode" class="md-nav__link">
+  <a href="#define-your-own-odepde" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Define your own ODE
+        Define your own ODE/PDE
       
     </span>
   </a>
@@ -2526,7 +2526,7 @@
 depending on what you want to do.</p>
 <hr />
 <h2 id="modify-the-physics">Modify the physics</h2>
-<p>Edit the ODE callable in <code>ode.py</code> to change the dynamics. Add or remove fields
+<p>Edit the equation in <code>ode.py</code> to change the dynamics. Add or remove fields
 and parameters in <code>create_problem</code>. The <code>ArgsRegistry</code> pattern means promoting
 a fixed constant to a learnable parameter is a one-line change: replace
 <code>Argument(value)</code> with <code>Parameter(config=hp.params_config)</code>.</p>
@@ -2543,11 +2543,11 @@ loading in <code>ode.py</code> to match your column names.</p>
 <h2 id="try-a-different-template">Try a different template</h2>
 <p>Each template demonstrates different AnyPINN features: Fourier encodings
 (Lotka-Volterra), Huber loss (Lorenz), boundary conditions (Poisson 2D),
-adaptive collocation (Burgers 1D). Scaffold several and compare how the ODE
-definition and config differ.</p>
+adaptive collocation (Burgers 1D). Scaffold several and compare how the physics
+and config differ.</p>
 <p><a href="../../catalog/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Browse the catalog</a></p>
-<h2 id="define-your-own-ode">Define your own ODE</h2>
-<p>Start from the Custom or Blank template and write your own ODE callable,
+<h2 id="define-your-own-odepde">Define your own ODE/PDE</h2>
+<p>Start from the Custom or Blank template and write your own equation,
 fields, and parameters from scratch.</p>
 <p><a href="../../guides/custom/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Guide: Define a custom problem</a></p>
 <h2 id="drop-lightning">Drop Lightning</h2>
