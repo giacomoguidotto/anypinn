@@ -17,6 +17,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -348,10 +349,10 @@ def plot_and_save(
         f_val = torch.nn.functional.softplus(torch.tensor(f_rec.mean())).item()
         k_val = torch.nn.functional.softplus(torch.tensor(k_rec.mean())).item()
         params_str = (
-            f" | D_u={du_val:.4e} (true={TRUE_DU:.4e})"
-            f", D_v={dv_val:.4e} (true={TRUE_DV:.4e})"
-            f"\nF={f_val:.4e} (true={TRUE_F:.4e})"
-            f", k={k_val:.4e} (true={TRUE_K:.4e})"
+            rf" | $D_{{u,\mathrm{{pred}}}} = {du_val:.4e}$"
+            rf", $D_{{v,\mathrm{{pred}}}} = {dv_val:.4e}$"
+            rf", $F_{{\mathrm{{pred}}}} = {f_val:.4e}$"
+            rf", $k_{{\mathrm{{pred}}}} = {k_val:.4e}$"
         )
 
     # Plot final time snapshot
@@ -368,56 +369,55 @@ def plot_and_save(
     X = x_final.reshape(n_side, n_side)
     Y = y_final.reshape(n_side, n_side)
 
+    sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(2, 3, figsize=(18, 11))
-    fig.suptitle(f"Gray-Scott 2D (t={t_max:.2f}){params_str}", fontsize=13)
+    fig.suptitle(f"Gray--Scott 2D ($t = {t_max:.2f}$){params_str}", fontsize=13)
 
-    # Row 1: u
     u_grid = u_p_final.reshape(n_side, n_side)
     im00 = axes[0, 0].pcolormesh(X, Y, u_grid, shading="auto", cmap="viridis")
-    axes[0, 0].set_title("Predicted $u$")
-    axes[0, 0].set_xlabel("$x$")
-    axes[0, 0].set_ylabel("$y$")
+    axes[0, 0].set_title(r"Predicted $u$")
+    axes[0, 0].set_xlabel(r"$x$")
+    axes[0, 0].set_ylabel(r"$y$")
     axes[0, 0].set_aspect("equal")
     fig.colorbar(im00, ax=axes[0, 0])
 
     u_true_grid = u_t_final.reshape(n_side, n_side)
     im01 = axes[0, 1].pcolormesh(X, Y, u_true_grid, shading="auto", cmap="viridis")
-    axes[0, 1].set_title("True $u$")
-    axes[0, 1].set_xlabel("$x$")
-    axes[0, 1].set_ylabel("$y$")
+    axes[0, 1].set_title(r"True $u$")
+    axes[0, 1].set_xlabel(r"$x$")
+    axes[0, 1].set_ylabel(r"$y$")
     axes[0, 1].set_aspect("equal")
     fig.colorbar(im01, ax=axes[0, 1])
 
     u_err = np.abs(u_p_final - u_t_final).reshape(n_side, n_side)
     im02 = axes[0, 2].pcolormesh(X, Y, u_err, shading="auto", cmap="hot")
-    axes[0, 2].set_title("$|u_{pred} - u_{true}|$")
-    axes[0, 2].set_xlabel("$x$")
-    axes[0, 2].set_ylabel("$y$")
+    axes[0, 2].set_title(r"$|u_{\mathrm{pred}} - u_{\mathrm{true}}|$")
+    axes[0, 2].set_xlabel(r"$x$")
+    axes[0, 2].set_ylabel(r"$y$")
     axes[0, 2].set_aspect("equal")
     fig.colorbar(im02, ax=axes[0, 2])
 
-    # Row 2: v
     v_grid = v_p_final.reshape(n_side, n_side)
     im10 = axes[1, 0].pcolormesh(X, Y, v_grid, shading="auto", cmap="viridis")
-    axes[1, 0].set_title("Predicted $v$")
-    axes[1, 0].set_xlabel("$x$")
-    axes[1, 0].set_ylabel("$y$")
+    axes[1, 0].set_title(r"Predicted $v$")
+    axes[1, 0].set_xlabel(r"$x$")
+    axes[1, 0].set_ylabel(r"$y$")
     axes[1, 0].set_aspect("equal")
     fig.colorbar(im10, ax=axes[1, 0])
 
     v_true_grid = v_t_final.reshape(n_side, n_side)
     im11 = axes[1, 1].pcolormesh(X, Y, v_true_grid, shading="auto", cmap="viridis")
-    axes[1, 1].set_title("True $v$")
-    axes[1, 1].set_xlabel("$x$")
-    axes[1, 1].set_ylabel("$y$")
+    axes[1, 1].set_title(r"True $v$")
+    axes[1, 1].set_xlabel(r"$x$")
+    axes[1, 1].set_ylabel(r"$y$")
     axes[1, 1].set_aspect("equal")
     fig.colorbar(im11, ax=axes[1, 1])
 
     v_err = np.abs(v_p_final - v_t_final).reshape(n_side, n_side)
     im12 = axes[1, 2].pcolormesh(X, Y, v_err, shading="auto", cmap="hot")
-    axes[1, 2].set_title("$|v_{pred} - v_{true}|$")
-    axes[1, 2].set_xlabel("$x$")
-    axes[1, 2].set_ylabel("$y$")
+    axes[1, 2].set_title(r"$|v_{\mathrm{pred}} - v_{\mathrm{true}}|$")
+    axes[1, 2].set_xlabel(r"$x$")
+    axes[1, 2].set_ylabel(r"$y$")
     axes[1, 2].set_aspect("equal")
     fig.colorbar(im12, ax=axes[1, 2])
 

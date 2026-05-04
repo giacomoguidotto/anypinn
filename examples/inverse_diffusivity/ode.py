@@ -18,6 +18,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import torch
 from torch import Tensor
 
@@ -221,46 +222,51 @@ def plot_and_save(
     error = np.abs(U_pred - U_true)
 
     # Recover D(x) from predictions
+    _DARK = ["#1f77b4"]
+    _LIGHT = ["#aec7e8"]
+
     d_pred = preds.get(D_KEY)
 
+    sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-    fig.suptitle(
-        "Inverse Diffusivity: $\\partial u/\\partial t = \\nabla\\cdot(D(x)\\nabla u)$",
-        fontsize=14,
-    )
+    fig.suptitle("Inverse Diffusivity", fontsize=14)
 
     im0 = axes[0].pcolormesh(X, T, U_pred, shading="auto", cmap="viridis")
-    axes[0].set_title("Predicted $u(x,t)$")
-    axes[0].set_xlabel("$x$")
-    axes[0].set_ylabel("$t$")
+    axes[0].set_title(r"Predicted $u(x,t)$")
+    axes[0].set_xlabel(r"$x$")
+    axes[0].set_ylabel(r"$t$")
     axes[0].set_aspect("equal")
     fig.colorbar(im0, ax=axes[0])
 
     im1 = axes[1].pcolormesh(X, T, error, shading="auto", cmap="hot")
-    axes[1].set_title("Pointwise Error $|u_{pred} - u_{true}|$")
-    axes[1].set_xlabel("$x$")
-    axes[1].set_ylabel("$t$")
+    axes[1].set_title(r"Pointwise Error $|u_{\mathrm{pred}} - u_{\mathrm{true}}|$")
+    axes[1].set_xlabel(r"$x$")
+    axes[1].set_ylabel(r"$t$")
     axes[1].set_aspect("equal")
     fig.colorbar(im1, ax=axes[1])
 
-    # D(x) line plot: recovered vs true
     x_line = np.linspace(0, 1, 200)
     d_true = 0.1 + 0.05 * np.sin(2 * np.pi * x_line)
-    axes[2].plot(x_line, d_true, "k--", label="True $D(x)$", linewidth=2)
+    axes[2].plot(x_line, d_true, color=_DARK[0], label=r"$D_{\mathrm{true}}(x)$", linewidth=2)
 
     if d_pred is not None:
-        # Average D predictions over time (D should be independent of t)
         d_pred_np = d_pred.numpy()
         d_grid = d_pred_np.reshape(n_side, n_side)
-        d_mean = d_grid.mean(axis=1)  # average over t
+        d_mean = d_grid.mean(axis=1)
         x_grid_unique = X[:, 0]
-        axes[2].plot(x_grid_unique, d_mean, "r-", label="Recovered $D(x)$", linewidth=2)
+        axes[2].plot(
+            x_grid_unique,
+            d_mean,
+            color=_LIGHT[0],
+            linestyle="--",
+            label=r"$D_{\mathrm{pred}}(x)$",
+            linewidth=2,
+        )
 
-    axes[2].set_title("Diffusivity $D(x)$")
-    axes[2].set_xlabel("$x$")
-    axes[2].set_ylabel("$D$")
+    axes[2].set_title("Parameter Recovery")
+    axes[2].set_xlabel(r"$x$")
+    axes[2].set_ylabel("Value")
     axes[2].legend()
-    axes[2].grid(True, alpha=0.3)
 
     plt.tight_layout()
     fig.savefig(results_dir / f"{experiment_name}.png", dpi=300)
