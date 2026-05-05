@@ -136,21 +136,21 @@ graph TD
     EXP --> CAT
     EXP --> LIT
 
-    subgraph CAT["anypinn.catalog · Drop-in problems"]
+    subgraph CAT["anypinn.catalog"]
         direction LR
         CA1[SIR / SEIR]
         CA2[DampedOscillator]
         CA3[LotkaVolterra]
     end
 
-    subgraph LIT["anypinn.lightning · Training engine (optional)"]
+    subgraph LIT["anypinn.lightning (optional)"]
         direction LR
         L1[PINNModule]
         L2[Callbacks]
         L3[PINNDataModule]
     end
 
-    subgraph PROB["anypinn.problems · ODE/PDE building blocks"]
+    subgraph PROB["anypinn.problems"]
         direction LR
         P1[ResidualsConstraint]
         P2[ICConstraint]
@@ -160,7 +160,7 @@ graph TD
         P6[DirichletBC · NeumannBC]
     end
 
-    subgraph CORE["anypinn.core · Pure PyTorch, no opinions about training"]
+    subgraph CORE["anypinn.core (pure PyTorch)"]
         direction LR
         C1[Problem · Constraint]
         C2[Field · Parameter]
