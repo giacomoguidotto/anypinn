@@ -45,9 +45,7 @@ ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 COPY pyproject.toml uv.lock LICENSE README.md ./
 
 # Install only project dependencies, as this is cached until pyproject.toml uv.lock are updated.
-# --frozen: lightning is quarantined on PyPI after a supply-chain attack (2026-04-30).
-# Restore to --locked once lightning is restored and `uv lock` can regenerate cleanly.
-RUN uv sync --frozen --no-default-groups --no-install-project
+RUN uv sync --locked --no-default-groups --no-install-project
 
 # Copy in source files.
 COPY src src
@@ -55,7 +53,7 @@ COPY src src
 # Install the rest of the application into the virtual environment.
 # Omit this step if your project is a non-package application and copy the source in the second
 # stage instead.
-RUN uv sync --frozen --no-default-groups --no-editable
+RUN uv sync --locked --no-default-groups --no-editable
 
 ## Final Image
 # The image used in the final image MUST match exactly to the python_builder image.
