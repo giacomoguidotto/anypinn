@@ -55,7 +55,7 @@ $$
 $$
 
 where \(\theta\) is an unknown parameter we want to recover from $N_D$ partial observations of $y$.
-These observations are indicated as $y_i^{\text{obs}}=H(y(t_i))+\epsilon_i$, where $t_i$ are the times of collection ($i=1,\dots,N_D)
+These observations are indicated as $y_i^{\text{obs}}=H(y(t_i))+\epsilon_i$, where $t_i$ are the times of collection $(i=1,\dots,N_D)$.
 $H$ is an observation operator and $\epsilon_i$ an observation error.
 
 A PINN replaces the solution \(y(t)\) with a neural network \(y_\text{NN}(t)\)

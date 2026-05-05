@@ -43,7 +43,7 @@ uvx anypinn create my-project
 pipx run anypinn create my-project
 ```
 
-Run `anypinn create --help` to see all available flags and templates. For a full walkthrough covering project structure, configuration, training, and next steps, see the [Getting Started](docs/getting-started/index.md) guide.
+Run `anypinn create --help` to see all available flags and templates. For a full walkthrough covering project structure, configuration, training, and next steps, see the [Getting Started](https://anypinn.guidotto.dev/getting-started/) guide.
 
 ## 👥 Who Is This For?
 
@@ -123,7 +123,7 @@ for batch in dataloader:
     optimizer.step()
 ```
 
-For complete walkthroughs, see the [custom ODE guide](docs/guides/custom.md) and the [PDE forward problems guide](docs/guides/pde-forward-problems.md).
+For complete walkthroughs, see the [custom ODE guide](https://anypinn.guidotto.dev/guides/custom/) and the [PDE forward problems guide](https://anypinn.guidotto.dev/guides/pde-forward-problems/).
 
 ## 🏗️ Architecture
 
@@ -173,7 +173,7 @@ graph TD
     PROB -->|depends on| CORE
 ```
 
-For a detailed breakdown of each layer, see the [Architecture guide](docs/guides/architecture.md).
+For a detailed breakdown of each layer, see the [Architecture guide](https://anypinn.guidotto.dev/guides/architecture/).
 
 ## 🤝 Contributing
 
