@@ -34,6 +34,7 @@ from anypinn.catalog.gray_scott_2d import (
     U_KEY,
     V_KEY,
     GrayScott2DDataModule,
+    reference_solution,
 )
 from anypinn.core import (
     Field,
@@ -324,7 +325,7 @@ def plot_and_save(
     experiment_name: str,
 ) -> None:
     batch, preds, _trues = predictions
-    xyt_data, uv_data = batch
+    xyt_data, _ = batch
 
     if xyt_data.ndim == 1:
         xyt_data = xyt_data.reshape(-1, 3)
@@ -334,8 +335,9 @@ def plot_and_save(
     t_np = xyt_data[:, 2].numpy()
     u_pred = preds[U_KEY].numpy()
     v_pred = preds[V_KEY].numpy()
-    u_true = uv_data[:, 0].squeeze(-1).numpy()
-    v_true = uv_data[:, 1].squeeze(-1).numpy()
+    u_true, v_true = reference_solution(
+        np.stack([x_np, y_np, t_np], axis=1),
+    )
 
     # Recover parameters (apply softplus to match PDE usage)
     params_str = ""
