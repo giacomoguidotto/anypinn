@@ -43,7 +43,7 @@ uvx anypinn create my-project
 pipx run anypinn create my-project
 ```
 
-Run `anypinn create --help` to see all available flags and templates. For a full walkthrough covering project structure, configuration, training, and next steps, see the [Getting Started](docs/getting-started.md) guide.
+Run `anypinn create --help` to see all available flags and templates. For a full walkthrough covering project structure, configuration, training, and next steps, see the [Getting Started](docs/getting-started/index.md) guide.
 
 ## 👥 Who Is This For?
 
@@ -61,18 +61,17 @@ The `examples/` directory has ready-made, self-contained scripts covering epidem
 
 ## 🔬 Defining Your Own Problem
 
-If you want to go beyond the built-in templates, here is the full workflow for defining a custom inverse problem.
+If you want to go beyond the built-in templates, here is the full workflow for defining a custom inverse problem. The example below uses an ODE; PDEs follow the same pattern with different building blocks (`PDEResidualConstraint`, `DirichletBCConstraint`, etc.). For complete walkthroughs, see the [custom ODE guide](docs/guides/custom.md) and the [PDE forward problems guide](docs/guides/pde-forward-problems.md).
 
-### 1: Define the ODE/PDE
+### 1: Define the equation
 
-Implement a function matching the `ODECallable` protocol:
+Write a function that returns derivatives given the current state and parameters:
 
 ```python
 from torch import Tensor
 from anypinn.core import ArgsRegistry
 
 def my_ode(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
-    """Return dy/dx given current state y and position x."""
     k = args["k"](x)        # learnable or fixed parameter
     return -k * y           # simple exponential decay
 ```
@@ -126,7 +125,7 @@ for batch in dataloader:
 
 ## 🏗️ Architecture
 
-AnyPINN is split into four layers with a strict dependency direction: outer layers depend on inner ones, never the reverse.
+Four layers with a strict dependency direction: outer layers depend on inner ones, never the reverse.
 
 ```mermaid
 graph TD
@@ -135,29 +134,31 @@ graph TD
     EXP --> CAT
     EXP --> LIT
 
-    subgraph CAT["anypinn.catalog"]
+    subgraph CAT["anypinn.catalog · Drop-in problems"]
         direction LR
         CA1[SIR / SEIR]
         CA2[DampedOscillator]
         CA3[LotkaVolterra]
     end
 
-    subgraph LIT["anypinn.lightning (optional)"]
+    subgraph LIT["anypinn.lightning · Training engine (optional)"]
         direction LR
         L1[PINNModule]
         L2[Callbacks]
         L3[PINNDataModule]
     end
 
-    subgraph PROB["anypinn.problems"]
+    subgraph PROB["anypinn.problems · ODE/PDE building blocks"]
         direction LR
         P1[ResidualsConstraint]
         P2[ICConstraint]
         P3[DataConstraint]
         P4[ODEInverseProblem]
+        P5[PDEResidualConstraint]
+        P6[DirichletBC · NeumannBC]
     end
 
-    subgraph CORE["anypinn.core (standalone · pure PyTorch)"]
+    subgraph CORE["anypinn.core · Pure PyTorch, no opinions about training"]
         direction LR
         C1[Problem · Constraint]
         C2[Field · Parameter]
@@ -170,36 +171,7 @@ graph TD
     PROB -->|depends on| CORE
 ```
 
-### `anypinn.core`: The Math Layer
-
-Pure PyTorch. Defines what a PINN problem _is_, with no opinions about training.
-
-- **`Problem`**: aggregates constraints, fields, and parameters. Provides `training_loss()` and `predict()`.
-- **`Constraint`** (ABC): a single loss term. Subclass it to express any physics equation, boundary condition, or data-matching objective.
-- **`Field`**: MLP mapping input coordinates to state variables (e.g., `t → [S, I, R]`).
-- **`Parameter`**: learnable scalar or function-valued parameter (e.g., `β` in SIR).
-- **`InferredContext`**: runtime domain bounds and validation references, extracted from data and injected into constraints automatically.
-
-### `anypinn.lightning`: The Training Engine _(optional)_
-
-A thin wrapper plugging a `Problem` into PyTorch Lightning:
-
-- **`PINNModule`**: `LightningModule` wrapping any `Problem`. Handles optimizer setup, context injection, and prediction.
-- **`PINNDataModule`**: abstract data module managing loading, config-driven collocation sampling, and context creation. Collocation strategy is selected via `TrainingDataConfig.collocation_sampler` (`"random"`, `"uniform"`, `"latin_hypercube"`, `"log_uniform_1d"`, or `"adaptive"`).
-- **Callbacks**: SMMA-based early stopping, formatted progress bars, data scaling, prediction writers.
-
-### `anypinn.problems`: ODE/PDE Building Blocks
-
-Ready-made constraints for ODE/PDE problems:
-
-- **`ResidualsConstraint`**: `‖dy/dt − f(t, y)‖²` via autograd
-- **`ICConstraint`**: `‖y(t₀) − y₀‖²`
-- **`DataConstraint`**: `‖prediction − observed data‖²`
-- **`ODEInverseProblem`**: composes all three with configurable weights
-
-### `anypinn.catalog`: Problem-Specific Building Blocks
-
-Drop-in ODE/PDE functions and `DataModule`s for specific systems. See `anypinn/catalog/` for the full list.
+For a detailed breakdown of each layer, see the [Architecture guide](docs/guides/architecture.md).
 
 ## 🤝 Contributing
 
