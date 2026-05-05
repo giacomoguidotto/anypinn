@@ -10,11 +10,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/giacomoguidotto/anypinn/actions"><img src="https://github.com/giacomoguidotto/anypinn/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
+  <a href="https://joss.theoj.org/papers/2a267aab98e21b7773af0952553b1cec"><img src="https://joss.theoj.org/papers/2a267aab98e21b7773af0952553b1cec/status.svg"></a>
   <a href="https://pypi.org/project/anypinn/"><img src="https://img.shields.io/pypi/v/anypinn" alt="PyPI"></a>
+  <a href="https://github.com/giacomoguidotto/anypinn/actions"><img src="https://github.com/giacomoguidotto/anypinn/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
   <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv"></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
-  <a href="https://docs.astral.sh/ty/"><img src="https://img.shields.io/badge/ty-typed-blue" alt="Type checked with ty"></a>
+  <a href="https://docs.astral.sh/ty/"><img src="https://img.shields.io/badge/ty-typed-black" alt="Type checked with ty"></a>
 </p>
 
 <br>
