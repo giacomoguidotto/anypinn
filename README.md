@@ -123,7 +123,7 @@ for batch in dataloader:
     optimizer.step()
 ```
 
-For complete walkthroughs, see the [custom ODE guide](https://anypinn.guidotto.dev/guides/custom/) and the [PDE forward problems guide](https://anypinn.guidotto.dev/guides/pde-forward-problems/).
+For complete walkthroughs, see the [custom ODE guide](https://anypinn.guidotto.dev/latest/guides/custom/) and the [PDE forward problems guide](https://anypinn.guidotto.dev/latest/guides/pde-forward-problems/).
 
 ## 🏗️ Architecture
 
@@ -173,7 +173,7 @@ graph TD
     PROB -->|depends on| CORE
 ```
 
-For a detailed breakdown of each layer, see the [Architecture guide](https://anypinn.guidotto.dev/guides/architecture/).
+For a detailed breakdown of each layer, see the [Architecture guide](https://anypinn.guidotto.dev/latest/guides/architecture/).
 
 ## 🤝 Contributing
 
