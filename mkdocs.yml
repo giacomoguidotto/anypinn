@@ -1,0 +1,88 @@
+# Set strict to true to turn warnings into errors to catch warnings within CI.
+strict: true
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+theme:
+  name: material
+  # By default, fonts are pulled from Google on the Internet. To support offline usage, this is
+  # disabled.
+  font: false
+  palette:
+    scheme: slate
+    primary: green
+    accent: yellow
+  icon:
+    logo: material/math-integral-box
+    # GitHub specific.
+    repo: fontawesome/brands/github
+  favicon: static/math-integral-box.png
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - content.tooltips
+    - navigation.indexes
+    - navigation.expand
+    - navigation.footer
+    - navigation.instant
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+markdown_extensions:
+  - abbr
+  - admonition
+  - footnotes
+  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - md_in_html
+extra_css:
+  - static/stylesheets/extra.css
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/johnthagen/python-blueprint
+plugins:
+  - search
+  - offline:
+      enabled: !ENV [MKDOCS_MATERIAL_OFFLINE, false]
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_if_no_docstring: true
+            show_signature_annotations: true
+  # Autodoc configuration.
+  # https://github.com/tlambert03/mkdocs-api-autonav#configuration
+  - api-autonav:
+      modules: ["src/fact"]
+  # This plugin is used to validate URLs (including anchors).
+  - htmlproofer:
+      # This is not enabled by default because this requires network I/O, so it is inherently not
+      # exactly reproducible. For larger projects, this can also slow local build times.
+      validate_external_urls: !ENV [HTMLPROOFER_VALIDATE_EXTERNAL_URLS, false]
+      raise_error: True
+watch:
+  # Watch src/ directory to reload on changes to docstrings for mkdocstrings plugin.
+  - src
+site_name: fact
+copyright: Copyright &copy; 2018-2023 John Hagen
+# GitHub Specific Configuration.
+repo_name: python-blueprint
+repo_url: https://github.com/johnthagen/python-blueprint
+edit_uri: edit/main/docs/user_guide/docs/
+nav:
+  - index.md
