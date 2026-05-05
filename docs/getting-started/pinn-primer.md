@@ -7,7 +7,7 @@ who haven't encountered them before.
 
 ## Background
 
-**Differential equations** describe how quantities change. A population
+**Differential equations** describe how unknown quantities change. A population
 grows proportionally to its size; a vibrating string accelerates toward its
 resting position. In each case the governing law relates a quantity to its
 own rate of change, producing an equation involving derivatives.
@@ -26,7 +26,7 @@ To pin down a unique solution, you need extra information:
 
 Finally, an **inverse problem** flips the usual question: instead of
 "given the equation and its parameters, find the solution," you ask "given
-partial observations of the solution, recover the unknown parameters."
+partial observations of the solution and the model equations, recover the unknown parameters."
 For example, estimating infection rates from case-count data.
 
 ---
@@ -48,21 +48,23 @@ This means a PINN can:
 
 ## How it works
 
-Consider a simple ODE:
+We show here the main ideas of applying PINN to an inverse problem for a first-order ODE. This procedure can be easily extended to PDEs.
 
 $$
-\frac{dy}{dt} = f(t, y, \theta)
+\frac{dy}{dt}(t) = f(t, y(t), \theta)
 $$
 
-where \(\theta\) is an unknown parameter we want to recover from data.
+where \(\theta\) is an unknown parameter we want to recover from $N_D$ partial observations of $y$.
+These observations are indicated as $y_i^{\text{obs}}=H(y(t_i))+\epsilon_i$, where $t_i$ are the times of collection ($i=1,\dots,N_D)
+$H$ is an observation operator and $\epsilon_i$ an observation error.
 
 A PINN replaces the solution \(y(t)\) with a neural network \(y_\text{NN}(t)\)
-and trains it by minimizing a composite loss:
+and trains the NN parameters together with the unknown parameter $\theta$ by minimizing a composite loss:
 
 $$
-\mathcal{L} = \underbrace{w_r \left\| \frac{dy_\text{NN}}{dt} - f(t, y_\text{NN}, \theta) \right\|^2}_{\text{Residual loss}}
+\mathcal{L} = \underbrace{w_r \left\| \frac{dy_\text{NN}}{dt}(\tau_j) - f(\tau_j, y_\text{NN}(\tau_j), \theta) \right\|^2}_{\text{Residual loss}}
 + \underbrace{w_{\text{ic}} \left\| y_\text{NN}(t_0) - y_0 \right\|^2}_{\text{Initial condition loss}}
-+ \underbrace{w_d \left\| y_\text{NN}(t_i) - y_i^{\text{obs}} \right\|^2}_{\text{Data loss}}
++ \underbrace{w_d \left\| H(y_\text{NN}(t_i)) - y_i^{\text{obs}} \right\|^2}_{\text{Data loss}}
 $$
 
 | Term | Purpose | Where evaluated |
