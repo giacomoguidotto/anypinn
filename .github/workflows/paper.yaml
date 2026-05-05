@@ -5,6 +5,9 @@ on:
   pull_request:
     paths: [paper/**]
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest
