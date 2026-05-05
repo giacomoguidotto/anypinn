@@ -48,7 +48,7 @@ This means a PINN can:
 
 ## How it works
 
-We show here the main ideas of applying PINN to an inverse problem for a first order ODE. This procedure can be easily extended to PDEs.
+We show here the main ideas of applying PINN to an inverse problem for a first-order ODE. This procedure can be easily extended to PDEs.
 
 $$
 \frac{dy}{dt}(t) = f(t, y(t), \theta)
@@ -59,7 +59,7 @@ These observations are indicated as $y_i^{\text{obs}}=H(y(t_i))+\epsilon_i$, whe
 $H$ is an observation operator and $\epsilon_i$ an observation error.
 
 A PINN replaces the solution \(y(t)\) with a neural network \(y_\text{NN}(t)\)
-and trains the NN parameters together with the unknonw parameter $\theta$ by minimizing a composite loss:
+and trains the NN parameters together with the unknown parameter $\theta$ by minimizing a composite loss:
 
 $$
 \mathcal{L} = \underbrace{w_r \left\| \frac{dy_\text{NN}}{dt}(\tau_j) - f(\tau_j, y_\text{NN}(\tau_j), \theta) \right\|^2}_{\text{Residual loss}}
