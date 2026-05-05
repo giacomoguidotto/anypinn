@@ -2564,7 +2564,7 @@ of the governing equations.</p>
 \frac{dy}{dt}(t) = f(t, y(t), \theta)
 \]</div>
 <p>where <span class="arithmatex">\(\theta\)</span> is an unknown parameter we want to recover from <span class="arithmatex">\(N_D\)</span> partial observations of <span class="arithmatex">\(y\)</span>.
-These observations are indicated as <span class="arithmatex">\(y_i^{\text{obs}}=H(y(t_i))+\epsilon_i\)</span>, where <span class="arithmatex">\(t_i\)</span> are the times of collection ($i=1,\dots,N_D)
+These observations are indicated as <span class="arithmatex">\(y_i^{\text{obs}}=H(y(t_i))+\epsilon_i\)</span>, where <span class="arithmatex">\(t_i\)</span> are the times of collection <span class="arithmatex">\((i=1,\dots,N_D)\)</span>.
 <span class="arithmatex">\(H\)</span> is an observation operator and <span class="arithmatex">\(\epsilon_i\)</span> an observation error.</p>
 <p>A PINN replaces the solution <span class="arithmatex">\(y(t)\)</span> with a neural network <span class="arithmatex">\(y_\text{NN}(t)\)</span>
 and trains the NN parameters together with the unknown parameter <span class="arithmatex">\(\theta\)</span> by minimizing a composite loss:</p>
