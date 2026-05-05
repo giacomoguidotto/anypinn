@@ -53,7 +53,7 @@ AnyPINN is built around **progressive complexity**. Start simple, go deeper only
 | --------------------- | -------------------------------------------------- | --------------------------------------------------------------------- |
 | **Experimenter**      | Run a known problem, tweak parameters, see results | Pick a built-in template, change config, press start                  |
 | **Researcher**        | Define new physics or custom constraints           | Subclass `Constraint` and `Problem`, use the provided training engine |
-| **Framework builder** | Custom training loops, novel architectures         | Use `anypinn.core` directly, no Lightning required                 |
+| **Framework builder** | Custom training loops, novel architectures         | Use `anypinn.core` directly, no Lightning required                    |
 
 ## 💡 Examples
 
@@ -61,7 +61,7 @@ The `examples/` directory has ready-made, self-contained scripts covering epidem
 
 ## 🔬 Defining Your Own Problem
 
-If you want to go beyond the built-in templates, here is the full workflow for defining a custom inverse problem. The example below uses an ODE; PDEs follow the same pattern with different building blocks (`PDEResidualConstraint`, `DirichletBCConstraint`, etc.). For complete walkthroughs, see the [custom ODE guide](docs/guides/custom.md) and the [PDE forward problems guide](docs/guides/pde-forward-problems.md).
+If you want to go beyond the built-in templates, here is the full workflow for defining a custom inverse problem. The example below uses an ODE; PDEs follow the same pattern with different building blocks (`PDEResidualConstraint`, `DirichletBCConstraint`, etc.).
 
 ### 1: Define the equation
 
@@ -122,6 +122,8 @@ for batch in dataloader:
     loss.backward()
     optimizer.step()
 ```
+
+For complete walkthroughs, see the [custom ODE guide](docs/guides/custom.md) and the [PDE forward problems guide](docs/guides/pde-forward-problems.md).
 
 ## 🏗️ Architecture
 
