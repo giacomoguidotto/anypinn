@@ -195,7 +195,7 @@ def plot_and_save(
     experiment_name: str,
 ) -> None:
     batch, preds, _trues = predictions
-    xt_data, u_data = batch
+    xt_data, _ = batch
 
     # xt_data may be (N,) after squeeze — reshape to (N, 2) if needed
     if xt_data.ndim == 1:
@@ -204,7 +204,7 @@ def plot_and_save(
     x_np = xt_data[:, 0].numpy()
     t_np = xt_data[:, 1].numpy()
     u_pred = preds[U_KEY].numpy()
-    u_true = u_data.reshape(-1).numpy()
+    u_true = np.exp(-TRUE_ALPHA * np.pi**2 * t_np) * np.sin(np.pi * x_np)
 
     n_side = math.isqrt(x_np.shape[0])
     X = x_np.reshape(n_side, n_side)
