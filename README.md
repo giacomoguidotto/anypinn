@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/assets/logo.png" alt="AnyPINN" width="160" />
+  <img src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/assets/logo-small.png" alt="AnyPINN" width="160" />
 </p>
 
 <h1 align="center">AnyPINN</h1>
