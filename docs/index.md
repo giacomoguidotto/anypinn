@@ -97,8 +97,6 @@ template, data source, and training framework.
 
 ![Damped oscillator](examples/damped_oscillator/results/damped-oscillator.png){ loading=lazy }
 
-![Hospitalized SIR inverse problem](examples/hospitalized_sir_inverse/results/hospitalized-sir-inverse.png){ loading=lazy }
-
 ![Poisson 2D equation](examples/poisson_2d/results/poisson-2d.png){ loading=lazy }
 
 ![FitzHugh-Nagumo model](examples/fitzhugh_nagumo/results/fitzhugh-nagumo.png){ loading=lazy }
