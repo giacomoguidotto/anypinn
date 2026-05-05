@@ -4,12 +4,12 @@ authors:
   - name: Giacomo Guidotto
     orcid: 0009-0006-2279-9126
     affiliation: 1
-  - name: Damiano Pasetto
-    orcid: 0000-0001-6892-9826
-    affiliation: 1
   - name: Caterina Millevoi
     orcid: 0000-0002-9743-4547
     affiliation: 2
+  - name: Damiano Pasetto
+    orcid: 0000-0001-6892-9826
+    affiliation: 1
 affiliations:
   - name: Ca' Foscari University of Venice, Venice, IT
     index: 1
