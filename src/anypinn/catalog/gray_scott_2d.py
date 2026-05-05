@@ -21,8 +21,8 @@ DV_KEY = "D_v"
 F_KEY = "F"
 K_KEY = "k"
 
-TRUE_DU = 5e-3
-TRUE_DV = 2.5e-3
+TRUE_DU = 2e-5
+TRUE_DV = 1e-5
 TRUE_F = 0.04
 TRUE_K = 0.06
 
