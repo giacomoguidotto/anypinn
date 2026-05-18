@@ -23,7 +23,7 @@
 Most PINN libraries make you wire up every loss term, collocation grid, and training loop by hand before you see a single result. AnyPINN gives you a working experiment in one command and then lets you peel back every layer when you're ready.
 
 <p align="center">
-  <video src="https://raw.githubusercontent.com/giacomoguidotto/anypinn/main/assets/demo.mp4" controls width="600"></video>
+  <video src="https://github.com/user-attachments/assets/17c7bcac-3288-4cd4-b6fc-f784ff63485c" controls width="600"></video>
 </p>
 
 <p align="center">
