@@ -124,30 +124,31 @@ The bootstrap CLI (`anypinn create`) generates a complete, immediately runnable 
 project (`ode.py`, `config.py`, `train.py`, `pyproject.toml`) from a single interactive
 command, lowering the barrier for users unfamiliar with PINN library APIs.
 
-# Research Impact
+# Research Impact Statement
 
-AnyPINN ships six working examples spanning epidemiology (SIR with real Italian COVID-19
-data, SEIR, reduced-SIR with hospitalization dynamics), mechanics (damped oscillator:
-recovering damping ratio and natural frequency), and ecology (Lotka-Volterra predator-prey
-dynamics), plus a minimal exponential decay script (~80 lines, core only, no Lightning).
-The SIR example reproduces the PINN methodology of @millevoi2024physics,
-serving as a validation benchmark: AnyPINN recovers comparable transmission rate dynamics
-and state variable trajectories on the same Italian COVID-19 dataset.
-Each example demonstrates a different dynamical system, scientific domain, and data type,
-with generated result plots and CSV exports. Neural ODEs [@chen2018neural] offer a
-complementary approach that replaces the ODE right-hand side with a neural network
-entirely; AnyPINN instead keeps the equation explicit, which makes the same `Problem` and
-`Constraint` abstractions applicable to both forward solutions and parameter recovery.
-The PDE constraint layer (`DirichletBCConstraint`, `NeumannBCConstraint`,
+AnyPINN ships reproducible examples across epidemiology, mechanics, nonlinear dynamics,
+ecology, and PDEs such as Burgers, heat, wave, Poisson, Allen-Cahn, Gray-Scott, and
+inverse diffusivity. The SIR example uses real Italian COVID-19 data and reproduces
+the PINN methodology of @millevoi2024physics, serving as a validation benchmark: AnyPINN
+recovers comparable transmission rate dynamics and state variable trajectories on the same
+dataset. Each example is packaged with configuration files, generated plots, and CSV
+exports, doubling as reference material for research workflows.
+
+Unlike Neural ODEs [@chen2018neural], which replace the ODE right-hand side with a neural
+network, AnyPINN keeps equations explicit, making the same `Problem` and `Constraint`
+abstractions applicable to both forward solutions and parameter recovery. The PDE
+constraint layer (`DirichletBCConstraint`, `NeumannBCConstraint`,
 `PDEResidualConstraint`) and the composable differential operators in `anypinn.lib.diff`
 extend the library's applicability beyond ODE systems, providing a foundation for
-spatiotemporal forward and inverse problems alike.
+spatiotemporal forward and inverse problems alike. Public releases, CI, documentation, and
+contribution guidelines support reuse beyond one analysis.
 
 # AI Usage Disclosure
 
-Claude (Anthropic) was used during the development of the AnyPINN codebase to assist with
-code audit, bug identification, and targeted fixes. All architectural decisions, design
-choices, and major implementations were authored by the human developer. Claude was not used
-to generate the core library code or its scientific content.
+Claude (Anthropic) assisted with code audit, bug identification, targeted fixes, test
+scaffolding, and documentation review. OpenAI Codex (GPT-5) assisted this revision with
+JOSS-requirement checking and copy-editing of the research impact and AI disclosure text.
+The human authors reviewed, edited, and validated all AI-assisted outputs; problem
+framing, architecture, implementation, and scientific decisions were human-authored.
 
 # References
