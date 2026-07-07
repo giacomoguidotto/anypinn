@@ -198,12 +198,16 @@ def write_artifacts(out_dir: Path, exporter: SnapshotExporter, observations: dic
     total_mb = weights_path.stat().st_size / 1e6
     print(f"\nWrote {len(snapshot_meta)} snapshots -> {out_dir}")
     print(f"  weights.bin      {total_mb:.2f} MB")
-    print(f"  manifest.json    {len(snapshot_meta)} snapshots, epochs "
-          f"{snapshot_meta[0]['epoch']}..{snapshot_meta[-1]['epoch']}")
+    print(
+        f"  manifest.json    {len(snapshot_meta)} snapshots, epochs "
+        f"{snapshot_meta[0]['epoch']}..{snapshot_meta[-1]['epoch']}"
+    )
     print(f"  observations.json {observations['count']} points")
     final = snapshot_meta[-1]
-    print(f"  final recovered: sigma={final['sigma']:.4f} rho={final['rho']:.4f} "
-          f"beta={final['beta']:.4f}  (true 10 / 28 / 2.6667)")
+    print(
+        f"  final recovered: sigma={final['sigma']:.4f} rho={final['rho']:.4f} "
+        f"beta={final['beta']:.4f}  (true 10 / 28 / 2.6667)"
+    )
 
 
 def verify_roundtrip(out_dir: Path, module: PINNModule) -> None:
