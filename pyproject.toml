@@ -41,7 +41,7 @@ dependencies = [
 
 [project.optional-dependencies]
 lib = [
-    "torch>=2.12.1",
+    "torch>=2.13.0",
     "lightning",
     "pandas",
     "matplotlib",
@@ -93,7 +93,7 @@ core = [
     "seaborn",
 ]
 dl = [
-    "torch>=2.12.1",
+    "torch>=2.13.0",
     "torchaudio",
     "lightning",
     "torchmetrics",
@@ -112,8 +112,8 @@ utils = [
     "mpmath",
 ]
 dev = [
-    "setuptools>=78.1.1,<82",
-    "tensorboard>=2.20.0",
+    "setuptools>=83.0.0,<84",
+    "tensorboard>=2.21.0",
 ]
 
 
