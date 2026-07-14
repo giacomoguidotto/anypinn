@@ -1,14 +1,18 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":semanticCommits", "group:all", "schedule:weekends"],
+  "extends": ["config:recommended", ":semanticCommits", "group:all"],
+  "timezone": "Europe/Rome",
+  "schedule": ["* 0-3 * * 6"],
   "labels": ["deps"],
   "rangeStrategy": "bump",
+  "prConcurrentLimit": 1,
+  "prHourlyLimit": 1,
   "automerge": true,
   "automergeStrategy": "squash",
   "platformAutomerge": true,
   "reviewersFromCodeOwners": true,
   "lockFileMaintenance": {
-    "enabled": true
+    "enabled": false
   },
   "packageRules": [
     {
