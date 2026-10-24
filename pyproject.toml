@@ -112,7 +112,7 @@ utils = [
     "mpmath",
 ]
 dev = [
-    "setuptools>=83.0.0,<84",
+    "setuptools>=84.1,<85",
     "tensorboard>=2.21.0",
 ]
 
