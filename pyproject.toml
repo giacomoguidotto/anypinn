@@ -41,7 +41,7 @@ dependencies = [
 
 [project.optional-dependencies]
 lib = [
-    "torch>=2.13.0",
+    "torch>=2.15.0",
     "lightning",
     "pandas",
     "matplotlib",
@@ -93,7 +93,7 @@ core = [
     "seaborn",
 ]
 dl = [
-    "torch>=2.13.0",
+    "torch>=2.15.0",
     "torchaudio",
     "lightning",
     "torchmetrics",
